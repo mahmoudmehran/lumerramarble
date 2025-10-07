@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(CUSTOMER)
+  country   String?
+  whatsapp  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quoteRequests QuoteRequest[]
+
+  @@map("users")
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  nameAr        String
+  nameEn        String
+  nameEs        String
+  nameFr        String
+  category      ProductCategory
+  descriptionAr String   @db.Text
+  descriptionEn String   @db.Text
+  descriptionEs String   @db.Text
+  descriptionFr String   @db.Text
+  thickness     String
+  finishes      String
+  originCountry String
+  images        Json
+  slug          String   @unique
+  featured      Boolean  @default(false)
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("products")
+}
+
+model BlogPost {
+  id              String   @id @default(cuid())
+  titleAr         String
+  titleEn         String
+  titleEs         String
+  titleFr         String
+  contentAr       String   @db.Text
+  contentEn       String   @db.Text
+  contentEs       String   @db.Text
+  contentFr       String   @db.Text
+  excerpt         String?  @db.Text
+  metaTitle       String?
+  metaDescription String?
+  slug            String   @unique
+  featured        Boolean  @default(false)
+  published       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("blog_posts")
+}
+
+model QuoteRequest {
+  id        String              @id @default(cuid())
+  userId    String
+  products  Json
+  country   String
+  whatsapp  String
+  email     String
+  notes     String?             @db.Text
+  status    QuoteRequestStatus  @default(PENDING)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  user      User                @relation(fields: [userId], references: [id])
+
+  @@map("quote_requests")
+}
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value Json
+
+  @@map("site_settings")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  CUSTOMER
+}
+
+enum ProductCategory {
+  MARBLE
+  GRANITE
+  QUARTZ
+  SPECIAL
+}
+
+enum QuoteRequestStatus {
+  PENDING
+  PROCESSING
+  QUOTED
+  COMPLETED
+  CANCELLED
+}
