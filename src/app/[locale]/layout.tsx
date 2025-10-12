@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
-import Navbar from 'bklumerra/components/layout/Navbar'
-import Footer from 'bklumerra/components/layout/Footer'
+import Navbar from '../../components/layout/Navbar'
+import Footer from '../../components/layout/Footer'
 
 const locales = ['ar', 'en', 'es', 'fr']
 
@@ -22,13 +22,19 @@ export default async function LocaleLayout({
   const isRTL = locale === 'ar'
 
   return (
-    <html lang={locale} dir={isRTL ? 'rtl' : 'ltr'}>
-      <body className={`min-h-screen flex flex-col ${isRTL ? 'font-arabic' : 'font-latin'}`}>
-        <Navbar locale={locale} />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer locale={locale} />
+    <html lang={locale} suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <div 
+          className="min-h-screen flex flex-col" 
+          dir={isRTL ? 'rtl' : 'ltr'}
+          data-locale={isRTL ? 'arabic' : 'latin'}
+        >
+          <Navbar locale={locale} />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer locale={locale} />
+        </div>
       </body>
     </html>
   )

@@ -6,22 +6,24 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  password  String
+  password  String?  // Optional for customers who don't create accounts
   name      String
   role      Role     @default(CUSTOMER)
   country   String?
-  whatsapp  String?
+  phone     String?
+  company   String?
+  active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  quoteRequests QuoteRequest[]
+  assignedQuotes QuoteRequest[] @relation("AssignedQuotes")
 
   @@map("users")
 }
@@ -33,10 +35,10 @@ model Product {
   nameEs        String
   nameFr        String
   category      ProductCategory
-  descriptionAr String   @db.Text
-  descriptionEn String   @db.Text
-  descriptionEs String   @db.Text
-  descriptionFr String   @db.Text
+  descriptionAr String
+  descriptionEn String
+  descriptionEs String
+  descriptionFr String
   thickness     String
   finishes      String
   originCountry String
@@ -56,11 +58,11 @@ model BlogPost {
   titleEn         String
   titleEs         String
   titleFr         String
-  contentAr       String   @db.Text
-  contentEn       String   @db.Text
-  contentEs       String   @db.Text
-  contentFr       String   @db.Text
-  excerpt         String?  @db.Text
+  contentAr       String
+  contentEn       String
+  contentEs       String
+  contentFr       String
+  excerpt         String?
   metaTitle       String?
   metaDescription String?
   slug            String   @unique
@@ -73,20 +75,89 @@ model BlogPost {
 }
 
 model QuoteRequest {
+  id            String              @id @default(cuid())
+  // Personal Information
+  fullName      String
+  email         String
+  phone         String
+  company       String?
+  country       String
+  city          String?
+  
+  // Project Information
+  projectType   String
+  projectName   String?
+  expectedDate  DateTime?
+  budget        String?
+  
+  // Product Requirements
+  productType   String
+  quantity      String
+  thickness     String?
+  finish        String?
+  dimensions    String?
+  color         String?
+  
+  // Additional Information
+  message       String?
+  attachments   Json?               // Array of file paths
+  
+  // System fields
+  status        QuoteRequestStatus  @default(PENDING)
+  priority      Priority            @default(NORMAL)
+  assignedTo    String?             // Admin user ID
+  internalNotes String?
+  quotedPrice   Float?
+  quotedAt      DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  // Relations
+  assignedUser  User?               @relation("AssignedQuotes", fields: [assignedTo], references: [id])
+  responses     QuoteResponse[]
+
+  @@map("quote_requests")
+}
+
+model QuoteResponse {
+  id            String       @id @default(cuid())
+  quoteId       String
+  message       String
+  attachments   Json?        // Array of file paths
+  isInternal    Boolean      @default(false) // Internal notes vs customer communication
+  createdBy     String       // User ID
+  createdAt     DateTime     @default(now())
+
+  quote         QuoteRequest @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@map("quote_responses")
+}
+
+model ContactMessage {
   id        String              @id @default(cuid())
-  userId    String
-  products  Json
-  country   String
-  whatsapp  String
+  name      String
   email     String
-  notes     String?             @db.Text
-  status    QuoteRequestStatus  @default(PENDING)
+  phone     String?
+  company   String?
+  subject   String?
+  message   String
+  status    ContactStatus       @default(NEW)
+  readAt    DateTime?
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
 
-  user      User                @relation(fields: [userId], references: [id])
+  @@map("contact_messages")
+}
 
-  @@map("quote_requests")
+model Newsletter {
+  id          String            @id @default(cuid())
+  email       String            @unique
+  name        String?
+  status      NewsletterStatus  @default(ACTIVE)
+  subscribedAt DateTime         @default(now())
+  unsubscribedAt DateTime?
+
+  @@map("newsletter_subscribers")
 }
 
 model SiteSetting {
@@ -95,6 +166,20 @@ model SiteSetting {
   value Json
 
   @@map("site_settings")
+}
+
+model FileUpload {
+  id          String    @id @default(cuid())
+  filename    String
+  originalName String
+  mimetype    String
+  size        Int
+  path        String
+  url         String
+  uploadedBy  String?   // User ID
+  createdAt   DateTime  @default(now())
+
+  @@map("file_uploads")
 }
 
 enum Role {
@@ -111,9 +196,32 @@ enum ProductCategory {
 }
 
 enum QuoteRequestStatus {
-  PENDING
-  PROCESSING
-  QUOTED
-  COMPLETED
-  CANCELLED
+  PENDING     // في الانتظار
+  REVIEWED    // تمت المراجعة
+  PROCESSING  // قيد المعالجة
+  QUOTED      // تم إرسال العرض
+  ACCEPTED    // تم قبول العرض
+  REJECTED    // تم رفض العرض
+  COMPLETED   // مكتمل
+  CANCELLED   // ملغي
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum ContactStatus {
+  NEW
+  READ
+  REPLIED
+  CLOSED
+}
+
+enum NewsletterStatus {
+  ACTIVE
+  UNSUBSCRIBED
+  BOUNCED
 }

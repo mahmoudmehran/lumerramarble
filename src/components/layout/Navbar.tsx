@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Menu, X, Globe, ChevronDown } from 'lucide-react'
-import { Button } from 'bklumerra/components/ui/button'
+import { Button } from '../ui/button'
 
 interface NavbarProps {
   locale: string
@@ -12,6 +13,7 @@ interface NavbarProps {
 export default function Navbar({ locale }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
+  const pathname = usePathname()
 
   const navigation = [
     { name: 'الرئيسية', nameEn: 'Home', href: `/${locale}` },
@@ -28,6 +30,13 @@ export default function Navbar({ locale }: NavbarProps) {
     { code: 'es', name: 'Español', flag: '🇪🇸' },
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
   ]
+
+  const isActive = (href: string) => {
+    if (href === `/${locale}`) {
+      return pathname === `/${locale}` || pathname === `/${locale}/`
+    }
+    return pathname.startsWith(href)
+  }
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
@@ -52,7 +61,11 @@ export default function Navbar({ locale }: NavbarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-secondary-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  isActive(item.href)
+                    ? 'text-primary-600 bg-primary-50 border-b-2 border-primary-600'
+                    : 'text-secondary-700 hover:text-primary-600 hover:bg-gray-50'
+                }`}
               >
                 {locale === 'ar' ? item.name : item.nameEn}
               </Link>
@@ -86,7 +99,7 @@ export default function Navbar({ locale }: NavbarProps) {
               )}
             </div>
 
-            <Link href={`/${locale}/contact`}>
+            <Link href={`/${locale}/quote`}>
               <Button variant="default" size="sm" className="group transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 {locale === 'ar' ? 'طلب عرض سعر' : 'Request Quote'}
               </Button>
@@ -117,14 +130,18 @@ export default function Navbar({ locale }: NavbarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-secondary-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium"
+                className={`block px-3 py-2 rounded-md text-base font-medium transition-all duration-200 ${
+                  isActive(item.href)
+                    ? 'text-primary-600 bg-primary-50 border-r-4 border-primary-600 rtl:border-r-0 rtl:border-l-4'
+                    : 'text-secondary-700 hover:text-primary-600 hover:bg-gray-50'
+                }`}
                 onClick={() => setIsOpen(false)}
               >
                 {locale === 'ar' ? item.name : item.nameEn}
               </Link>
             ))}
             <div className="px-3 py-2">
-              <Link href={`/${locale}/contact`}>
+              <Link href={`/${locale}/quote`}>
                 <Button variant="default" size="sm" className="w-full group transition-all duration-300 hover:scale-105 hover:shadow-lg">
                   {locale === 'ar' ? 'طلب عرض سعر' : 'Request Quote'}
                 </Button>

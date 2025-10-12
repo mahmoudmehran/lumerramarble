@@ -262,7 +262,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
               <p className="text-xl text-primary-100 mb-8 leading-relaxed">
                 {currentContent.hero.subtitle}
               </p>
-              <Link href={`/${locale}/contact`}>
+              <Link href={`/${locale}/quote`}>
                 <Button variant="secondary" size="lg" className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl">
                   {currentContent.hero.cta}
                   {isRTL ? <ArrowLeft className="ml-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
@@ -412,7 +412,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
           <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
             {currentContent.cta.subtitle}
           </p>
-          <Link href={`/${locale}/contact`}>
+          <Link href={`/${locale}/quote`}>
             <Button variant="secondary" size="lg" className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl">
               {currentContent.cta.button}
               {isRTL ? <ArrowLeft className="ml-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}

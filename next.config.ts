@@ -5,10 +5,25 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'arabiangranite.com',
+      },
+      {
+        protocol: 'https',
         hostname: '**',
       },
     ],
-    domains: ['localhost'],
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],

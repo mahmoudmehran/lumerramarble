@@ -1,16 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react'
-import { Button } from 'bklumerra/components/ui/button'
-import { Input } from 'bklumerra/components/ui/input'
+import { useState, use } from 'react'
+import { MapPin, Phone, Mail, Clock, Send, User } from 'lucide-react'
+import { Button } from '../../../components/ui/button'
+import { Input } from '../../../components/ui/input'
+import { Textarea } from '../../../components/ui/textarea'
 
 interface ContactPageProps {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export default function ContactPage({ params }: ContactPageProps) {
-  const { locale } = params
+  const { locale } = use(params)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -251,86 +252,73 @@ export default function ContactPage({ params }: ContactPageProps) {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Name & Email */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-secondary-700 mb-2">
-                        {currentContent.form.name} *
-                      </label>
-                      <Input
-                        id="name"
-                        name="name"
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder={currentContent.form.namePlaceholder}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-secondary-700 mb-2">
-                        {currentContent.form.email} *
-                      </label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder={currentContent.form.emailPlaceholder}
-                      />
-                    </div>
+                    <Input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      label={currentContent.form.name}
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder={currentContent.form.namePlaceholder}
+                      icon={<User className="w-4 h-4" />}
+                    />
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      label={currentContent.form.email}
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder={currentContent.form.emailPlaceholder}
+                      icon={<Mail className="w-4 h-4" />}
+                    />
                   </div>
 
                   {/* Phone & Company */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-secondary-700 mb-2">
-                        {currentContent.form.phone}
-                      </label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder={currentContent.form.phonePlaceholder}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="company" className="block text-sm font-medium text-secondary-700 mb-2">
-                        {currentContent.form.company}
-                      </label>
-                      <Input
-                        id="company"
-                        name="company"
-                        type="text"
-                        value={formData.company}
-                        onChange={handleInputChange}
-                        placeholder={currentContent.form.companyPlaceholder}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Message */}
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-secondary-700 mb-2">
-                      {currentContent.form.message} *
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={6}
-                      required
-                      value={formData.message}
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      label={currentContent.form.phone}
+                      value={formData.phone}
                       onChange={handleInputChange}
-                      placeholder={currentContent.form.messagePlaceholder}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      placeholder={currentContent.form.phonePlaceholder}
+                      icon={<Phone className="w-4 h-4" />}
+                    />
+                    <Input
+                      id="company"
+                      name="company"
+                      type="text"
+                      label={currentContent.form.company}
+                      value={formData.company}
+                      onChange={handleInputChange}
+                      placeholder={currentContent.form.companyPlaceholder}
+                      icon={<MapPin className="w-4 h-4" />}
                     />
                   </div>
 
+                  {/* Message */}
+                  <Textarea
+                    id="message"
+                    name="message"
+                    rows={6}
+                    required
+                    label={currentContent.form.message}
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    placeholder={currentContent.form.messagePlaceholder}
+                  />
+
                   {/* Submit Button */}
                   <div>
-                    <Button type="submit" size="lg" className="w-full md:w-auto group transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                    <Button 
+                      type="submit" 
+                      size="lg" 
+                      className="w-full md:w-auto group transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                    >
                       <Send className="w-5 h-5 mr-2 rtl:mr-0 rtl:ml-2 group-hover:rotate-12 transition-transform" />
                       {currentContent.form.send}
                     </Button>

@@ -1,15 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Search, Filter, Grid, List } from 'lucide-react'
-import { Button } from 'bklumerra/components/ui/button'
-import { Input } from 'bklumerra/components/ui/input'
+import { Button } from '../../../components/ui/button'
+import { Input } from '../../../components/ui/input'
+import { Select } from '../../../components/ui/select'
 
 interface ProductsPageProps {
-  params: { locale: string }
-  searchParams: { category?: string; search?: string }
+  params: Promise<{ locale: string }>
+  searchParams: Promise<{ category?: string; search?: string }>
 }
 
 // Mock products data - would be fetched from database
@@ -21,7 +23,11 @@ const mockProducts = [
     nameEs: 'Mármol Blanco Carrara',
     nameFr: 'Marbre Blanc de Carrare',
     category: 'MARBLE',
-    images: ['/images/marble-1.jpg'],
+    images: [
+      'https://picsum.photos/400/400?random=1',
+      'https://picsum.photos/400/400?random=2',
+      'https://picsum.photos/400/400?random=3'
+    ],
     originCountry: 'مصر',
     thickness: '18mm, 20mm, 30mm',
     finishes: 'مصقول، مطفي، مضغوط'
@@ -33,21 +39,181 @@ const mockProducts = [
     nameEs: 'Granito Negro Galaxia',
     nameFr: 'Granit Noir Galaxie',
     category: 'GRANITE',
-    images: ['/images/granite-1.jpg'],
+    images: [
+      'https://picsum.photos/400/400?random=5',
+      'https://picsum.photos/400/400?random=6',
+      'https://picsum.photos/400/400?random=7'
+    ],
     originCountry: 'مصر',
     thickness: '20mm, 30mm',
     finishes: 'مصقول، مطفي'
   },
-  // Add more mock products...
+  {
+    id: '3',
+    nameAr: 'رخام كالاكاتا ذهبي',
+    nameEn: 'Calacatta Gold Marble',
+    nameEs: 'Mármol Calacatta Oro',
+    nameFr: 'Marbre Calacatta Or',
+    category: 'MARBLE',
+    images: [
+      'https://picsum.photos/400/400?random=9',
+      'https://picsum.photos/400/400?random=10',
+      'https://picsum.photos/400/400?random=11'
+    ],
+    originCountry: 'إيطاليا',
+    thickness: '20mm, 30mm',
+    finishes: 'مصقول، مطفي'
+  },
+  {
+    id: '4',
+    nameAr: 'جرانيت أحمر إمبريال',
+    nameEn: 'Imperial Red Granite',
+    nameEs: 'Granito Rojo Imperial',
+    nameFr: 'Granit Rouge Impérial',
+    category: 'GRANITE',
+    images: [
+      'https://picsum.photos/400/400?random=13',
+      'https://picsum.photos/400/400?random=14',
+      'https://picsum.photos/400/400?random=15'
+    ],
+    originCountry: 'الهند',
+    thickness: '18mm, 20mm, 30mm',
+    finishes: 'مصقول، مطفي، محكك'
+  }
 ]
 
+// Product Card Component with hover gallery
+function ProductCard({ product, locale, viewMode, currentContent }: {
+  product: any
+  locale: string
+  viewMode: 'grid' | 'list'
+  currentContent: any
+}) {
+  const router = useRouter()
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
+
+  // Auto-cycle through images on hover
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+    if (isHovered && product.images.length > 1) {
+      interval = setInterval(() => {
+        setCurrentImageIndex((prev) => 
+          prev === product.images.length - 1 ? 0 : prev + 1
+        )
+      }, 1500) // Change image every 1.5 seconds
+    }
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [isHovered, product.images.length])
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Prevent navigation if clicking on action buttons
+    const target = e.target as HTMLElement
+    if (target.closest('button') || target.closest('a[href*="quote"]')) {
+      return
+    }
+    router.push(`/${locale}/products/${product.id}`)
+  }
+
+  const handleQuoteClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/${locale}/contact?product=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`)
+  }
+
+  return (
+    <div
+      className={`bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group transform hover:-translate-y-1 ${
+        viewMode === 'list' ? 'flex' : ''
+      }`}
+      onClick={handleCardClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false)
+        setCurrentImageIndex(0)
+      }}
+    >
+      <div className={`relative ${viewMode === 'list' ? 'w-64 flex-shrink-0' : 'aspect-square'} overflow-hidden`}>
+        <Image
+          src={product.images[currentImageIndex] || `https://via.placeholder.com/400x400/e5e7eb/6b7280?text=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`}
+          alt={locale === 'ar' ? product.nameAr : product.nameEn}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+        />
+        
+        {/* Image indicators */}
+        {product.images.length > 1 && (
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+            {product.images.map((_: any, index: number) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                  index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+        
+        {/* Click to view hint */}
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="bg-black/70 text-white text-xs px-2 py-1 rounded">
+            {locale === 'ar' ? 'اضغط للتفاصيل' : 'Click for details'}
+          </div>
+        </div>
+      </div>
+      
+      <div className="p-6 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 className="text-xl font-bold text-secondary-900 mb-2 group-hover:text-primary-600 transition-colors duration-300">
+            {locale === 'ar' ? product.nameAr : product.nameEn}
+          </h3>
+          
+          <div className="space-y-2 text-sm text-secondary-600 mb-4">
+            <p><span className="font-medium">{currentContent.origin}:</span> {product.originCountry}</p>
+            <p><span className="font-medium">{currentContent.thickness}:</span> {product.thickness}</p>
+            <p><span className="font-medium">{currentContent.finishes}:</span> {product.finishes}</p>
+          </div>
+        </div>
+        
+        <div className="flex gap-2 mt-4">
+          <Button 
+            className="flex-1 group/btn transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            onClick={(e) => {
+              e.stopPropagation()
+              router.push(`/${locale}/products/${product.id}`)
+            }}
+          >
+            {currentContent.viewDetails}
+          </Button>
+          <Button 
+            variant="outline" 
+            className="flex-1 border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white group/btn transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            onClick={handleQuoteClick}
+          >
+            {currentContent.requestQuote}
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ProductsPage({ params, searchParams }: ProductsPageProps) {
-  const { locale } = params
+  const { locale } = use(params)
+  const { category, search } = use(searchParams)
+  const router = useRouter()
   const isRTL = locale === 'ar'
   const [products, setProducts] = useState(mockProducts)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [searchTerm, setSearchTerm] = useState(searchParams.search || '')
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.category || 'all')
+  const [searchTerm, setSearchTerm] = useState(search || '')
+  const [selectedCategory, setSelectedCategory] = useState(category || 'all')
 
   const content = {
     ar: {
@@ -186,48 +352,13 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
                 : 'grid-cols-1'
             }`}>
               {filteredProducts.map((product) => (
-                <div
+                <ProductCard
                   key={product.id}
-                  className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden ${
-                    viewMode === 'list' ? 'flex' : ''
-                  }`}
-                >
-                  <div className={`relative ${viewMode === 'list' ? 'w-64 flex-shrink-0' : 'aspect-square'}`}>
-                    <Image
-                      src={product.images[0]}
-                      alt={locale === 'ar' ? product.nameAr : product.nameEn}
-                      fill
-                      className="object-cover"
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                    />
-                  </div>
-                  
-                  <div className="p-6 flex-1">
-                    <h3 className="text-xl font-bold text-secondary-900 mb-2">
-                      {locale === 'ar' ? product.nameAr : product.nameEn}
-                    </h3>
-                    
-                    <div className="space-y-2 text-sm text-secondary-600 mb-4">
-                      <p><span className="font-medium">{currentContent.origin}:</span> {product.originCountry}</p>
-                      <p><span className="font-medium">{currentContent.thickness}:</span> {product.thickness}</p>
-                      <p><span className="font-medium">{currentContent.finishes}:</span> {product.finishes}</p>
-                    </div>
-                    
-                    <div className="flex gap-2">
-                      <Link href={`/${locale}/products/${product.id}`} className="flex-1">
-                        <Button className="w-full group transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                          {currentContent.viewDetails}
-                        </Button>
-                      </Link>
-                      <Link href={`/${locale}/contact`} className="flex-1">
-                        <Button variant="outline" className="w-full border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white group transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                          {currentContent.requestQuote}
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                  product={product}
+                  locale={locale}
+                  viewMode={viewMode}
+                  currentContent={currentContent}
+                />
               ))}
             </div>
           )}

@@ -18,7 +18,7 @@ async function main() {
       name: 'المدير العام',
       role: 'ADMIN',
       country: 'مصر',
-      whatsapp: '+201113121444',
+      phone: '+201113121444',
     },
   })
 
