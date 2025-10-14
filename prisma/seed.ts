@@ -10,10 +10,10 @@ async function main() {
   const hashedPassword = await bcrypt.hash('admin123', 10)
   
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@lumerramarble.com' },
+    where: { email: 'admin@alhotmarble.com' },
     update: {},
     create: {
-      email: 'admin@lumerramarble.com',
+      email: 'admin@alhotmarble.com',
       password: hashedPassword,
       name: 'المدير العام',
       role: 'ADMIN',
@@ -129,17 +129,17 @@ async function main() {
         nameEn: 'Lumerra Marble Company',
         address: 'مصر - القاهرة - المنطقة الصناعية شق الثعبان',
         phone: '+20 111 312 1444',
-        email: 'info@lumerramarble.com',
+        email: 'info@alhotmarble.com',
         whatsapp: '+20 111 312 1444',
       },
     },
     {
       key: 'social_media',
       value: {
-        facebook: 'https://facebook.com/lumerramarble',
-        instagram: 'https://instagram.com/lumerramarble',
-        twitter: 'https://twitter.com/lumerramarble',
-        youtube: 'https://youtube.com/@lumerramarble',
+        facebook: 'https://facebook.com/alhotmarble',
+        instagram: 'https://instagram.com/alhotmarble',
+        twitter: 'https://twitter.com/alhotmarble',
+        youtube: 'https://youtube.com/@alhotmarble',
         linkedin: 'https://linkedin.com/company/lumerramarble',
       },
     },

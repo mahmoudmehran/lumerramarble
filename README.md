@@ -1,4 +1,4 @@
-# 🪨 Lumerra Marble - Premium Marble Export Website
+# 🪨 الحوت ماربل (Alhot Marble) - Premium Marble Export Website
 
 A professional multilingual website for exporting premium marble, granite, and quartz from Egypt to global markets.
 
@@ -66,8 +66,8 @@ src/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/lumerra-marble.git
-   cd lumerra-marble
+   git clone https://github.com/yourusername/alhot-marble.git
+   cd alhot-marble
    ```
 
 2. **Install dependencies**
@@ -84,7 +84,7 @@ src/
    
    Update the following variables:
    ```env
-   DATABASE_URL="mysql://username:password@localhost:3306/lumerra_marble"
+   DATABASE_URL="mysql://username:password@localhost:3306/alhot_marble"
    NEXTAUTH_URL="http://localhost:3000"
    NEXTAUTH_SECRET="your-secret-key"
    NEXT_PUBLIC_APP_URL="http://localhost:3000"
@@ -211,11 +211,11 @@ npx prisma migrate   # Run migrations
 
 ## 📧 Contact
 
-**Lumerra Marble**
+**الحوت ماربل (Alhot Marble)**
 - 📍 Egypt - Cairo - Shaq Al-Thuban Industrial Zone
 - 📱 WhatsApp: +20 111 312 1444
-- ✉️ Email: info@lumerramarble.com
-- 🌐 Website: [lumerramarble.com](https://lumerramarble.com)
+- ✉️ Email: info@alhotmarble.com
+- 🌐 Website: [alhotmarble.com](https://alhotmarble.com)
 
 ## 📄 License
 
@@ -230,4 +230,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built with ❤️ for Lumerra Marble**
+**Built with ❤️ for الحوت ماربل (Alhot Marble)**

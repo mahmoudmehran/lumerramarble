@@ -46,10 +46,10 @@ export default function Navbar({ locale }: NavbarProps) {
             <Link href={`/${locale}`} className="flex-shrink-0">
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">L</span>
+                  <span className="text-white font-bold text-lg">ح</span>
                 </div>
                 <span className="font-bold text-xl text-secondary-900">
-                  Lumerra Marble
+                  {locale === 'ar' ? 'الحوت ماربل' : 'Alhot Marble'}
                 </span>
               </div>
             </Link>

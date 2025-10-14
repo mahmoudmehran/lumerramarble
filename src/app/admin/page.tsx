@@ -7,7 +7,7 @@ import { Input } from '../../components/ui/input'
 import { Textarea } from '../../components/ui/textarea'
 import { Select } from '../../components/ui/select'
 import { Card } from '../../components/ui/card'
-import { Save, Edit, Eye, Settings, Calculator, LogOut } from 'lucide-react'
+import { Save, Edit, Eye, Settings, Calculator, LogOut, Building, Ship } from 'lucide-react'
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('homepage')
@@ -70,16 +70,31 @@ export default function AdminPanel() {
     loadContent()
   }, [router])
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, section?: string, subSection?: string, imageKey?: string) => {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // التحقق من حجم الملف (5MB حد أقصى)
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    if (file.size > maxSize) {
+      alert('حجم الملف كبير جداً. الحد الأقصى 5MB')
+      return
+    }
+
     try {
+      console.log('بدء تحميل الصورة:', file.name, file.size, file.type)
+      
       const formData = new FormData()
       formData.append('image', file)
 
       const token = localStorage.getItem('admin_token')
-      const response = await fetch('/api/admin/upload', {
+      console.log('Token exists:', !!token)
+      
+      // التأكد من استخدام البورت الصحيح
+      const baseUrl = window.location.origin
+      console.log('Upload URL:', `${baseUrl}/api/admin/upload`)
+      
+      const response = await fetch(`${baseUrl}/api/admin/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -87,8 +102,12 @@ export default function AdminPanel() {
         body: formData,
       })
 
+      console.log('Response status:', response.status)
+      
       if (!response.ok) {
-        throw new Error('فشل في رفع الصورة')
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Upload error:', errorData)
+        throw new Error(errorData.error || `فشل في رفع الصورة: ${response.status}`)
       }
 
       const { filePath } = await response.json()
@@ -96,15 +115,26 @@ export default function AdminPanel() {
       // Update content with new image path
       const newContent = JSON.parse(JSON.stringify(content))
       if (!newContent[currentLang]) newContent[currentLang] = {}
-      if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-      if (!newContent[currentLang].homepage.hero) newContent[currentLang].homepage.hero = {}
-      newContent[currentLang].homepage.hero.backgroundImage = filePath
-      setContent(newContent)
 
+      if (section && subSection && imageKey) {
+        // For specific sections like about.hero.backgroundImage
+        if (!newContent[currentLang][section]) newContent[currentLang][section] = {}
+        if (!newContent[currentLang][section][subSection]) newContent[currentLang][section][subSection] = {}
+        newContent[currentLang][section][subSection][imageKey] = filePath
+      } else {
+        // Default to homepage hero background
+        if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
+        if (!newContent[currentLang].homepage.hero) newContent[currentLang].homepage.hero = {}
+        newContent[currentLang].homepage.hero.backgroundImage = filePath
+      }
+
+      setContent(newContent)
+      console.log('تم رفع الصورة بنجاح:', filePath)
       alert('تم رفع الصورة بنجاح!')
     } catch (err) {
       console.error('Upload error:', err)
-      alert(err instanceof Error ? err.message : 'خطأ في رفع الصورة')
+      const errorMessage = err instanceof Error ? err.message : 'خطأ غير معروف في رفع الصورة'
+      alert(`خطأ في رفع الصورة: ${errorMessage}`)
     }
   }
 
@@ -123,6 +153,30 @@ export default function AdminPanel() {
       if (response.ok) {
         alert('تم حفظ التغييرات بنجاح!')
         setIsEditing(false)
+        
+        // إعادة تحميل المحتوى المحدث
+        const updatedResponse = await fetch('/api/admin/content', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Cache-Control': 'no-cache'
+          }
+        })
+        
+        if (updatedResponse.ok) {
+          const updatedContent = await updatedResponse.json()
+          setContent(updatedContent)
+        }
+        
+        // تحديث الصفحات في browser cache
+        if (typeof window !== 'undefined') {
+          // إشعار المستخدم بأن المحتوى تم تحديثه
+          setTimeout(() => {
+            const confirmed = confirm('تم حفظ التغييرات بنجاح! هل تريد رؤية التغييرات في الموقع؟')
+            if (confirmed) {
+              window.open('/', '_blank')
+            }
+          }, 500)
+        }
       } else {
         alert('حدث خطأ في حفظ التغييرات')
       }
@@ -140,6 +194,8 @@ export default function AdminPanel() {
 
   const tabs = [
     { id: 'homepage', name: 'الصفحة الرئيسية', icon: Eye },
+    { id: 'about', name: 'عن الشركة', icon: Building },
+    { id: 'export', name: 'خدمات التصدير', icon: Ship },
     { id: 'quotes', name: 'طلبات الأسعار', icon: Calculator },
     { id: 'products', name: 'المنتجات', icon: Edit },
     { id: 'blog', name: 'المدونة', icon: Edit },
@@ -166,7 +222,7 @@ export default function AdminPanel() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">لوحة تحكم Lumerra Marble</h1>
+              <h1 className="text-2xl font-bold text-gray-900">لوحة تحكم الحوت ماربل</h1>
               <p className="text-gray-600">مرحباً {user?.name} - إدارة محتوى الموقع</p>
             </div>
             <div className="flex items-center gap-4">
@@ -184,6 +240,11 @@ export default function AdminPanel() {
                 />
 
               </div>
+              {content?._lastUpdated && (
+                <div className="text-sm text-gray-500">
+                  آخر تحديث: {new Date(content._lastUpdated).toLocaleString('ar-EG')}
+                </div>
+              )}
               <Button 
                 onClick={handleSave}
                 className="flex items-center gap-2"
@@ -688,7 +749,7 @@ export default function AdminPanel() {
                               newContent[currentLang].siteInfo.email = e.target.value
                               setContent(newContent)
                             }}
-                            placeholder="info@lumerramarble.com"
+                            placeholder="info@alhotmarble.com"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
@@ -733,6 +794,892 @@ export default function AdminPanel() {
                         </div>
                         <p className="text-yellow-800 font-medium">
                           {currentLang === 'ar' 
+                            ? 'تذكر: يجب تحديث المحتوى لكل اللغات المدعومة (العربية والإنجليزية)'
+                            : 'Remember: Content should be updated for all supported languages (Arabic and English)'
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            )}
+
+            {activeTab === 'about' && (
+              <Card className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold">صفحة عن الشركة</h2>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsEditing(!isEditing)}
+                  >
+                    {isEditing ? 'إلغاء التعديل' : 'تعديل'}
+                  </Button>
+                </div>
+
+                <div className="space-y-8">
+                  {/* Hero Section */}
+                  <div className="bg-white p-6 rounded-lg border">
+                    <h3 className="font-semibold text-lg mb-4 text-primary-700 border-b pb-2">
+                      القسم الرئيسي
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          العنوان الرئيسي
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.about?.hero?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
+                              if (!newContent[currentLang].about.hero) newContent[currentLang].about.hero = {}
+                              newContent[currentLang].about.hero.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="من نحن"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.hero?.title || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          النص التوضيحي
+                        </label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={4}
+                            value={content[currentLang]?.about?.hero?.description || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
+                              if (!newContent[currentLang].about.hero) newContent[currentLang].about.hero = {}
+                              newContent[currentLang].about.hero.description = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="وصف موجز عن الشركة"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.hero?.description || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          صورة القسم الرئيسي
+                        </label>
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, 'about', 'hero', 'backgroundImage')}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <p className="text-sm text-gray-500">
+                              اختر صورة للخلفية (JPG, PNG, WebP)
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.hero?.backgroundImage || 'غير محدد'}
+                          </div>
+                        )}
+                        {content[currentLang]?.about?.hero?.backgroundImage && (
+                          <div className="mt-2">
+                            <img 
+                              src={content[currentLang].about.hero.backgroundImage} 
+                              alt="صورة الخلفية" 
+                              className="w-32 h-20 object-cover rounded border"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mission Section */}
+                  <div className="bg-white p-6 rounded-lg border">
+                    <h3 className="font-semibold text-lg mb-4 text-primary-700 border-b pb-2">
+                      الرؤية والرسالة
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          عنوان القسم
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.about?.mission?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
+                              if (!newContent[currentLang].about.mission) newContent[currentLang].about.mission = {}
+                              newContent[currentLang].about.mission.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="رؤيتنا ورسالتنا"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.mission?.title || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          الرؤية
+                        </label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={3}
+                            value={content[currentLang]?.about?.mission?.vision || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
+                              if (!newContent[currentLang].about.mission) newContent[currentLang].about.mission = {}
+                              newContent[currentLang].about.mission.vision = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="رؤية الشركة"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.mission?.vision || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          الرسالة
+                        </label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={3}
+                            value={content[currentLang]?.about?.mission?.mission || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
+                              if (!newContent[currentLang].about.mission) newContent[currentLang].about.mission = {}
+                              newContent[currentLang].about.mission.mission = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="رسالة الشركة"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.mission?.mission || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          صورة قسم الرؤية والرسالة
+                        </label>
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, 'about', 'mission', 'image')}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <p className="text-sm text-gray-500">
+                              اختر صورة توضيحية للرؤية والرسالة (JPG, PNG, WebP)
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.mission?.image || 'غير محدد'}
+                          </div>
+                        )}
+                        {content[currentLang]?.about?.mission?.image && (
+                          <div className="mt-2">
+                            <img 
+                              src={content[currentLang].about.mission.image} 
+                              alt="صورة الرؤية والرسالة" 
+                              className="w-32 h-20 object-cover rounded border"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Location Section */}
+                  <div className="bg-white p-6 rounded-lg border">
+                    <h3 className="font-semibold text-lg mb-4 text-primary-700 border-b pb-2">
+                      موقعنا
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          عنوان القسم
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.about?.location?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
+                              if (!newContent[currentLang].about.location) newContent[currentLang].about.location = {}
+                              newContent[currentLang].about.location.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="موقعنا"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.location?.title || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          العنوان
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.about?.location?.address || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
+                              if (!newContent[currentLang].about.location) newContent[currentLang].about.location = {}
+                              newContent[currentLang].about.location.address = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="العنوان التفصيلي"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.location?.address || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          وصف الموقع
+                        </label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={3}
+                            value={content[currentLang]?.about?.location?.description || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
+                              if (!newContent[currentLang].about.location) newContent[currentLang].about.location = {}
+                              newContent[currentLang].about.location.description = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="وصف الموقع ومزاياه"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.location?.description || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          صورة الموقع
+                        </label>
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, 'about', 'location', 'image')}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <p className="text-sm text-gray-500">
+                              اختر صورة للموقع أو المصنع (JPG, PNG, WebP)
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.location?.image || 'غير محدد'}
+                          </div>
+                        )}
+                        {content[currentLang]?.about?.location?.image && (
+                          <div className="mt-2">
+                            <img 
+                              src={content[currentLang].about.location.image} 
+                              alt="صورة الموقع" 
+                              className="w-32 h-20 object-cover rounded border"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Stats Section */}
+                  <div className="bg-white p-6 rounded-lg border">
+                    <h3 className="font-semibold text-lg mb-4 text-primary-700 border-b pb-2">
+                      إنجازاتنا بالأرقام
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          عنوان القسم
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.about?.stats?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
+                              if (!newContent[currentLang].about.stats) newContent[currentLang].about.stats = {}
+                              newContent[currentLang].about.stats.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="إنجازاتنا بالأرقام"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.about?.stats?.title || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {(content[currentLang]?.about?.stats?.items || []).map((stat: any, index: number) => (
+                        <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                          <div>
+                            <label className="block text-sm font-medium mb-2">
+                              الرقم {index + 1}
+                            </label>
+                            {isEditing ? (
+                              <Input
+                                value={stat.number || ''}
+                                onChange={(e) => {
+                                  const newContent = JSON.parse(JSON.stringify(content))
+                                  if (!newContent[currentLang]?.about?.stats?.items) return
+                                  newContent[currentLang].about.stats.items[index].number = e.target.value
+                                  setContent(newContent)
+                                }}
+                                placeholder="15+"
+                              />
+                            ) : (
+                              <div className="p-2 bg-white rounded border">
+                                {stat.number || 'غير محدد'}
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-2">
+                              النص {index + 1}
+                            </label>
+                            {isEditing ? (
+                              <Input
+                                value={stat.label || ''}
+                                onChange={(e) => {
+                                  const newContent = JSON.parse(JSON.stringify(content))
+                                  if (!newContent[currentLang]?.about?.stats?.items) return
+                                  newContent[currentLang].about.stats.items[index].label = e.target.value
+                                  setContent(newContent)
+                                }}
+                                placeholder="سنوات من الخبرة"
+                              />
+                            ) : (
+                              <div className="p-2 bg-white rounded border">
+                                {stat.label || 'غير محدد'}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Language Sync Warning */}
+                  {isEditing && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">!</span>
+                        </div>
+                        <p className="text-yellow-800 font-medium">
+                          {currentLang === 'ar'
+                            ? 'تذكر: يجب تحديث المحتوى لكل اللغات المدعومة (العربية والإنجليزية)'
+                            : 'Remember: Content should be updated for all supported languages (Arabic and English)'
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            )}
+
+            {activeTab === 'export' && (
+              <Card className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold">صفحة خدمات التصدير</h2>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsEditing(!isEditing)}
+                  >
+                    {isEditing ? 'إلغاء التعديل' : 'تعديل'}
+                  </Button>
+                </div>
+
+                <div className="space-y-8">
+                  {/* Hero Section */}
+                  <div className="bg-white p-6 rounded-lg border">
+                    <h3 className="font-semibold text-lg mb-4 text-primary-700 border-b pb-2">
+                      القسم الرئيسي
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          العنوان الرئيسي
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.export?.hero?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
+                              if (!newContent[currentLang].export.hero) newContent[currentLang].export.hero = {}
+                              newContent[currentLang].export.hero.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="خدمات التصدير الاحترافية"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.hero?.title || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          النص التوضيحي
+                        </label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={4}
+                            value={content[currentLang]?.export?.hero?.subtitle || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
+                              if (!newContent[currentLang].export.hero) newContent[currentLang].export.hero = {}
+                              newContent[currentLang].export.hero.subtitle = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="وصف خدمات التصدير"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.hero?.subtitle || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          نص الزر
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.export?.hero?.cta || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
+                              if (!newContent[currentLang].export.hero) newContent[currentLang].export.hero = {}
+                              newContent[currentLang].export.hero.cta = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="طلب عرض سعر للتصدير"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.hero?.cta || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          صورة القسم الرئيسي
+                        </label>
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, 'export', 'hero', 'backgroundImage')}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <p className="text-sm text-gray-500">
+                              اختر صورة للقسم الرئيسي (JPG, PNG, WebP)
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.hero?.backgroundImage || 'غير محدد'}
+                          </div>
+                        )}
+                        {content[currentLang]?.export?.hero?.backgroundImage && (
+                          <div className="mt-2">
+                            <img 
+                              src={content[currentLang].export.hero.backgroundImage} 
+                              alt="صورة القسم الرئيسي" 
+                              className="w-32 h-20 object-cover rounded border"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Services Section */}
+                  <div className="bg-white p-6 rounded-lg border">
+                    <h3 className="font-semibold text-lg mb-4 text-primary-700 border-b pb-2">
+                      خدماتنا
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          عنوان القسم
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.export?.services?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
+                              if (!newContent[currentLang].export.services) newContent[currentLang].export.services = {}
+                              newContent[currentLang].export.services.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="خدماتنا"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.services?.title || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          وصف القسم
+                        </label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={2}
+                            value={content[currentLang]?.export?.services?.subtitle || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
+                              if (!newContent[currentLang].export.services) newContent[currentLang].export.services = {}
+                              newContent[currentLang].export.services.subtitle = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="نقدم خدمات تصدير متكاملة من الاستشارة إلى التسليم"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.services?.subtitle || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          صورة قسم الخدمات
+                        </label>
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, 'export', 'services', 'image')}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <p className="text-sm text-gray-500">
+                              اختر صورة توضيحية للخدمات (JPG, PNG, WebP)
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.services?.image || 'غير محدد'}
+                          </div>
+                        )}
+                        {content[currentLang]?.export?.services?.image && (
+                          <div className="mt-2">
+                            <img 
+                              src={content[currentLang].export.services.image} 
+                              alt="صورة الخدمات" 
+                              className="w-32 h-20 object-cover rounded border"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Countries Section */}
+                  <div className="bg-white p-6 rounded-lg border">
+                    <h3 className="font-semibold text-lg mb-4 text-primary-700 border-b pb-2">
+                      الدول المستوردة
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          عنوان القسم
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.export?.countries?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
+                              if (!newContent[currentLang].export.countries) newContent[currentLang].export.countries = {}
+                              newContent[currentLang].export.countries.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="الدول التي نصدر إليها"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.countries?.title || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          وصف القسم
+                        </label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={2}
+                            value={content[currentLang]?.export?.countries?.subtitle || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
+                              if (!newContent[currentLang].export.countries) newContent[currentLang].export.countries = {}
+                              newContent[currentLang].export.countries.subtitle = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="نصل إلى أكثر من 50 دولة في 6 قارات"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.countries?.subtitle || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          صورة قسم الدول المستوردة
+                        </label>
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, 'export', 'countries', 'image')}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <p className="text-sm text-gray-500">
+                              اختر صورة خريطة أو تمثيلية للدول (JPG, PNG, WebP)
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.countries?.image || 'غير محدد'}
+                          </div>
+                        )}
+                        {content[currentLang]?.export?.countries?.image && (
+                          <div className="mt-2">
+                            <img 
+                              src={content[currentLang].export.countries.image} 
+                              alt="صورة الدول المستوردة" 
+                              className="w-32 h-20 object-cover rounded border"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CTA Section */}
+                  <div className="bg-white p-6 rounded-lg border">
+                    <h3 className="font-semibold text-lg mb-4 text-primary-700 border-b pb-2">
+                      دعوة للعمل
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          العنوان
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.export?.cta?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
+                              if (!newContent[currentLang].export.cta) newContent[currentLang].export.cta = {}
+                              newContent[currentLang].export.cta.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="ابدأ مشروع التصدير الخاص بك"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.cta?.title || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          النص التوضيحي
+                        </label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={2}
+                            value={content[currentLang]?.export?.cta?.subtitle || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
+                              if (!newContent[currentLang].export.cta) newContent[currentLang].export.cta = {}
+                              newContent[currentLang].export.cta.subtitle = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="احصل على عرض سعر مخصص وابدأ رحلة التصدير معنا اليوم"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.cta?.subtitle || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          نص الزر
+                        </label>
+                        {isEditing ? (
+                          <Input
+                            value={content[currentLang]?.export?.cta?.button || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[currentLang]) newContent[currentLang] = {}
+                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
+                              if (!newContent[currentLang].export.cta) newContent[currentLang].export.cta = {}
+                              newContent[currentLang].export.cta.button = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="طلب عرض سعر الآن"
+                          />
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.cta?.button || 'غير محدد'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          صورة قسم دعوة العمل
+                        </label>
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, 'export', 'cta', 'backgroundImage')}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <p className="text-sm text-gray-500">
+                              اختر صورة خلفية لقسم دعوة العمل (JPG, PNG, WebP)
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[currentLang]?.export?.cta?.backgroundImage || 'غير محدد'}
+                          </div>
+                        )}
+                        {content[currentLang]?.export?.cta?.backgroundImage && (
+                          <div className="mt-2">
+                            <img 
+                              src={content[currentLang].export.cta.backgroundImage} 
+                              alt="صورة خلفية دعوة العمل" 
+                              className="w-32 h-20 object-cover rounded border"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Language Sync Warning */}
+                  {isEditing && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">!</span>
+                        </div>
+                        <p className="text-yellow-800 font-medium">
+                          {currentLang === 'ar'
                             ? 'تذكر: يجب تحديث المحتوى لكل اللغات المدعومة (العربية والإنجليزية)'
                             : 'Remember: Content should be updated for all supported languages (Arabic and English)'
                           }
@@ -939,10 +1886,32 @@ export default function AdminPanel() {
             {activeTab === 'settings' && (
               <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-6">إعدادات الموقع</h2>
-                <div className="text-center py-8 text-gray-500">
-                  <Settings className="w-12 h-12 mx-auto mb-4" />
-                  <p>إعدادات الموقع العامة قيد التطوير</p>
-                  <p className="text-sm">ستتمكن من تغيير الألوان والخطوط هنا</p>
+                <div className="space-y-6">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h3 className="font-semibold text-blue-800 mb-2">معلومات النظام</h3>
+                    <div className="text-sm text-blue-700 space-y-1">
+                      <p><strong>حالة الخادم:</strong> يعمل على البورت 3002</p>
+                      <p><strong>نوع المحتوى:</strong> Dynamic Content (تحديث فوري)</p>
+                      <p><strong>مسار الملفات:</strong> src/data/content.json</p>
+                      <p><strong>آخر تحديث:</strong> {content?._lastUpdated ? new Date(content._lastUpdated).toLocaleString('ar-EG') : 'غير متاح'}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h3 className="font-semibold text-green-800 mb-2">حالة المزامنة</h3>
+                    <div className="text-sm text-green-700">
+                      <p>✅ التغييرات تظهر فوراً في الموقع</p>
+                      <p>✅ دعم متعدد اللغات (العربية، الإنجليزية، الفرنسية، الإسبانية)</p>
+                      <p>✅ تحميل الصور مدعوم</p>
+                      <p>✅ حفظ تلقائي في قاعدة البيانات</p>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center py-4 text-gray-500">
+                    <Settings className="w-12 h-12 mx-auto mb-4" />
+                    <p>إعدادات إضافية قيد التطوير</p>
+                    <p className="text-sm">ستتمكن من تغيير الألوان والخطوط قريباً</p>
+                  </div>
                 </div>
               </Card>
             )}

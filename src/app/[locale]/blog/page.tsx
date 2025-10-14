@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Calendar, User, ArrowRight, ArrowLeft, Clock } from 'lucide-react'
-import { Button } from 'bklumerra/components/ui/button'
-import { Card } from 'bklumerra/components/ui/card'
+import { Button } from 'bkalhot/components/ui/button'
+import { Card } from 'bkalhot/components/ui/card'
 
 interface BlogPageProps {
   params: Promise<{ locale: string }>

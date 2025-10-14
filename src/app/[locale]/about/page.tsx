@@ -1,5 +1,10 @@
 import Image from 'next/image'
 import { MapPin, Award, Users, Globe, Clock, Shield } from 'lucide-react'
+import { fetchContentFromAPI, getContent } from '../../../lib/content'
+
+// إجبار dynamic rendering
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 interface AboutPageProps {
   params: Promise<{ locale: string }>
@@ -9,15 +14,27 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const { locale } = await params
   const isRTL = locale === 'ar'
 
+  // جلب المحتوى من API مع fallback للمحتوى الثابت
+  let contentData
+  try {
+    contentData = await fetchContentFromAPI()
+  } catch (error) {
+    console.error('فشل في جلب المحتوى من API، استخدام المحتوى الافتراضي:', error)
+    contentData = getContent()
+  }
+
+  // استخدام المحتوى المحدث أو الافتراضي
+  const aboutContent = contentData[locale as keyof typeof contentData]?.about
+
   const content = {
     ar: {
       hero: {
-        title: 'عن شركة Lumerra Marble',
+        title: 'عن شركة الحوت ماربل',
         subtitle: 'رحلة من التميز في تصدير الأحجار الطبيعية'
       },
       story: {
         title: 'قصتنا',
-        content: `تأسست شركة Lumerra Marble في مصر بهدف أن تكون الجسر الذي يربط بين جمال الأحجار الطبيعية المصرية والأسواق العالمية. 
+        content: `تأسست شركة الحوت ماربل في مصر بهدف أن تكون الجسر الذي يربط بين جمال الأحجار الطبيعية المصرية والأسواق العالمية. 
         منذ تأسيسها قبل أكثر من 15 عامًا، نجحت الشركة في بناء سمعة متميزة في مجال تصدير الرخام والجرانيت والكوارتز عالي الجودة.
         
         نحن لا نقوم بتصدير الأحجار فحسب، بل نصدر قطعًا من الفن المصري الأصيل الذي يحمل في طياته تاريخ وحضارة آلاف السنين. 
@@ -70,12 +87,12 @@ export default async function AboutPage({ params }: AboutPageProps) {
     },
     en: {
       hero: {
-        title: 'About Lumerra Marble',
+        title: 'About Alhot Marble',
         subtitle: 'A Journey of Excellence in Natural Stone Export'
       },
       story: {
         title: 'Our Story',
-        content: `Lumerra Marble was founded in Egypt with the vision of becoming the bridge that connects the beauty of Egyptian natural stones with global markets. 
+        content: `Alhot Marble was founded in Egypt with the vision of becoming the bridge that connects the beauty of Egyptian natural stones with global markets. 
         Since its establishment over 15 years ago, the company has successfully built an outstanding reputation in exporting high-quality marble, granite, and quartz.
         
         We don't just export stones; we export pieces of authentic Egyptian art that carry within them the history and civilization of thousands of years. 
@@ -128,7 +145,35 @@ export default async function AboutPage({ params }: AboutPageProps) {
     }
   }
 
-  const currentContent = content[locale as keyof typeof content] || content.en
+  // دمج المحتوى المحدث مع المحتوى الافتراضي
+  const currentContent = aboutContent ? {
+    hero: {
+      title: aboutContent.hero?.title || content[locale as keyof typeof content]?.hero?.title || content.en.hero.title,
+      subtitle: aboutContent.hero?.description || content[locale as keyof typeof content]?.hero?.subtitle || content.en.hero.subtitle
+    },
+    story: {
+      title: content[locale as keyof typeof content]?.story?.title || content.en.story.title,
+      content: content[locale as keyof typeof content]?.story?.content || content.en.story.content
+    },
+    mission: {
+      title: aboutContent.mission?.title || content[locale as keyof typeof content]?.mission?.title || content.en.mission.title,
+      vision: aboutContent.mission?.vision || content[locale as keyof typeof content]?.mission?.vision || content.en.mission.vision,
+      mission: aboutContent.mission?.mission || content[locale as keyof typeof content]?.mission?.mission || content.en.mission.mission
+    },
+    values: content[locale as keyof typeof content]?.values || content.en.values,
+    location: {
+      title: aboutContent.location?.title || content[locale as keyof typeof content]?.location?.title || content.en.location.title,
+      address: aboutContent.location?.address || content[locale as keyof typeof content]?.location?.address || content.en.location.address,
+      description: aboutContent.location?.description || content[locale as keyof typeof content]?.location?.description || content.en.location.description
+    },
+    stats: {
+      title: aboutContent.stats?.title || content[locale as keyof typeof content]?.stats?.title || content.en.stats.title,
+      items: aboutContent.stats?.items?.map((item: any, index: number) => ({
+        ...item,
+        icon: content[locale as keyof typeof content]?.stats?.items?.[index]?.icon || content.en.stats.items[index]?.icon
+      })) || content[locale as keyof typeof content]?.stats?.items || content.en.stats.items
+    }
+  } : (content[locale as keyof typeof content] || content.en)
 
   return (
     <div className="min-h-screen">
@@ -136,7 +181,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
       <section className="relative py-20 bg-gradient-to-br from-secondary-900 to-secondary-800">
         <div className="absolute inset-0">
           <Image
-            src="/images/about-hero.jpg"
+            src={aboutContent?.hero?.backgroundImage || "/images/about-hero.jpg"}
             alt="About Lumerra Marble"
             fill
             className="object-cover opacity-20"
@@ -171,7 +216,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
             </div>
             <div className="relative">
               <Image
-                src="/images/factory.jpg"
+                src={aboutContent?.mission?.image || "/images/factory.jpg"}
                 alt="Lumerra Marble Factory"
                 width={600}
                 height={400}
@@ -259,25 +304,35 @@ export default async function AboutPage({ params }: AboutPageProps) {
               </p>
             </div>
             <div className="relative">
-              {/* Map placeholder - replace with actual map component */}
-              <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-600">
-                    {locale === 'ar' ? 'خريطة الموقع' : 'Location Map'}
-                  </p>
-                  <p className="text-sm text-gray-500 mt-2">
-                    <a 
-                      href="https://maps.app.goo.gl/4to6WUKDMY7KEjRVA" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-primary-600 hover:text-primary-700"
-                    >
-                      {locale === 'ar' ? 'عرض في خرائط Google' : 'View on Google Maps'}
-                    </a>
-                  </p>
+              {aboutContent?.location?.image ? (
+                <Image
+                  src={aboutContent.location.image}
+                  alt="Our Location"
+                  width={600}
+                  height={400}
+                  className="rounded-lg shadow-lg object-cover"
+                />
+              ) : (
+                /* Map placeholder - replace with actual map component */
+                <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-600">
+                      {locale === 'ar' ? 'خريطة الموقع' : 'Location Map'}
+                    </p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      <a 
+                        href="https://maps.app.goo.gl/4to6WUKDMY7KEjRVA" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-primary-600 hover:text-primary-700"
+                      >
+                        {locale === 'ar' ? 'عرض في خرائط Google' : 'View on Google Maps'}
+                      </a>
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -290,7 +345,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
             {currentContent.stats.title}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {currentContent.stats.items.map((stat, index) => {
+            {currentContent.stats.items.map((stat: any, index: number) => {
               const IconComponent = stat.icon
               return (
                 <div key={index} className="text-center">

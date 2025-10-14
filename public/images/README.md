@@ -1,15 +1,27 @@
-# Image Placeholders
+# صور الموقع
 
-This directory contains placeholder images for the Lumerra Marble website.
+هذا المجلد يحتوي على صور الموقع المختلفة:
 
-## Required Images:
-- hero-marble.jpg - Hero section background
-- marble-category.jpg - Marble category thumbnail
-- granite-category.jpg - Granite category thumbnail  
-- quartz-category.jpg - Quartz category thumbnail
-- special-category.jpg - Special products category thumbnail
+## الصور المطلوبة:
+- hero-marble.jpg - خلفية القسم الرئيسي
+- marble-category.jpg - صورة فئة الرخام
+- granite-category.jpg - صورة فئة الجرانيت  
+- quartz-category.jpg - صورة فئة الكوارتز
+- special-category.jpg - صورة المنتجات الخاصة
 
-## Notes:
-- All images should be high quality (1920x1080 or higher for hero, 800x800 for categories)
-- Images should be optimized for web (WebP format preferred)
-- Placeholder images can be replaced with actual product photos
+## صور صفحة "عن الشركة":
+- about-hero.jpg - صورة القسم الرئيسي
+- about-mission.jpg - صورة قسم الرؤية والرسالة  
+- about-location.jpg - صورة الموقع/المصنع
+
+## صور صفحة "خدمات التصدير":
+- export-hero.jpg - صورة القسم الرئيسي
+- export-services.jpg - صورة قسم الخدمات
+- export-countries.jpg - صورة الدول المستوردة
+- export-cta.jpg - صورة خلفية دعوة العمل
+
+## ملاحظات:
+- يجب أن تكون جميع الصور عالية الجودة (1920x1080 أو أعلى للرئيسية، 800x800 للفئات)
+- يُنصح بتحسين الصور للويب (تفضيل تنسيق WebP)
+- يمكن رفع الصور من لوحة التحكم مباشرة
+- الصور المدعومة: JPG, PNG, WebP

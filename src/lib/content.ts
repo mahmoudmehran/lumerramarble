@@ -1,9 +1,10 @@
 // Import للـ client-side (المحتوى الثابت)
 import contentData from '../data/content.json'
+import { ContentData } from '../types'
 
 // دالة للـ client-side - تستخدم static import
-export function getContent() {
-  return contentData
+export function getContent(): ContentData {
+  return contentData as ContentData
 }
 
 export function updateContent(newContent: any) {
@@ -38,15 +39,27 @@ export async function saveContentToAPI(content: any, token?: string) {
 // دالة لجلب المحتوى المحدث من API
 export async function fetchContentFromAPI(token?: string) {
   try {
-    // في server-side rendering نحتاج absolute URL
+    // في server-side rendering نقرأ مباشرة من الملف
+    if (typeof window === 'undefined') {
+      const fs = await import('fs/promises')
+      const path = await import('path')
+      
+      const contentFilePath = path.join(process.cwd(), 'src', 'data', 'content.json')
+      const fileContent = await fs.readFile(contentFilePath, 'utf8')
+      return JSON.parse(fileContent)
+    }
+    
+    // في client-side نستخدم fetch مع cache busting
     const baseUrl = process.env.NODE_ENV === 'production' 
       ? 'https://your-domain.com' 
       : 'http://localhost:3001'
     
-    const response = await fetch(`${baseUrl}/api/admin/content`, {
+    const timestamp = Date.now()
+    const response = await fetch(`${baseUrl}/api/admin/content?t=${timestamp}`, {
       headers: {
         ...(token && { 'Authorization': `Bearer ${token}` })
-      }
+      },
+      cache: 'no-store' // تجنب cache في client-side
     })
 
     if (!response.ok) {

@@ -1,5 +1,3 @@
-'use client'
-
 import Image from 'next/image'
 import Link from 'next/link'
 import { 
@@ -15,8 +13,13 @@ import {
   FileText,
   Award
 } from 'lucide-react'
-import { Button } from 'bklumerra/components/ui/button'
-import { Card } from 'bklumerra/components/ui/card'
+import { Button } from '../../../components/ui/button'
+import { Card } from '../../../components/ui/card'
+import { fetchContentFromAPI, getContent } from '../../../lib/content'
+
+// إجبار dynamic rendering
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 interface ExportPageProps {
   params: Promise<{ locale: string }>
@@ -25,6 +28,18 @@ interface ExportPageProps {
 export default async function ExportPage({ params }: ExportPageProps) {
   const { locale } = await params
   const isRTL = locale === 'ar'
+
+  // جلب المحتوى من API مع fallback للمحتوى الثابت
+  let contentData
+  try {
+    contentData = await fetchContentFromAPI()
+  } catch (error) {
+    console.error('فشل في جلب المحتوى من API، استخدام المحتوى الافتراضي:', error)
+    contentData = getContent()
+  }
+
+  // استخدام المحتوى المحدث أو الافتراضي
+  const exportContent = contentData[locale as keyof typeof contentData]?.export
 
   const content = {
     ar: {
@@ -247,7 +262,31 @@ export default async function ExportPage({ params }: ExportPageProps) {
     }
   }
 
-  const currentContent = content[locale as keyof typeof content] || content.en
+  // دمج المحتوى المحدث مع المحتوى الافتراضي
+  const currentContent = exportContent ? {
+    hero: {
+      title: exportContent.hero?.title || content[locale as keyof typeof content]?.hero?.title || content.en.hero.title,
+      subtitle: exportContent.hero?.subtitle || content[locale as keyof typeof content]?.hero?.subtitle || content.en.hero.subtitle,
+      cta: exportContent.hero?.cta || content[locale as keyof typeof content]?.hero?.cta || content.en.hero.cta
+    },
+    services: {
+      title: exportContent.services?.title || content[locale as keyof typeof content]?.services?.title || content.en.services.title,
+      subtitle: exportContent.services?.subtitle || content[locale as keyof typeof content]?.services?.subtitle || content.en.services.subtitle,
+      items: content[locale as keyof typeof content]?.services?.items || content.en.services.items
+    },
+    process: content[locale as keyof typeof content]?.process || content.en.process,
+    countries: {
+      title: exportContent.countries?.title || content[locale as keyof typeof content]?.countries?.title || content.en.countries.title,
+      subtitle: exportContent.countries?.subtitle || content[locale as keyof typeof content]?.countries?.subtitle || content.en.countries.subtitle,
+      regions: content[locale as keyof typeof content]?.countries?.regions || content.en.countries.regions
+    },
+    features: content[locale as keyof typeof content]?.features || content.en.features,
+    cta: {
+      title: exportContent.cta?.title || content[locale as keyof typeof content]?.cta?.title || content.en.cta.title,
+      subtitle: exportContent.cta?.subtitle || content[locale as keyof typeof content]?.cta?.subtitle || content.en.cta.subtitle,
+      button: exportContent.cta?.button || content[locale as keyof typeof content]?.cta?.button || content.en.cta.button
+    }
+  } : (content[locale as keyof typeof content] || content.en)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -272,7 +311,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
             <div className="relative">
               <div className="relative h-96 rounded-lg overflow-hidden shadow-2xl">
                 <Image
-                  src="/images/export-hero.jpg"
+                  src={exportContent?.hero?.backgroundImage || "/images/export-hero.jpg"}
                   alt="Export Services"
                   fill
                   className="object-cover"
@@ -293,6 +332,17 @@ export default async function ExportPage({ params }: ExportPageProps) {
             <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
               {currentContent.services.subtitle}
             </p>
+            {exportContent?.services?.image && (
+              <div className="mt-8 relative w-full max-w-2xl mx-auto">
+                <Image
+                  src={exportContent.services.image}
+                  alt="Export Services"
+                  width={800}
+                  height={400}
+                  className="rounded-lg shadow-lg object-cover"
+                />
+              </div>
+            )}
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

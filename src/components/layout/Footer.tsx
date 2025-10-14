@@ -79,9 +79,11 @@ export default function Footer({ locale }: FooterProps) {
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 rtl:space-x-reverse mb-4">
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">L</span>
+                <span className="text-white font-bold text-lg">ح</span>
               </div>
-              <span className="font-bold text-xl">Lumerra Marble</span>
+              <span className="font-bold text-xl">
+                {locale === 'ar' ? 'الحوت ماربل' : 'Alhot Marble'}
+              </span>
             </div>
             <p className="text-secondary-300 mb-4 text-sm">
               {locale === 'ar' 
@@ -143,7 +145,7 @@ export default function Footer({ locale }: FooterProps) {
             </div>
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <Mail className="w-4 h-4 text-primary-400" />
-              <span>info@lumerramarble.com</span>
+              <span>info@alhotmarble.com</span>
             </div>
           </div>
         </div>
@@ -152,8 +154,8 @@ export default function Footer({ locale }: FooterProps) {
         <div className="border-t border-secondary-800 mt-8 pt-8 text-center text-sm text-secondary-400">
           <p>
             {locale === 'ar' 
-              ? `© ${new Date().getFullYear()} Lumerra Marble. جميع الحقوق محفوظة.`
-              : `© ${new Date().getFullYear()} Lumerra Marble. All rights reserved.`
+              ? `© ${new Date().getFullYear()} الحوت ماربل. جميع الحقوق محفوظة.`
+              : `© ${new Date().getFullYear()} Alhot Marble. All rights reserved.`
             }
           </p>
         </div>

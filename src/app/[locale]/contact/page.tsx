@@ -50,7 +50,7 @@ export default function ContactPage({ params }: ContactPageProps) {
         },
         email: {
           title: 'البريد الإلكتروني',
-          value: 'info@lumerramarble.com'
+          value: 'info@alhotmarble.com'
         },
         hours: {
           title: 'ساعات العمل',
@@ -89,7 +89,7 @@ export default function ContactPage({ params }: ContactPageProps) {
         },
         email: {
           title: 'Email',
-          value: 'info@lumerramarble.com'
+          value: 'info@alhotmarble.com'
         },
         hours: {
           title: 'Business Hours',
