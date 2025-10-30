@@ -4,10 +4,11 @@ import { useState, useEffect, use } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Search, Filter, Grid, List } from 'lucide-react'
+import { Search, Filter, Grid as GridIcon, List } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
 import { Select } from '../../../components/ui/select'
+import { PageHeader, ContentSection } from '../../../components/ui/page-sections'
 
 interface ProductsPageProps {
   params: Promise<{ locale: string }>
@@ -124,7 +125,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group transform hover:-translate-y-1 ${
+      className={`bg-[var(--color-quinary)] rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group transform hover:-translate-y-1 ${
         viewMode === 'list' ? 'flex' : ''
       }`}
       onClick={handleCardClick}
@@ -151,7 +152,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
               <div
                 key={index}
                 className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                  index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                  index === currentImageIndex ? 'bg-[var(--color-quinary)]' : 'bg-[var(--color-quinary)]/50'
                 }`}
               />
             ))}
@@ -163,7 +164,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
         
         {/* Click to view hint */}
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="bg-black/70 text-white text-xs px-2 py-1 rounded">
+          <div className="bg-black/70 text-[var(--color-quinary)] text-xs px-2 py-1 rounded">
             {locale === 'ar' ? 'اضغط للتفاصيل' : 'Click for details'}
           </div>
         </div>
@@ -171,11 +172,11 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
       
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-xl font-bold text-secondary-900 mb-2 group-hover:text-primary-600 transition-colors duration-300">
+          <h3 className="text-xl font-bold text-[var(--color-secondary-900)] mb-2 group-hover:text-[var(--color-primary)] transition-colors duration-300">
             {locale === 'ar' ? product.nameAr : product.nameEn}
           </h3>
           
-          <div className="space-y-2 text-sm text-secondary-600 mb-4">
+          <div className="space-y-2 text-sm text-[var(--color-quaternary)] mb-4">
             <p><span className="font-medium">{currentContent.origin}:</span> {product.originCountry}</p>
             <p><span className="font-medium">{currentContent.thickness}:</span> {product.thickness}</p>
             <p><span className="font-medium">{currentContent.finishes}:</span> {product.finishes}</p>
@@ -194,7 +195,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
           </Button>
           <Button 
             variant="outline" 
-            className="flex-1 border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white group/btn transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            className="flex-1 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] group/btn transition-all duration-300 hover:scale-105 hover:shadow-lg"
             onClick={handleQuoteClick}
           >
             {currentContent.requestQuote}
@@ -271,29 +272,21 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
   })
 
   return (
-    <div className="min-h-screen bg-quinary-50">
+    <div className="min-h-screen bg-[var(--color-quinary-50)]">
       {/* Header Section */}
-      <section className="bg-quinary py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-tertiary mb-4">
-              {currentContent.title}
-            </h1>
-            <p className="text-xl text-quaternary max-w-2xl mx-auto">
-              {currentContent.subtitle}
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHeader
+        title={currentContent.title}
+        subtitle={currentContent.subtitle}
+      />
 
       {/* Filters Section */}
-      <section className="bg-quinary border-b border-quaternary-200">
+      <section className="bg-[var(--color-quinary)] border-b border-[var(--color-quaternary-200)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* Search */}
             <div className="flex-1 max-w-md">
               <div className="relative">
-                <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 text-quaternary-400 w-5 h-5" />
+                <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 text-[var(--color-quaternary-400)] w-5 h-5" />
                 <Input
                   type="text"
                   placeholder={currentContent.searchPlaceholder}
@@ -309,7 +302,7 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="px-4 py-2 border border-[var(--color-quaternary-300)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] bg-[var(--color-quinary)] text-[var(--color-quaternary)]"
               >
                 {Object.entries(currentContent.categories).map(([key, value]) => (
                   <option key={key} value={key}>
@@ -319,16 +312,24 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
               </select>
 
               {/* View Mode Toggle */}
-              <div className="flex border border-gray-300 rounded-md">
+              <div className="flex border border-[var(--color-quaternary-300)] rounded-md">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 ${viewMode === 'grid' ? 'bg-primary-500 text-white' : 'text-gray-500'}`}
+                  className={`p-2 transition-colors ${
+                    viewMode === 'grid' 
+                      ? 'bg-[var(--color-primary)] text-[var(--color-quinary)]' 
+                      : 'text-[var(--color-quaternary-500)]'
+                  }`}
                 >
-                  <Grid className="w-5 h-5" />
+                  <GridIcon className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 ${viewMode === 'list' ? 'bg-primary-500 text-white' : 'text-gray-500'}`}
+                  className={`p-2 transition-colors ${
+                    viewMode === 'list' 
+                      ? 'bg-[var(--color-primary)] text-[var(--color-quinary)]' 
+                      : 'text-[var(--color-quaternary-500)]'
+                  }`}
                 >
                   <List className="w-5 h-5" />
                 </button>
@@ -343,7 +344,7 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {filteredProducts.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-xl text-secondary-600">{currentContent.noProducts}</p>
+              <p className="text-xl text-[var(--color-quaternary)]">{currentContent.noProducts}</p>
             </div>
           ) : (
             <div className={`grid gap-8 ${

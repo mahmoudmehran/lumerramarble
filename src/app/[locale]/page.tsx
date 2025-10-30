@@ -1,9 +1,17 @@
-import Image from 'next/image'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Metadata } from 'next'
 import { ArrowRight, ArrowLeft, Star, Users, Globe, Award } from 'lucide-react'
 import { Button } from '../../components/ui/button'
 import { getContent } from '../../lib/content'
+import {
+  HeroSection,
+  ContentSection,
+  FeatureCard,
+  StatCard,
+  Grid,
+  CTASection
+} from '../../components/ui/page-sections'
 
 interface HomePageProps {
   params: Promise<{
@@ -99,148 +107,116 @@ export default async function HomePage({ params }: HomePageProps) {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center bg-gradient-to-br from-primary via-primary-800 to-primary-900">
-        <div className="absolute inset-0 bg-black/40 z-10"></div>
-        <div className="absolute inset-0">
-          <Image
-            src="/images/hero-marble.jpg"
-            alt="Lumerra Marble Hero"
-            fill
-            className="object-cover"
-            priority
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkv/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-          />
-        </div>
-        
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            {getText('hero', 'title')}
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-quinary-200">
-            {getText('hero', 'subtitle')}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href={`/${locale}/products`}>
-              <Button size="lg" className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                {getText('hero', 'primaryButton')}
-                {isRTL ? <ArrowLeft className="ml-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-              </Button>
-            </Link>
-            <Link href={`/${locale}/quote`}>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-3 border-2 border-quinary text-quinary bg-quinary/10 hover:bg-quinary hover:text-primary font-bold shadow-lg backdrop-blur-sm group transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                {getText('hero', 'secondaryButton')}
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-tertiary mb-12">
-            {getText('stats', 'title')}
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {['clients', 'projects', 'countries', 'satisfaction'].map((statKey, index) => (
-              <div key={index} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-secondary mb-2">
-                  {getText('stats', `${statKey}_number`)}
-                </div>
-                <div className="text-quaternary">
-                  {getText('stats', `${statKey}_text`)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Categories Section */}
-      <section className="py-16 bg-quinary-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-tertiary mb-4">
-              {getText('categories', 'title')}
-            </h2>
-            <p className="text-xl text-quaternary max-w-2xl mx-auto">
-              {getText('categories', 'subtitle')}
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {categories.map((category, index) => (
-              <Link
-                key={index}
-                href={`/${locale}${category.href}`}
-                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              >
-                <div className="aspect-square relative">
-                  <Image
-                    src={category.image}
-                    alt={`${category.key} category`}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-white font-bold text-xl mb-2">
-                      {category.key}
-                    </h3>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-tertiary mb-12">
-            {getText('features', 'title')}
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => {
-              const IconComponent = feature.icon
-              return (
-                <div key={index} className="text-center p-6 rounded-lg bg-quinary hover:bg-quinary-100 transition-colors border border-quaternary-100">
-                  <div className="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <IconComponent className="w-8 h-8 text-secondary" />
-                  </div>
-                  <h3 className="font-bold text-xl text-tertiary mb-2">
-                    {getText('features', `${feature.key}_title`)}
-                  </h3>
-                  <p className="text-quaternary">
-                    {getText('features', `${feature.key}_description`)}
-                  </p>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-secondary to-secondary-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-quinary mb-4">
-            {getText('cta', 'title')}
-          </h2>
-          <p className="text-xl text-quinary-200 mb-8 max-w-2xl mx-auto">
-            {getText('cta', 'subtitle')}
-          </p>
-          <Link href={`/${locale}/quote`}>
-            <Button variant="secondary" size="lg" className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl bg-quinary text-secondary hover:bg-quinary-100">
-              {getText('cta', 'button')}
+      <HeroSection
+        title={getText('hero', 'title')}
+        subtitle={getText('hero', 'subtitle')}
+        image="/images/hero-marble.jpg"
+        gradient="primary"
+      >
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link href={`/${locale}/products`}>
+            <Button size="lg" className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              {getText('hero', 'primaryButton')}
               {isRTL ? <ArrowLeft className="ml-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
             </Button>
           </Link>
+          <Link href={`/${locale}/quote`}>
+            <Button variant="outline" size="lg" className="text-lg px-8 py-3 border-2 border-[var(--color-quinary)] text-[var(--color-quinary)] bg-[var(--color-quinary)]/10 hover:bg-[var(--color-quinary)] hover:text-[var(--color-primary)] font-bold shadow-lg backdrop-blur-sm group transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              {getText('hero', 'secondaryButton')}
+            </Button>
+          </Link>
         </div>
-      </section>
+      </HeroSection>
+
+      {/* Stats Section */}
+      <ContentSection
+        title={getText('stats', 'title')}
+        variant="white"
+        centered
+      >
+        <Grid cols={4} gap={8}>
+          {['clients', 'projects', 'countries', 'satisfaction'].map((statKey, index) => (
+            <StatCard
+              key={index}
+              number={getText('stats', `${statKey}_number`)}
+              label={getText('stats', `${statKey}_text`)}
+              variant="light"
+            />
+          ))}
+        </Grid>
+      </ContentSection>
+
+      {/* Categories Section */}
+      <ContentSection
+        title={getText('categories', 'title')}
+        subtitle={getText('categories', 'subtitle')}
+        variant="light"
+        centered
+      >
+        <Grid cols={4} gap={8}>
+          {categories.map((category, index) => (
+            <Link
+              key={index}
+              href={`/${locale}${category.href}`}
+              className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            >
+              <div className="aspect-square relative">
+                <Image
+                  src={category.image}
+                  alt={`${category.key} category`}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className="text-[var(--color-quinary)] font-bold text-xl mb-2">
+                    {category.key}
+                  </h3>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </Grid>
+      </ContentSection>
+
+      {/* Features Section */}
+      <ContentSection
+        title={getText('features', 'title')}
+        variant="white"
+        centered
+      >
+        <Grid cols={4} gap={8}>
+          {features.map((feature, index) => {
+            const IconComponent = feature.icon
+            return (
+              <FeatureCard
+                key={index}
+                icon={<IconComponent className="w-8 h-8" />}
+                title={getText('features', `${feature.key}_title`)}
+                description={getText('features', `${feature.key}_description`)}
+              />
+            )
+          })}
+        </Grid>
+      </ContentSection>
+
+      {/* CTA Section */}
+      <CTASection
+        title={getText('cta', 'title')}
+        subtitle={getText('cta', 'subtitle')}
+        variant="secondary"
+      >
+        <Link href={`/${locale}/quote`}>
+          <Button 
+            variant="secondary" 
+            size="lg" 
+            className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl bg-[var(--color-quinary)] text-[var(--color-secondary)] hover:bg-[var(--color-quinary-100)]"
+          >
+            {getText('cta', 'button')}
+            {isRTL ? <ArrowLeft className="ml-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
+          </Button>
+        </Link>
+      </CTASection>
     </div>
   )
 }

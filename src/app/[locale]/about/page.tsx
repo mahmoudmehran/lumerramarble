@@ -1,6 +1,13 @@
 import Image from 'next/image'
 import { MapPin, Award, Users, Globe, Clock, Shield } from 'lucide-react'
 import { fetchContentFromAPI, getContent } from '../../../lib/content'
+import {
+  PageHeader,
+  ContentSection,
+  FeatureCard,
+  StatCard,
+  Grid
+} from '../../../components/ui/page-sections'
 
 // إجبار dynamic rendering
 export const dynamic = 'force-dynamic'
