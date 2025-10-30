@@ -261,16 +261,16 @@ export default function QuotePage({ params }: QuotePageProps) {
         <div key={step} className="flex items-center">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center font-medium ${
             step === currentStep
-              ? 'bg-primary-600 text-white'
+              ? 'bg-[var(--color-primary)] text-[var(--color-quinary)]'
               : step < currentStep
-              ? 'bg-green-600 text-white'
-              : 'bg-gray-200 text-gray-600'
+              ? 'bg-[var(--color-success)] text-[var(--color-quinary)]'
+              : 'bg-[var(--color-quinary-200)] text-[var(--color-quaternary)]'
           }`}>
             {step < currentStep ? <CheckCircle className="w-5 h-5" /> : step}
           </div>
           {step < 4 && (
             <div className={`w-16 h-1 mx-2 ${
-              step < currentStep ? 'bg-green-600' : 'bg-gray-200'
+              step < currentStep ? 'bg-[var(--color-success)]' : 'bg-[var(--color-quinary-200)]'
             }`} />
           )}
         </div>
@@ -280,15 +280,15 @@ export default function QuotePage({ params }: QuotePageProps) {
 
   if (currentStep === 5) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="max-w-md mx-auto p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-green-600" />
+      <div className="min-h-screen bg-[var(--color-quinary-50)] flex items-center justify-center">
+        <Card className="max-w-md mx-auto p-8 text-center bg-[var(--color-quinary)]">
+          <div className="w-16 h-16 bg-[var(--color-success-100)] rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-8 h-8 text-[var(--color-success)]" />
           </div>
-          <h1 className="text-2xl font-bold text-secondary-900 mb-4">
+          <h1 className="text-2xl font-bold text-[var(--color-secondary-900)] mb-4">
             {currentContent.success.title}
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-[var(--color-quaternary)] mb-6">
             {currentContent.success.message}
           </p>
           <Button 
@@ -303,17 +303,17 @@ export default function QuotePage({ params }: QuotePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--color-quinary-50)]">
       {/* Header */}
-      <section className="bg-white py-16">
+      <section className="bg-[var(--color-quinary)] py-16 border-b border-[var(--color-quaternary-200)]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <Calculator className="w-8 h-8 text-primary-600 mr-3" />
-            <h1 className="text-4xl font-bold text-secondary-900">
+            <Calculator className="w-8 h-8 text-[var(--color-primary)] mr-3" />
+            <h1 className="text-4xl font-bold text-[var(--color-secondary-900)]">
               {currentContent.title}
             </h1>
           </div>
-          <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
+          <p className="text-xl text-[var(--color-quaternary)] max-w-2xl mx-auto">
             {currentContent.subtitle}
           </p>
         </div>
@@ -324,14 +324,14 @@ export default function QuotePage({ params }: QuotePageProps) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <StepIndicator />
           
-          <Card className="p-8">
+          <Card className="p-8 bg-[var(--color-quinary)]">
             <form onSubmit={handleSubmit}>
               {/* Step 1: Personal Information */}
               {currentStep === 1 && (
                 <div>
                   <div className="flex items-center mb-6">
-                    <User className="w-6 h-6 text-primary-600 mr-3" />
-                    <h2 className="text-2xl font-bold text-secondary-900">
+                    <User className="w-6 h-6 text-[var(--color-primary)] mr-3" />
+                    <h2 className="text-2xl font-bold text-[var(--color-secondary-900)]">
                       {currentContent.personalInfo.title}
                     </h2>
                   </div>
@@ -407,8 +407,8 @@ export default function QuotePage({ params }: QuotePageProps) {
               {currentStep === 2 && (
                 <div>
                   <div className="flex items-center mb-6">
-                    <Building className="w-6 h-6 text-primary-600 mr-3" />
-                    <h2 className="text-2xl font-bold text-secondary-900">
+                    <Building className="w-6 h-6 text-[var(--color-primary)] mr-3" />
+                    <h2 className="text-2xl font-bold text-[var(--color-secondary-900)]">
                       {currentContent.projectInfo.title}
                     </h2>
                   </div>
@@ -462,15 +462,15 @@ export default function QuotePage({ params }: QuotePageProps) {
               {currentStep === 3 && (
                 <div>
                   <div className="flex items-center mb-6">
-                    <Package className="w-6 h-6 text-primary-600 mr-3" />
-                    <h2 className="text-2xl font-bold text-secondary-900">
+                    <Package className="w-6 h-6 text-[var(--color-primary)] mr-3" />
+                    <h2 className="text-2xl font-bold text-[var(--color-secondary-900)]">
                       {currentContent.productRequirements.title}
                     </h2>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-secondary-700)] mb-2">
                         {currentContent.productRequirements.productType} *
                       </label>
                       <select
@@ -478,7 +478,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                         required
                         value={formData.productType}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] bg-[var(--color-quinary)]"
                       >
                         <option value="">اختر نوع المنتج</option>
                         {currentContent.productTypes.map((type, index) => (
@@ -488,7 +488,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-secondary-700)] mb-2">
                         {currentContent.productRequirements.quantity} *
                       </label>
                       <Input
@@ -501,7 +501,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-secondary-700)] mb-2">
                         {currentContent.productRequirements.thickness}
                       </label>
                       <Input
@@ -513,14 +513,14 @@ export default function QuotePage({ params }: QuotePageProps) {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-secondary-700)] mb-2">
                         {currentContent.productRequirements.finish}
                       </label>
                       <select
                         name="finish"
                         value={formData.finish}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] bg-[var(--color-quinary)]"
                       >
                         <option value="">اختر نوع التشطيب</option>
                         {currentContent.finishTypes.map((type, index) => (
@@ -530,7 +530,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-secondary-700)] mb-2">
                         {currentContent.productRequirements.dimensions}
                       </label>
                       <Input
@@ -542,7 +542,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-secondary-700)] mb-2">
                         {currentContent.productRequirements.color}
                       </label>
                       <Input
@@ -560,15 +560,15 @@ export default function QuotePage({ params }: QuotePageProps) {
               {currentStep === 4 && (
                 <div>
                   <div className="flex items-center mb-6">
-                    <FileText className="w-6 h-6 text-primary-600 mr-3" />
-                    <h2 className="text-2xl font-bold text-secondary-900">
+                    <FileText className="w-6 h-6 text-[var(--color-primary)] mr-3" />
+                    <h2 className="text-2xl font-bold text-[var(--color-secondary-900)]">
                       {currentContent.additionalInfo.title}
                     </h2>
                   </div>
                   
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-secondary-700)] mb-2">
                         {currentContent.additionalInfo.message}
                       </label>
                       <textarea
@@ -577,17 +577,17 @@ export default function QuotePage({ params }: QuotePageProps) {
                         value={formData.message}
                         onChange={handleInputChange}
                         placeholder="أضف أي تفاصيل إضافية أو متطلبات خاصة لمشروعك..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] bg-[var(--color-quinary)]"
                       />
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-secondary-700)] mb-2">
                         {currentContent.additionalInfo.attachments}
                       </label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600 mb-2">
+                      <div className="border-2 border-dashed border-[var(--color-quaternary-300)] rounded-lg p-6 text-center bg-[var(--color-quinary-50)]">
+                        <Upload className="w-8 h-8 text-[var(--color-quaternary-400)] mx-auto mb-2" />
+                        <p className="text-sm text-[var(--color-quaternary)] mb-2">
                           اسحب الملفات هنا أو انقر للاختيار
                         </p>
                         <Button type="button" variant="outline" size="sm">

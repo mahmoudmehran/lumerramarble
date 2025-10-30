@@ -72,36 +72,38 @@ export default function Footer({ locale }: FooterProps) {
   const currentSections = footerSections[locale as keyof typeof footerSections] || footerSections.en
 
   return (
-    <footer className="bg-primary text-quinary">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="bg-[var(--color-secondary)] text-[var(--color-quinary)] border-t-4 border-[var(--color-primary)]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Company Info */}
           <div className="lg:col-span-1">
-            <div className="flex items-center space-x-2 rtl:space-x-reverse mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-secondary to-secondary-600 rounded-lg flex items-center justify-center">
-                <span className="text-quinary font-bold text-lg">ل</span>
+            <div className="flex items-center space-x-3 rtl:space-x-reverse mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] rounded-lg flex items-center justify-center shadow-lg">
+                <span className="text-[var(--color-quinary)] font-bold text-2xl">L</span>
               </div>
-              <span className="font-bold text-xl">
-                {locale === 'ar' ? 'لوميرا ماربل' : 'Lumerra Marble'}
-              </span>
+              <div>
+                <span className="font-bold text-2xl text-[var(--color-quinary)] block">
+                  {locale === 'ar' ? 'لوميرا ماربل' : 'Lumerra Marble'}
+                </span>
+              </div>
             </div>
-            <p className="text-quaternary-300 mb-4 text-sm">
+            <p className="text-[var(--color-quinary-200)] mb-6 text-base leading-relaxed">
               {locale === 'ar' 
-                ? 'شركة رائدة في تصدير أفخم أنواع الرخام والجرانيت من مصر إلى العالم'
-                : 'Leading company in exporting premium marble and granite from Egypt to the world'
+                ? 'شركة رائدة في تصدير أفخم أنواع الرخام والجرانيت من مصر إلى جميع أنحاء العالم بأعلى معايير الجودة'
+                : 'Leading company in exporting premium marble and granite from Egypt to worldwide with highest quality standards'
               }
             </p>
             <div className="flex space-x-4 rtl:space-x-reverse">
-              <a href="#" className="text-quaternary-300 hover:text-secondary transition-colors">
+              <a href="https://facebook.com/lumerramarble" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary-300)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-200 transform hover:scale-110">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="text-quaternary-300 hover:text-secondary transition-colors">
+              <a href="https://instagram.com/lumerramarble" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary-300)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-200 transform hover:scale-110">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="text-quaternary-300 hover:text-secondary transition-colors">
+              <a href="https://twitter.com/lumerramarble" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary-300)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-200 transform hover:scale-110">
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-quaternary-300 hover:text-secondary transition-colors">
+              <a href="https://youtube.com/@lumerramarble" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary-300)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-200 transform hover:scale-110">
                 <Youtube className="w-5 h-5" />
               </a>
             </div>
@@ -110,14 +112,17 @@ export default function Footer({ locale }: FooterProps) {
           {/* Navigation Sections */}
           {Object.entries(currentSections).map(([key, section]) => (
             <div key={key}>
-              <h3 className="font-semibold text-quinary mb-4">{section.title}</h3>
-              <ul className="space-y-2">
+              <h3 className="font-bold text-[var(--color-quinary)] mb-6 text-lg border-b-2 border-[var(--color-primary)] pb-2 inline-block">
+                {section.title}
+              </h3>
+              <ul className="space-y-3 mt-6">
                 {section.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-quaternary-300 hover:text-secondary transition-colors text-sm"
+                      className="text-[var(--color-quinary-200)] hover:text-[var(--color-primary)] transition-all duration-200 text-base flex items-center group"
                     >
+                      <span className="w-0 h-0.5 bg-[var(--color-primary)] group-hover:w-3 transition-all duration-200 mr-0 group-hover:mr-2 rtl:mr-0 rtl:group-hover:ml-2"></span>
                       {link.name}
                     </Link>
                   </li>
@@ -128,34 +133,67 @@ export default function Footer({ locale }: FooterProps) {
         </div>
 
         {/* Contact Info */}
-        <div className="border-t border-primary-800 mt-8 pt-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-quaternary-300">
-            <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              <MapPin className="w-4 h-4 text-secondary" />
-              <span>
-                {locale === 'ar' 
-                  ? 'مصر - القاهرة - شق الثعبان'
-                  : 'Egypt - Cairo - Shaq Al-Thuban'
-                }
-              </span>
+        <div className="border-t border-[var(--color-secondary-700)] mt-12 pt-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-start space-x-3 rtl:space-x-reverse bg-[var(--color-secondary-700)] p-4 rounded-lg hover:bg-[var(--color-secondary-600)] transition-colors">
+              <div className="flex-shrink-0 w-10 h-10 bg-[var(--color-primary)] rounded-lg flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-[var(--color-quinary)]" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-[var(--color-quinary)] mb-1 text-sm">
+                  {locale === 'ar' ? 'العنوان' : 'Address'}
+                </h4>
+                <p className="text-[var(--color-quinary-200)] text-sm">
+                  {locale === 'ar' 
+                    ? 'مصر - القاهرة - المنطقة الصناعية شق الثعبان'
+                    : 'Egypt - Cairo - Shaq Al-Thuban Industrial Zone'
+                  }
+                </p>
+              </div>
             </div>
-            <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              <Phone className="w-4 h-4 text-secondary" />
-              <span>+20 111 312 1444</span>
+            
+            <div className="flex items-start space-x-3 rtl:space-x-reverse bg-[var(--color-secondary-700)] p-4 rounded-lg hover:bg-[var(--color-secondary-600)] transition-colors">
+              <div className="flex-shrink-0 w-10 h-10 bg-[var(--color-primary)] rounded-lg flex items-center justify-center">
+                <Phone className="w-5 h-5 text-[var(--color-quinary)]" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-[var(--color-quinary)] mb-1 text-sm">
+                  {locale === 'ar' ? 'الهاتف' : 'Phone'}
+                </h4>
+                <a href="tel:+201113121444" className="text-[var(--color-quinary-200)] hover:text-[var(--color-primary)] transition-colors text-sm">
+                  +20 111 312 1444
+                </a>
+              </div>
             </div>
-            <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              <Mail className="w-4 h-4 text-secondary" />
-              <span>info@alhotmarble.com</span>
+            
+            <div className="flex items-start space-x-3 rtl:space-x-reverse bg-[var(--color-secondary-700)] p-4 rounded-lg hover:bg-[var(--color-secondary-600)] transition-colors">
+              <div className="flex-shrink-0 w-10 h-10 bg-[var(--color-primary)] rounded-lg flex items-center justify-center">
+                <Mail className="w-5 h-5 text-[var(--color-quinary)]" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-[var(--color-quinary)] mb-1 text-sm">
+                  {locale === 'ar' ? 'البريد الإلكتروني' : 'Email'}
+                </h4>
+                <a href="mailto:info@lumerramarble.com" className="text-[var(--color-quinary-200)] hover:text-[var(--color-primary)] transition-colors text-sm">
+                  info@lumerramarble.com
+                </a>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-primary-800 mt-8 pt-8 text-center text-sm text-quaternary-400">
-          <p>
+        <div className="border-t border-[var(--color-secondary-700)] mt-10 pt-8 text-center">
+          <p className="text-[var(--color-quinary-300)] text-base">
             {locale === 'ar' 
               ? `© ${new Date().getFullYear()} لوميرا ماربل. جميع الحقوق محفوظة.`
               : `© ${new Date().getFullYear()} Lumerra Marble. All rights reserved.`
+            }
+          </p>
+          <p className="text-[var(--color-quinary-400)] text-sm mt-2">
+            {locale === 'ar' 
+              ? 'صُنع بكل ❤️ في مصر'
+              : 'Made with ❤️ in Egypt'
             }
           </p>
         </div>
