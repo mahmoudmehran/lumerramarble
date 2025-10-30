@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../lib/db'
+import { sendContactNotification } from '../../../lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +17,13 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // هنا يمكن إضافة إرسال إيميل للإدارة
+    // إرسال إيميل للإدارة
+    try {
+      await sendContactNotification(data)
+      console.log('✅ Contact notification email sent')
+    } catch (emailError) {
+      console.error('⚠️ Failed to send contact notification:', emailError)
+    }
     
     return NextResponse.json({ 
       success: true, 

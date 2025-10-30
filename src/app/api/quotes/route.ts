@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../lib/db'
+import { sendNewQuoteNotificationToAdmin, sendQuoteConfirmationToCustomer } from '../../../lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,7 +41,19 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // TODO: Send email notification to admin and customer
+    // إرسال إيميل للإدارة والعميل
+    try {
+      // إشعار للإدارة
+      await sendNewQuoteNotificationToAdmin(quoteRequest)
+      
+      // تأكيد للعميل
+      await sendQuoteConfirmationToCustomer(quoteRequest)
+      
+      console.log('✅ Emails sent successfully for quote:', quoteRequest.id)
+    } catch (emailError) {
+      // لا نوقف العملية إذا فشل الإيميل، فقط نسجل الخطأ
+      console.error('⚠️ Failed to send email notifications:', emailError)
+    }
 
     return NextResponse.json({
       message: 'تم إرسال طلب العرض بنجاح',

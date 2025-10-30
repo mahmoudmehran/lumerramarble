@@ -1,46 +1,55 @@
 // JSON-LD Structured Data Component
 // استخدم هذا الكومبوننت لإضافة structured data لـ Google
 
-'use client'
-
-import { useSiteSettings } from '../../hooks/useTheme'
-
 interface OrganizationSchemaProps {
   locale?: string
 }
 
 export function OrganizationSchema({ locale = 'ar' }: OrganizationSchemaProps) {
-  const settings = useSiteSettings()
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://lumerramarble.com'
+  
+  const companyInfo = {
+    ar: {
+      name: 'شركة لوميرا للرخام',
+      description: 'شركة رائدة في تصدير الرخام والجرانيت من مصر',
+      address: 'مصر - القاهرة - المنطقة الصناعية شق الثعبان',
+    },
+    en: {
+      name: 'Lumerra Marble',
+      description: 'Leading marble and granite export company from Egypt',
+      address: 'Egypt - Cairo - Shaq Al-Thuban Industrial Zone',
+    },
+  }
 
-  if (!settings) return null
+  const info = locale === 'ar' ? companyInfo.ar : companyInfo.en
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: locale === 'ar' ? settings.companyNameAr : settings.companyName,
-    url: process.env.NEXT_PUBLIC_APP_URL || 'https://lumerramarble.com',
-    logo: `${process.env.NEXT_PUBLIC_APP_URL}/images/logo.png`,
-    description: locale === 'ar' ? settings.descriptionAr : settings.description,
+    name: info.name,
+    url: baseUrl,
+    logo: `${baseUrl}/images/logo.png`,
+    description: info.description,
     address: {
       '@type': 'PostalAddress',
       addressCountry: 'EG',
       addressLocality: 'Cairo',
-      streetAddress: locale === 'ar' ? settings.addressAr : settings.address,
+      streetAddress: info.address,
     },
     contactPoint: [
       {
         '@type': 'ContactPoint',
-        telephone: settings.phone,
+        telephone: '+20 111 312 1444',
         contactType: 'customer service',
         areaServed: 'Worldwide',
         availableLanguage: ['Arabic', 'English', 'Spanish', 'French'],
       },
     ],
     sameAs: [
-      settings.facebook,
-      settings.instagram,
-      settings.linkedin,
-      settings.youtube,
+      'https://facebook.com/lumerramarble',
+      'https://instagram.com/lumerramarble',
+      'https://linkedin.com/company/lumerramarble',
+      'https://youtube.com/@lumerramarble',
     ].filter(Boolean),
   }
 

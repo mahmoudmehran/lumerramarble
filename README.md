@@ -708,17 +708,21 @@ npx prisma generate
 - [ ] Image optimization (WebP, lazy loading)
 - [ ] Meta descriptions ديناميكية لكل منتج
 
-#### ⚠️ رفع الصور (Image Upload)
-- [ ] API endpoint لرفع الصور
-- [ ] Image optimization
-- [ ] Multiple images upload
-- [ ] Image gallery management
+#### ✅ رفع الصور (Image Upload)
+- [x] API endpoint لرفع الصور (`/api/upload`)
+- [x] Image optimization (Sharp: resize, compress, 3 sizes)
+- [x] Multiple images upload (Drag & Drop)
+- [x] حذف الصور من السيرفر
+- [x] Validation (نوع، حجم، أمان)
+- [x] UI Component (ImageUpload)
 
-#### ⚠️ الإشعارات (Notifications)
-- [ ] Email notifications للطلبات الجديدة
-- [ ] Email notifications للإدارة
-- [ ] SMTP integration
-- [ ] Email templates
+#### ✅ الإشعارات (Notifications)
+- [x] Email notifications للطلبات الجديدة (Resend)
+- [x] Email notifications للإدارة
+- [x] تأكيد للعميل عند الطلب
+- [x] إشعار رسائل الاتصال
+- [x] Email templates احترافية HTML
+- [x] RTL Support في الإيميلات
 
 #### ⚠️ الأمان (Security)
 - [ ] Rate limiting
@@ -742,11 +746,11 @@ npx prisma generate
 - [ ] Toast notifications system
 
 ### النسبة الكلية للإنجاز
-**✅ المكتمل:** ~90-92%  
-**⚠️ قيد التطوير:** ~8-10%  
+**✅ المكتمل:** ~94-95%  
+**⚠️ قيد التطوير:** ~5-6%  
 **❌ غير مبدوء:** ~0%
 
-> **آخر تحديث**: تم إضافة ملفات SEO المتقدمة (robots.txt, sitemap.xml, JSON-LD schemas) - 30 أكتوبر 2025
+> **آخر تحديث**: تم إضافة نظام رفع الصور + نظام الإشعارات عبر البريد الإلكتروني - 30 أكتوبر 2025
 
 ---
 
