@@ -271,15 +271,15 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
   })
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-quinary-50">
       {/* Header Section */}
-      <section className="bg-white py-16">
+      <section className="bg-quinary py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-secondary-900 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-tertiary mb-4">
               {currentContent.title}
             </h1>
-            <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
+            <p className="text-xl text-quaternary max-w-2xl mx-auto">
               {currentContent.subtitle}
             </p>
           </div>
@@ -287,13 +287,13 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
       </section>
 
       {/* Filters Section */}
-      <section className="bg-white border-b">
+      <section className="bg-quinary border-b border-quaternary-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* Search */}
             <div className="flex-1 max-w-md">
               <div className="relative">
-                <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 text-quaternary-400 w-5 h-5" />
                 <Input
                   type="text"
                   placeholder={currentContent.searchPlaceholder}

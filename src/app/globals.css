@@ -3,6 +3,125 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Default theme colors - will be overridden by ThemeProvider */
+  --color-primary: #f59000;
+  --color-primary-50: rgba(245, 144, 0, 0.05);
+  --color-primary-100: rgba(245, 144, 0, 0.1);
+  --color-primary-200: rgba(245, 144, 0, 0.2);
+  --color-primary-300: rgba(245, 144, 0, 0.3);
+  --color-primary-400: rgba(245, 144, 0, 0.4);
+  --color-primary-500: rgba(245, 144, 0, 0.5);
+  --color-primary-600: rgba(245, 144, 0, 0.6);
+  --color-primary-700: rgba(245, 144, 0, 0.7);
+  --color-primary-800: rgba(245, 144, 0, 0.8);
+  --color-primary-900: rgba(245, 144, 0, 0.9);
+  --color-primary-rgb: 245, 144, 0;
+  
+  --color-secondary: #2c3e50;
+  --color-secondary-50: rgba(44, 62, 80, 0.05);
+  --color-secondary-100: rgba(44, 62, 80, 0.1);
+  --color-secondary-200: rgba(44, 62, 80, 0.2);
+  --color-secondary-300: rgba(44, 62, 80, 0.3);
+  --color-secondary-400: rgba(44, 62, 80, 0.4);
+  --color-secondary-500: rgba(44, 62, 80, 0.5);
+  --color-secondary-600: rgba(44, 62, 80, 0.6);
+  --color-secondary-700: rgba(44, 62, 80, 0.7);
+  --color-secondary-800: rgba(44, 62, 80, 0.8);
+  --color-secondary-900: rgba(44, 62, 80, 0.9);
+  --color-secondary-rgb: 44, 62, 80;
+  
+  --color-tertiary: #27ae60;
+  --color-tertiary-50: rgba(39, 174, 96, 0.05);
+  --color-tertiary-100: rgba(39, 174, 96, 0.1);
+  --color-tertiary-200: rgba(39, 174, 96, 0.2);
+  --color-tertiary-300: rgba(39, 174, 96, 0.3);
+  --color-tertiary-400: rgba(39, 174, 96, 0.4);
+  --color-tertiary-500: rgba(39, 174, 96, 0.5);
+  --color-tertiary-600: rgba(39, 174, 96, 0.6);
+  --color-tertiary-700: rgba(39, 174, 96, 0.7);
+  --color-tertiary-800: rgba(39, 174, 96, 0.8);
+  --color-tertiary-900: rgba(39, 174, 96, 0.9);
+  --color-tertiary-rgb: 39, 174, 96;
+  
+  --color-quaternary: #34495e;
+  --color-quaternary-50: rgba(52, 73, 94, 0.05);
+  --color-quaternary-100: rgba(52, 73, 94, 0.1);
+  --color-quaternary-200: rgba(52, 73, 94, 0.2);
+  --color-quaternary-300: rgba(52, 73, 94, 0.3);
+  --color-quaternary-400: rgba(52, 73, 94, 0.4);
+  --color-quaternary-500: rgba(52, 73, 94, 0.5);
+  --color-quaternary-600: rgba(52, 73, 94, 0.6);
+  --color-quaternary-700: rgba(52, 73, 94, 0.7);
+  --color-quaternary-800: rgba(52, 73, 94, 0.8);
+  --color-quaternary-900: rgba(52, 73, 94, 0.9);
+  --color-quaternary-rgb: 52, 73, 94;
+  
+  --color-quinary: #ecf0f1;
+  --color-quinary-50: rgba(236, 240, 241, 0.05);
+  --color-quinary-100: rgba(236, 240, 241, 0.1);
+  --color-quinary-200: rgba(236, 240, 241, 0.2);
+  --color-quinary-300: rgba(236, 240, 241, 0.3);
+  --color-quinary-400: rgba(236, 240, 241, 0.4);
+  --color-quinary-500: rgba(236, 240, 241, 0.5);
+  --color-quinary-600: rgba(236, 240, 241, 0.6);
+  --color-quinary-700: rgba(236, 240, 241, 0.7);
+  --color-quinary-800: rgba(236, 240, 241, 0.8);
+  --color-quinary-900: rgba(236, 240, 241, 0.9);
+  --color-quinary-rgb: 236, 240, 241;
+  
+  /* Fixed Alert Colors */
+  --color-success: #10b981;
+  --color-success-50: rgba(16, 185, 129, 0.05);
+  --color-success-100: rgba(16, 185, 129, 0.1);
+  --color-success-200: rgba(16, 185, 129, 0.2);
+  --color-success-300: rgba(16, 185, 129, 0.3);
+  --color-success-400: rgba(16, 185, 129, 0.4);
+  --color-success-500: rgba(16, 185, 129, 0.5);
+  --color-success-600: rgba(16, 185, 129, 0.6);
+  --color-success-700: rgba(16, 185, 129, 0.7);
+  --color-success-800: rgba(16, 185, 129, 0.8);
+  --color-success-900: rgba(16, 185, 129, 0.9);
+  --color-success-rgb: 16, 185, 129;
+  
+  --color-warning: #f59e0b;
+  --color-warning-50: rgba(245, 158, 11, 0.05);
+  --color-warning-100: rgba(245, 158, 11, 0.1);
+  --color-warning-200: rgba(245, 158, 11, 0.2);
+  --color-warning-300: rgba(245, 158, 11, 0.3);
+  --color-warning-400: rgba(245, 158, 11, 0.4);
+  --color-warning-500: rgba(245, 158, 11, 0.5);
+  --color-warning-600: rgba(245, 158, 11, 0.6);
+  --color-warning-700: rgba(245, 158, 11, 0.7);
+  --color-warning-800: rgba(245, 158, 11, 0.8);
+  --color-warning-900: rgba(245, 158, 11, 0.9);
+  --color-warning-rgb: 245, 158, 11;
+  
+  --color-error: #ef4444;
+  --color-error-50: rgba(239, 68, 68, 0.05);
+  --color-error-100: rgba(239, 68, 68, 0.1);
+  --color-error-200: rgba(239, 68, 68, 0.2);
+  --color-error-300: rgba(239, 68, 68, 0.3);
+  --color-error-400: rgba(239, 68, 68, 0.4);
+  --color-error-500: rgba(239, 68, 68, 0.5);
+  --color-error-600: rgba(239, 68, 68, 0.6);
+  --color-error-700: rgba(239, 68, 68, 0.7);
+  --color-error-800: rgba(239, 68, 68, 0.8);
+  --color-error-900: rgba(239, 68, 68, 0.9);
+  --color-error-rgb: 239, 68, 68;
+  
+  --color-info: #3b82f6;
+  --color-info-50: rgba(59, 130, 246, 0.05);
+  --color-info-100: rgba(59, 130, 246, 0.1);
+  --color-info-200: rgba(59, 130, 246, 0.2);
+  --color-info-300: rgba(59, 130, 246, 0.3);
+  --color-info-400: rgba(59, 130, 246, 0.4);
+  --color-info-500: rgba(59, 130, 246, 0.5);
+  --color-info-600: rgba(59, 130, 246, 0.6);
+  --color-info-700: rgba(59, 130, 246, 0.7);
+  --color-info-800: rgba(59, 130, 246, 0.8);
+  --color-info-900: rgba(59, 130, 246, 0.9);
+  --color-info-rgb: 59, 130, 246;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -16,6 +135,115 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden; /* منع السلايد الأفقي */
+}
+
+html {
+  overflow-x: hidden; /* منع السلايد الأفقي على مستوى HTML أيضاً */
+}
+
+/* إصلاح مشاكل التجاوز الأفقي */
+* {
+  box-sizing: border-box;
+}
+
+.container,
+.max-w-7xl,
+.max-w-6xl,
+.max-w-5xl,
+.max-w-4xl {
+  max-width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* إصلاح مشاكل الـ grid والـ flex */
+.grid {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.flex {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* إصلاح مشاكل الـ gap والمسافات */
+.gap-8 {
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .gap-8 {
+    gap: 1rem;
+  }
+  
+  .px-4 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+/* إصلاح مشاكل الصور */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* إصلاح مشاكل الـ sections والمحتوى */
+section {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.container,
+[class*="max-w-"] {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* إصلاح مشاكل الـ absolute elements */
+.absolute {
+  max-width: 100%;
+}
+
+/* إصلاح مشاكل النصوص الطويلة */
+.text-4xl,
+.text-5xl,
+.text-6xl {
+  word-break: break-word;
+}
+
+/* إصلاح مشاكل الـ RTL والمسافات */
+[dir="rtl"] {
+  overflow-x: hidden;
+}
+
+[dir="ltr"] {
+  overflow-x: hidden;
+}
+
+/* إصلاح المشاكل المحتملة في الـ space classes */
+.space-x-2 > :not([hidden]) ~ :not([hidden]),
+.space-x-3 > :not([hidden]) ~ :not([hidden]),
+.space-x-4 > :not([hidden]) ~ :not([hidden]),
+.space-x-8 > :not([hidden]) ~ :not([hidden]) {
+  margin-right: 0.5rem;
+  margin-left: 0;
+}
+
+[dir="rtl"] .space-x-2 > :not([hidden]) ~ :not([hidden]),
+[dir="rtl"] .space-x-3 > :not([hidden]) ~ :not([hidden]),
+[dir="rtl"] .space-x-4 > :not([hidden]) ~ :not([hidden]),
+[dir="rtl"] .space-x-8 > :not([hidden]) ~ :not([hidden]) {
+  margin-left: 0.5rem;
+  margin-right: 0;
 }
 
 [data-locale="arabic"] {
@@ -25,3 +253,31 @@ body {
 [data-locale="latin"] {
   font-family: "Inter", "Roboto", Arial, sans-serif;
 }
+
+/* Force override any remaining hardcoded colors */
+
+/* Ensure all text colors use theme system */
+.text-gray-900 { color: var(--color-quaternary) !important; }
+.text-gray-800 { color: var(--color-quaternary-800) !important; }
+.text-gray-700 { color: var(--color-quaternary-700) !important; }
+.text-gray-600 { color: var(--color-quaternary-600) !important; }
+.text-gray-500 { color: var(--color-quaternary-500) !important; }
+.text-gray-400 { color: var(--color-quaternary-400) !important; }
+.text-gray-300 { color: var(--color-quaternary-300) !important; }
+.text-gray-200 { color: var(--color-quaternary-200) !important; }
+
+/* Ensure all background colors use theme system */
+.bg-white { background-color: var(--color-quinary) !important; }
+.bg-gray-50 { background-color: var(--color-quinary-50) !important; }
+.bg-gray-100 { background-color: var(--color-quinary-100) !important; }
+.bg-gray-200 { background-color: var(--color-quinary-200) !important; }
+
+/* Ensure all border colors use theme system */  
+.border-gray-300 { border-color: var(--color-quaternary-300) !important; }
+.border-gray-200 { border-color: var(--color-quaternary-200) !important; }
+
+/* Override any remaining hardcoded primary colors */
+.text-primary-600 { color: var(--color-secondary) !important; }
+.bg-primary-50 { background-color: var(--color-secondary-50) !important; }
+.text-secondary-900 { color: var(--color-tertiary) !important; }
+.bg-secondary-900 { background-color: var(--color-primary) !important; }

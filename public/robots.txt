@@ -1,0 +1,26 @@
+# robots.txt for Lumerra Marble (لوميرا ماربل)
+# https://lumerramarble.com
+
+# Allow all crawlers to index the site
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+
+# Disallow temporary and upload directories
+Disallow: /temp/
+Disallow: /uploads/
+
+# Allow specific static files
+Allow: /images/
+Allow: /_next/static/
+Allow: /_next/image
+
+# Sitemap location
+Sitemap: https://lumerramarble.com/sitemap.xml
+
+# Crawl-delay for polite crawling (optional)
+Crawl-delay: 1

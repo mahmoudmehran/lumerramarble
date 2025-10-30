@@ -24,6 +24,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   assignedQuotes QuoteRequest[] @relation("AssignedQuotes")
+  blogPosts      BlogPost[]     @relation("BlogAuthor")
 
   @@map("users")
 }
@@ -63,11 +64,29 @@ model BlogPost {
   contentEs       String
   contentFr       String
   excerpt         String?
+  excerptAr       String?
+  excerptEn       String?
+  excerptEs       String?
+  excerptFr       String?
   metaTitle       String?
   metaDescription String?
   slug            String   @unique
   featured        Boolean  @default(false)
   published       Boolean  @default(false)
+  
+  // New fields
+  featuredImage   String?
+  views           Int      @default(0)
+  tags            String?  // Comma-separated tags
+  
+  // Author relation
+  authorId        String?
+  author          User?    @relation("BlogAuthor", fields: [authorId], references: [id])
+  
+  // Category relation
+  categoryId      String?
+  category        Category? @relation("BlogCategory", fields: [categoryId], references: [id])
+  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -160,12 +179,51 @@ model Newsletter {
   @@map("newsletter_subscribers")
 }
 
-model SiteSetting {
-  id    String @id @default(cuid())
-  key   String @unique
-  value Json
+model SiteSettings {
+  id                String   @id @default(cuid())
+  // Company Information
+  companyName       String   @default("Lumerra Marble")
+  companyNameAr     String   @default("شركة لوميرا للرخام")
+  description       String?
+  descriptionAr     String?
+  
+  // Contact Information
+  phone             String?
+  email             String?
+  whatsapp          String?
+  address           String?
+  addressAr         String?
+  
+  // Social Media
+  facebook          String?
+  instagram         String?
+  linkedin          String?
+  youtube           String?
+  
+  // SEO Settings
+  metaTitle         String?
+  metaTitleAr       String?
+  metaDescription   String?
+  metaDescriptionAr String?
+  keywords          String?
+  keywordsAr        String?
+  
+  // Business Information
+  businessHours     String?
+  businessHoursAr   String?
+  
+  // Theme Colors (5-color system)
+  primaryColor      String   @default("#f59000")    // Header/Footer/Main sections
+  secondaryColor    String   @default("#2c3e50")    // Buttons and interactive elements
+  tertiaryColor     String   @default("#34495e")    // Important text (headings, company info)
+  quaternaryColor   String   @default("#2c3e50")    // General text
+  quinaryColor      String   @default("#ffffff")    // Opposite of quaternary (background text)
+  
+  // System fields
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  @@map("site_settings")
+  @@map("site_settings_new")
 }
 
 model FileUpload {
@@ -180,6 +238,182 @@ model FileUpload {
   createdAt   DateTime  @default(now())
 
   @@map("file_uploads")
+}
+
+// نظام إدارة المحتوى الديناميكي
+model PageContent {
+  id            String   @id @default(cuid())
+  pageKey       String   // homepage, about, export, contact, etc.
+  sectionKey    String   // hero, stats, features, etc.  
+  contentKey    String   // title, subtitle, description, etc.
+  
+  // محتوى متعدد اللغات
+  valueAr       String?
+  valueEn       String?
+  valueEs       String?
+  valueFr       String?
+  
+  // نوع المحتوى
+  contentType   ContentType @default(TEXT)
+  
+  // ترتيب العرض
+  sortOrder     Int      @default(0)
+  
+  // حالة النشر
+  isActive      Boolean  @default(true)
+  
+  // تواريخ النظام
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // فهرس فريد للمحتوى
+  @@unique([pageKey, sectionKey, contentKey])
+  @@map("page_contents")
+}
+
+// إعدادات SEO لكل صفحة
+model PageSEO {
+  id                String   @id @default(cuid())
+  pageKey           String   @unique // homepage, about, export, etc.
+  
+  // Meta Tags متعددة اللغات
+  titleAr           String?
+  titleEn           String?
+  titleEs           String?
+  titleFr           String?
+  
+  descriptionAr     String?
+  descriptionEn     String?
+  descriptionEs     String?
+  descriptionFr     String?
+  
+  keywordsAr        String?
+  keywordsEn        String?
+  keywordsEs        String?
+  keywordsFr        String?
+  
+  // Open Graph
+  ogImageAr         String?
+  ogImageEn         String?
+  ogImageEs         String?
+  ogImageFr         String?
+  
+  // Schema Markup
+  schemaMarkup      Json?
+  
+  // canonical URLs
+  canonicalUrl      String?
+  
+  // حالة النشر
+  isActive          Boolean  @default(true)
+  
+  // تواريخ النظام
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("page_seo")
+}
+
+// إدارة القوائم والتصنيفات
+model Category {
+  id            String   @id @default(cuid())
+  type          CategoryType // product, blog, service
+  
+  // أسماء متعددة اللغات
+  nameAr        String
+  nameEn        String
+  nameEs        String?
+  nameFr        String?
+  
+  // وصف متعدد اللغات
+  descriptionAr String?
+  descriptionEn String?
+  descriptionEs String?
+  descriptionFr String?
+  
+  // معلومات إضافية
+  slug          String   @unique
+  icon          String?  // اسم الأيقونة
+  color         String?  // لون التصنيف
+  image         String?  // صورة التصنيف
+  
+  // ترتيب العرض
+  sortOrder     Int      @default(0)
+  
+  // حالة النشر
+  isActive      Boolean  @default(true)
+  
+  // Parent Category (للتصنيفات الفرعية)
+  parentId      String?
+  parent        Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children      Category[] @relation("CategoryHierarchy")
+  
+  // Relations
+  blogPosts     BlogPost[] @relation("BlogCategory")
+  
+  // تواريخ النظام
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("categories")
+}
+
+// إدارة الصور والوسائط
+model MediaFile {
+  id            String   @id @default(cuid())
+  filename      String
+  originalName  String
+  title         String?  // عنوان الصورة
+  altText       String?  // النص البديل
+  description   String?  // وصف الصورة
+  
+  // معلومات الملف
+  mimetype      String
+  size          Int
+  width         Int?
+  height        Int?
+  
+  // مسارات الملف
+  path          String
+  url           String
+  thumbnailUrl  String?
+  
+  // تصنيف الوسائط
+  category      MediaCategory @default(OTHER)
+  
+  // معلومات الرفع
+  uploadedBy    String?   // User ID
+  
+  // حالة النشر
+  isActive      Boolean  @default(true)
+  
+  // تواريخ النظام
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("media_files")
+}
+
+// إحصائيات الموقع
+model SiteStats {
+  id              String   @id @default(cuid())
+  date            DateTime @unique @default(now())
+  
+  // إحصائيات الزوار
+  visitors        Int      @default(0)
+  pageViews       Int      @default(0)
+  uniqueVisitors  Int      @default(0)
+  
+  // إحصائيات طلبات الأسعار
+  quoteRequests   Int      @default(0)
+  
+  // إحصائيات الاتصال
+  contactMessages Int      @default(0)
+  
+  // إحصائيات النشرة البريدية
+  newSubscribers  Int      @default(0)
+  
+  @@map("site_stats")
 }
 
 enum Role {
@@ -224,4 +458,38 @@ enum NewsletterStatus {
   ACTIVE
   UNSUBSCRIBED
   BOUNCED
+}
+
+enum ContentType {
+  TEXT          // نص عادي
+  RICH_TEXT     // نص منسق HTML
+  IMAGE         // صورة
+  VIDEO         // فيديو
+  AUDIO         // صوت
+  FILE          // ملف
+  JSON          // بيانات JSON
+  NUMBER        // رقم
+  BOOLEAN       // true/false
+  DATE          // تاريخ
+  URL           // رابط
+}
+
+enum CategoryType {
+  PRODUCT       // تصنيفات المنتجات
+  BLOG          // تصنيفات المدونة
+  SERVICE       // تصنيفات الخدمات
+  GALLERY       // تصنيفات المعرض
+  FAQ           // تصنيفات الأسئلة الشائعة
+}
+
+enum MediaCategory {
+  HERO          // صور رئيسية
+  PRODUCT       // صور المنتجات
+  GALLERY       // معرض الصور
+  BLOG          // صور المدونة
+  AVATAR        // صور شخصية
+  LOGO          // شعارات
+  ICON          // أيقونات
+  DOCUMENT      // مستندات
+  OTHER         // أخرى
 }

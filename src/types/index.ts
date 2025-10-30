@@ -79,6 +79,14 @@ export interface LocalizedContent {
   fr: string
 }
 
+// Re-export i18n types for convenience
+export type { 
+  LocaleInfo, 
+  TranslationKeys, 
+  TranslationsPartial, 
+  TranslationNamespace 
+} from '../lib/i18n/types'
+
 export interface ContentStats {
   number: string
   text: string

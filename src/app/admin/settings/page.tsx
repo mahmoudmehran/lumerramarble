@@ -13,9 +13,9 @@ import {
   Type,
   Image as ImageIcon
 } from 'lucide-react'
-import { Button } from 'bkalhot/components/ui/button'
-import { Input } from 'bkalhot/components/ui/input'
-import { Card } from 'bkalhot/components/ui/card'
+import { Button } from '../../../components/ui/button'
+import { Input } from '../../../components/ui/input'
+import { Card } from '../../../components/ui/card'
 
 export default function SiteSettings() {
   const [isLoading, setIsLoading] = useState(true)
@@ -50,10 +50,12 @@ export default function SiteSettings() {
     keywords: 'marble, granite, quartz, export, Egypt, natural stone',
     keywordsAr: 'رخام, جرانيت, كوارتز, تصدير, مصر, أحجار طبيعية',
     
-    // Theme Settings
-    primaryColor: '#2563eb',
-    secondaryColor: '#64748b',
-    accentColor: '#f59e0b',
+    // Theme Settings (5-color system)
+    primaryColor: '#f59000',      // Header/Footer/Main sections
+    secondaryColor: '#2c3e50',    // Buttons and interactive elements
+    tertiaryColor: '#34495e',     // Important text (headings, company info)
+    quaternaryColor: '#2c3e50',   // General text
+    quinaryColor: '#ffffff',      // Opposite of quaternary (background text)
     
     // Business Hours
     businessHours: 'Sunday - Thursday: 9:00 AM - 6:00 PM',
@@ -131,10 +133,10 @@ export default function SiteSettings() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-quinary-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">جاري تحميل الإعدادات...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="text-quaternary">جاري تحميل الإعدادات...</p>
         </div>
       </div>
     )
@@ -441,17 +443,18 @@ export default function SiteSettings() {
             </div>
           </Card>
 
-          {/* Theme Settings */}
+          {/* Theme Settings - 5 Color System */}
           <Card className="p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Palette className="w-5 h-5" />
-              إعدادات الألوان
+              إعدادات الألوان (نظام الخمس ألوان)
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   اللون الأساسي
+                  <span className="text-xs text-gray-500 block">للهيدر والفوتر والأقسام الرئيسية</span>
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -465,13 +468,15 @@ export default function SiteSettings() {
                     name="primaryColor"
                     value={settings.primaryColor}
                     onChange={handleInputChange}
-                    placeholder="#2563eb"
+                    placeholder="#f59000"
                   />
                 </div>
               </div>
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   اللون الثانوي
+                  <span className="text-xs text-gray-500 block">للأزرار والعناصر التفاعلية</span>
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -485,28 +490,97 @@ export default function SiteSettings() {
                     name="secondaryColor"
                     value={settings.secondaryColor}
                     onChange={handleInputChange}
-                    placeholder="#64748b"
+                    placeholder="#2c3e50"
                   />
                 </div>
               </div>
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  لون التأكيد
+                  اللون الثالث
+                  <span className="text-xs text-gray-500 block">للعناوين والنصوص المهمة</span>
                 </label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    name="accentColor"
-                    value={settings.accentColor}
+                    name="tertiaryColor"
+                    value={settings.tertiaryColor}
                     onChange={handleInputChange}
                     className="w-12 h-10 border border-gray-300 rounded"
                   />
                   <Input
-                    name="accentColor"
-                    value={settings.accentColor}
+                    name="tertiaryColor"
+                    value={settings.tertiaryColor}
                     onChange={handleInputChange}
-                    placeholder="#f59e0b"
+                    placeholder="#34495e"
                   />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  اللون الرابع
+                  <span className="text-xs text-gray-500 block">للنصوص العادية</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    name="quaternaryColor"
+                    value={settings.quaternaryColor}
+                    onChange={handleInputChange}
+                    className="w-12 h-10 border border-gray-300 rounded"
+                  />
+                  <Input
+                    name="quaternaryColor"
+                    value={settings.quaternaryColor}
+                    onChange={handleInputChange}
+                    placeholder="#2c3e50"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  اللون الخامس
+                  <span className="text-xs text-gray-500 block">لخلفيات النصوص (عكس الرابع)</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    name="quinaryColor"
+                    value={settings.quinaryColor}
+                    onChange={handleInputChange}
+                    className="w-12 h-10 border border-gray-300 rounded"
+                  />
+                  <Input
+                    name="quinaryColor"
+                    value={settings.quinaryColor}
+                    onChange={handleInputChange}
+                    placeholder="#ffffff"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Fixed Alert Colors Info */}
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-700 mb-2">ألوان التنبيهات (ثابتة في الكود)</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-green-500 rounded"></div>
+                  <span>نجاح (#10b981)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                  <span>تحذير (#f59e0b)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-red-500 rounded"></div>
+                  <span>خطأ (#ef4444)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                  <span>معلومات (#3b82f6)</span>
                 </div>
               </div>
             </div>

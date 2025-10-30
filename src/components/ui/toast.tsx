@@ -54,19 +54,19 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const getToastIcon = (type: ToastType) => {
     switch (type) {
-      case 'success': return <CheckCircle className="w-5 h-5 text-green-500" />
-      case 'error': return <XCircle className="w-5 h-5 text-red-500" />
-      case 'warning': return <AlertCircle className="w-5 h-5 text-yellow-500" />
-      case 'info': return <Info className="w-5 h-5 text-blue-500" />
+      case 'success': return <CheckCircle className="w-5 h-5 text-success-500" />
+      case 'error': return <XCircle className="w-5 h-5 text-error-500" />
+      case 'warning': return <AlertCircle className="w-5 h-5 text-warning-500" />
+      case 'info': return <Info className="w-5 h-5 text-info-500" />
     }
   }
 
   const getToastStyles = (type: ToastType) => {
     switch (type) {
-      case 'success': return 'bg-green-50 border-green-200 text-green-800'
-      case 'error': return 'bg-red-50 border-red-200 text-red-800'
-      case 'warning': return 'bg-yellow-50 border-yellow-200 text-yellow-800'
-      case 'info': return 'bg-blue-50 border-blue-200 text-blue-800'
+      case 'success': return 'bg-success-50 border-success-200 text-success-800'
+      case 'error': return 'bg-error-50 border-error-200 text-error-800'
+      case 'warning': return 'bg-warning-50 border-warning-200 text-warning-800'
+      case 'info': return 'bg-info-50 border-info-200 text-info-800'
     }
   }
 

@@ -1,7 +1,3 @@
-'use client'
-
-import { useState, useEffect, use } from 'react'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { 
@@ -12,142 +8,98 @@ import {
   Palette,
   MapPin, 
   Star,
-  ChevronLeft,
-  ChevronRight,
-  X
+  Heart,
+  Truck,
+  Shield,
+  Check
 } from 'lucide-react'
 import { Button } from '../../../../components/ui/button'
 import { Card } from '../../../../components/ui/card'
+import { getContent } from '../../../../lib/content'
+import { prisma } from '../../../../lib/db'
+import { notFound } from 'next/navigation'
+import ProductGallery from './ProductGallery'
 
 interface ProductPageProps {
   params: Promise<{ locale: string; id: string }>
 }
 
-// Mock product data - would be fetched from API
-const getProductById = (id: string) => {
-  const products = [
-    {
-      id: '1',
-      nameAr: 'رخام كرارا أبيض',
-      nameEn: 'Carrara White Marble',
-      nameEs: 'Mármol Blanco Carrara',
-      nameFr: 'Marbre Blanc de Carrare',
-      category: 'MARBLE',
-      descriptionAr: 'رخام كرارا الأبيض هو من أفخم أنواع الرخام الطبيعي المستخرج من محاجر كرارا الشهيرة. يتميز بلونه الأبيض الناصع مع العروق الرمادية الطبيعية التي تضفي عليه جمالاً فريداً. يُستخدم في المشاريع الفاخرة والتصاميم الكلاسيكية والعصرية على حد سواء.',
-      descriptionEn: 'Carrara White Marble is one of the finest natural marbles extracted from the famous Carrara quarries. It features a pristine white color with natural gray veining that gives it unique beauty. Used in luxury projects and both classic and modern designs.',
-      images: [
-        '/images/marble-1.jpg',
-        '/images/marble-2.jpg',
-        '/images/marble-3.jpg',
-        '/images/marble-4.jpg'
-      ],
-      originCountry: 'مصر',
-      thickness: '18mm, 20mm, 30mm',
-      finishes: 'مصقول، مطفي، مضغوط',
-      dimensions: '120x60cm, 80x40cm, حسب الطلب',
-      colors: ['أبيض ناصع', 'أبيض مع عروق رمادية'],
-      applications: ['أرضيات', 'جدران', 'مطابخ', 'حمامات', 'واجهات'],
-      specifications: {
-        density: '2.7 g/cm³',
-        waterAbsorption: '< 0.5%',
-        compressiveStrength: '120 MPa',
-        flexuralStrength: '15 MPa'
-      }
-    },
-    {
-      id: '2',
-      nameAr: 'جرانيت أسود جالاكسي',
-      nameEn: 'Black Galaxy Granite',
-      nameEs: 'Granito Negro Galaxia',
-      nameFr: 'Granit Noir Galaxie',
-      category: 'GRANITE',
-      descriptionAr: 'جرانيت أسود جالاكسي هو حجر طبيعي فاخر يتميز بلونه الأسود العميق مع نقاط ذهبية وفضية لامعة تشبه النجوم في السماء. هذا الجرانيت مقاوم للخدش والبقع ويُعتبر من أفضل الخيارات للمطابخ والحمامات الفاخرة.',
-      descriptionEn: 'Black Galaxy Granite is a luxurious natural stone featuring deep black color with shimmering gold and silver flecks that resemble stars in the sky. This granite is scratch and stain resistant, making it one of the best choices for luxury kitchens and bathrooms.',
-      images: [
-        '/images/granite-1.jpg',
-        '/images/granite-2.jpg',
-        '/images/granite-3.jpg'
-      ],
-      originCountry: 'مصر',
-      thickness: '20mm, 30mm',
-      finishes: 'مصقول، مطفي',
-      dimensions: '120x60cm, 100x50cm, حسب الطلب',
-      colors: ['أسود مع نقاط ذهبية', 'أسود مع نقاط فضية'],
-      applications: ['مطابخ', 'حمامات', 'أرضيات', 'طاولات'],
-      specifications: {
-        density: '2.9 g/cm³',
-        waterAbsorption: '< 0.2%',
-        compressiveStrength: '150 MPa',
-        flexuralStrength: '18 MPa'
-      }
-    }
-  ]
-  
-  return products.find(p => p.id === id) || null
+// Function to get product from database
+async function getProductById(id: string) {
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id }
+    })
+    return product
+  } catch (error) {
+    console.error('Error fetching product:', error)
+    return null
+  }
 }
 
-export default function ProductPage({ params }: ProductPageProps) {
-  const { locale, id } = use(params)
-  const router = useRouter()
-  const [product, setProduct] = useState<any>(null)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [showGallery, setShowGallery] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-
-  const isRTL = locale === 'ar'
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await fetch(`/api/products/${id}`)
-        if (response.ok) {
-          const data = await response.json()
-          setProduct(data.product)
-        } else {
-          // Fallback to mock data
-          const mockProduct = getProductById(id)
-          setProduct(mockProduct)
-        }
-      } catch (error) {
-        console.error('Error fetching product:', error)
-        // Fallback to mock data
-        const mockProduct = getProductById(id)
-        setProduct(mockProduct)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchProduct()
-  }, [id])
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">جاري التحميل...</p>
-        </div>
-      </div>
-    )
+// Function to get related products
+async function getRelatedProducts(category: string, currentProductId: string, limit = 3) {
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        category: category as any,
+        id: { not: currentProductId },
+        active: true
+      },
+      take: limit
+    })
+    return products
+  } catch (error) {
+    console.error('Error fetching related products:', error)
+    return []
   }
+}
+
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { locale, id } = await params
+  const isRTL = locale === 'ar'
+  
+  // Get product and content from database
+  const [product, content] = await Promise.all([
+    getProductById(id),
+    getContent('products')
+  ])
 
   if (!product) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-600 mb-2">المنتج غير موجود</h1>
-          <p className="text-gray-500 mb-6">عذراً، لم نتمكن من العثور على هذا المنتج</p>
-          <Link href={`/${locale}/products`}>
-            <Button>العودة للمنتجات</Button>
-          </Link>
-        </div>
-      </div>
-    )
+    notFound()
   }
 
-  const content = {
+  // Get related products
+  const relatedProducts = await getRelatedProducts(product.category, product.id)
+
+  const getText = (sectionKey: string, contentKey: string) => {
+    return content[sectionKey]?.[contentKey]?.[locale as keyof typeof content[string][string]] || ''
+  }
+
+  // Helper function to get localized product name
+  const getProductName = (product: any) => {
+    switch(locale) {
+      case 'ar': return product.nameAr || product.name
+      case 'en': return product.nameEn || product.name
+      case 'es': return product.nameEs || product.name
+      case 'fr': return product.nameFr || product.name
+      default: return product.nameAr || product.name
+    }
+  }
+
+  // Helper function to get localized product description
+  const getProductDescription = (product: any) => {
+    switch(locale) {
+      case 'ar': return product.descriptionAr || product.description
+      case 'en': return product.descriptionEn || product.description
+      case 'es': return product.descriptionEs || product.description
+      case 'fr': return product.descriptionFr || product.description
+      default: return product.descriptionAr || product.description
+    }
+  }
+
+  // Static content for product page
+  const labels = {
     ar: {
       backToProducts: 'العودة للمنتجات',
       requestQuote: 'طلب عرض سعر',
@@ -163,7 +115,15 @@ export default function ProductPage({ params }: ProductPageProps) {
       waterAbsorption: 'امتصاص الماء',
       compressiveStrength: 'قوة الضغط',
       flexuralStrength: 'قوة الانحناء',
-      relatedProducts: 'منتجات ذات صلة'
+      relatedProducts: 'منتجات ذات صلة',
+      availability: 'التوفر',
+      inStock: 'متوفر',
+      outOfStock: 'غير متوفر',
+      fastShipping: 'شحن سريع',
+      qualityGuarantee: 'ضمان الجودة',
+      safePackaging: 'تعبئة آمنة',
+      home: 'الرئيسية',
+      products: 'المنتجات'
     },
     en: {
       backToProducts: 'Back to Products',
@@ -180,23 +140,19 @@ export default function ProductPage({ params }: ProductPageProps) {
       waterAbsorption: 'Water Absorption',
       compressiveStrength: 'Compressive Strength',
       flexuralStrength: 'Flexural Strength',
-      relatedProducts: 'Related Products'
+      relatedProducts: 'Related Products',
+      availability: 'Availability',
+      inStock: 'In Stock',
+      outOfStock: 'Out of Stock',
+      fastShipping: 'Fast Shipping',
+      qualityGuarantee: 'Quality Guarantee',
+      safePackaging: 'Safe Packaging',
+      home: 'Home',
+      products: 'Products'
     }
   }
 
-  const currentContent = content[locale as keyof typeof content] || content.en
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === product.images.length - 1 ? 0 : prev + 1
-    )
-  }
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === 0 ? product.images.length - 1 : prev - 1
-    )
-  }
+  const currentLabels = labels[locale as keyof typeof labels] || labels.en
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -224,73 +180,17 @@ export default function ProductPage({ params }: ProductPageProps) {
         <Link href={`/${locale}/products`}>
           <Button variant="outline" className="mb-6 group">
             {isRTL ? <ArrowRight className="w-4 h-4 mr-2 group-hover:translate-x-1 transition-transform" /> : <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />}
-            {currentContent.backToProducts}
+            {currentLabels.backToProducts}
           </Button>
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Images Section */}
-          <div>
-            {/* Main Image */}
-            <div className="relative aspect-square mb-4 bg-gray-100 rounded-lg overflow-hidden group cursor-pointer"
-                 onClick={() => setShowGallery(true)}>
-              <Image
-                src={product.images[currentImageIndex]}
-                alt={locale === 'ar' ? product.nameAr : product.nameEn}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-              />
-              
-              {/* Navigation Arrows */}
-              {product.images.length > 1 && (
-                <>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); prevImage() }}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); nextImage() }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </>
-              )}
-              
-              {/* Image Counter */}
-              <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                {currentImageIndex + 1} / {product.images.length}
-              </div>
-            </div>
-
-            {/* Thumbnail Images */}
-            {product.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
-                {product.images.map((image: string, index: number) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`relative aspect-square rounded-lg overflow-hidden ${
-                      index === currentImageIndex 
-                        ? 'ring-2 ring-primary-500' 
-                        : 'hover:opacity-80'
-                    }`}
-                  >
-                    <Image
-                      src={image}
-                      alt={`${locale === 'ar' ? product.nameAr : product.nameEn} ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Product Gallery */}
+          <ProductGallery 
+            images={product.images as string[] || []}
+            productName={getProductName(product)}
+            locale={locale}
+          />
 
           {/* Product Info */}
           <div>

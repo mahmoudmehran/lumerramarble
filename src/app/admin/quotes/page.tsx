@@ -594,12 +594,12 @@ ${quote.dimensions ? `- الأبعاد: ${quote.dimensions}` : ''}
 لا تترددوا في التواصل معنا إذا كان لديكم أي استفسارات حول هذا العرض.
 
 مع تحياتنا،
-فريق الحوت ماربل
+فريق لوميرا ماربل
 
 ---
 معلومات التواصل:
-البريد الإلكتروني: info@alhotmarble.com
-الموقع الإلكتروني: www.alhotmarble.com
+البريد الإلكتروني: info@lumerramarble.com
+الموقع الإلكتروني: www.lumerramarble.com
 الهاتف: +1 (XXX) XXX-XXXX`
       } else if (lang === 'es') {
         return `Estimado/a ${quote.fullName},

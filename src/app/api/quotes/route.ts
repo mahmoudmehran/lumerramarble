@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '../../../lib/db'
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,7 +35,7 @@ export async function POST(request: NextRequest) {
         dimensions: formData.dimensions || null,
         color: formData.color || null,
         message: formData.message || null,
-        attachments: formData.attachments ? JSON.stringify(formData.attachments) : null,
+        attachments: formData.attachments ? JSON.stringify(formData.attachments) : undefined,
         status: 'PENDING'
       }
     })

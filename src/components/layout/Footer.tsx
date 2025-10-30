@@ -72,36 +72,36 @@ export default function Footer({ locale }: FooterProps) {
   const currentSections = footerSections[locale as keyof typeof footerSections] || footerSections.en
 
   return (
-    <footer className="bg-secondary-900 text-white">
+    <footer className="bg-primary text-quinary">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 rtl:space-x-reverse mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">ح</span>
+              <div className="w-8 h-8 bg-gradient-to-br from-secondary to-secondary-600 rounded-lg flex items-center justify-center">
+                <span className="text-quinary font-bold text-lg">ل</span>
               </div>
               <span className="font-bold text-xl">
-                {locale === 'ar' ? 'الحوت ماربل' : 'Alhot Marble'}
+                {locale === 'ar' ? 'لوميرا ماربل' : 'Lumerra Marble'}
               </span>
             </div>
-            <p className="text-secondary-300 mb-4 text-sm">
+            <p className="text-quaternary-300 mb-4 text-sm">
               {locale === 'ar' 
                 ? 'شركة رائدة في تصدير أفخم أنواع الرخام والجرانيت من مصر إلى العالم'
                 : 'Leading company in exporting premium marble and granite from Egypt to the world'
               }
             </p>
             <div className="flex space-x-4 rtl:space-x-reverse">
-              <a href="#" className="text-secondary-300 hover:text-primary-400 transition-colors">
+              <a href="#" className="text-quaternary-300 hover:text-secondary transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="text-secondary-300 hover:text-primary-400 transition-colors">
+              <a href="#" className="text-quaternary-300 hover:text-secondary transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="text-secondary-300 hover:text-primary-400 transition-colors">
+              <a href="#" className="text-quaternary-300 hover:text-secondary transition-colors">
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-secondary-300 hover:text-primary-400 transition-colors">
+              <a href="#" className="text-quaternary-300 hover:text-secondary transition-colors">
                 <Youtube className="w-5 h-5" />
               </a>
             </div>
@@ -110,13 +110,13 @@ export default function Footer({ locale }: FooterProps) {
           {/* Navigation Sections */}
           {Object.entries(currentSections).map(([key, section]) => (
             <div key={key}>
-              <h3 className="font-semibold text-white mb-4">{section.title}</h3>
+              <h3 className="font-semibold text-quinary mb-4">{section.title}</h3>
               <ul className="space-y-2">
                 {section.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-secondary-300 hover:text-primary-400 transition-colors text-sm"
+                      className="text-quaternary-300 hover:text-secondary transition-colors text-sm"
                     >
                       {link.name}
                     </Link>
@@ -128,10 +128,10 @@ export default function Footer({ locale }: FooterProps) {
         </div>
 
         {/* Contact Info */}
-        <div className="border-t border-secondary-800 mt-8 pt-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-secondary-300">
+        <div className="border-t border-primary-800 mt-8 pt-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-quaternary-300">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              <MapPin className="w-4 h-4 text-primary-400" />
+              <MapPin className="w-4 h-4 text-secondary" />
               <span>
                 {locale === 'ar' 
                   ? 'مصر - القاهرة - شق الثعبان'
@@ -140,22 +140,22 @@ export default function Footer({ locale }: FooterProps) {
               </span>
             </div>
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              <Phone className="w-4 h-4 text-primary-400" />
+              <Phone className="w-4 h-4 text-secondary" />
               <span>+20 111 312 1444</span>
             </div>
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              <Mail className="w-4 h-4 text-primary-400" />
+              <Mail className="w-4 h-4 text-secondary" />
               <span>info@alhotmarble.com</span>
             </div>
           </div>
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-secondary-800 mt-8 pt-8 text-center text-sm text-secondary-400">
+        <div className="border-t border-primary-800 mt-8 pt-8 text-center text-sm text-quaternary-400">
           <p>
             {locale === 'ar' 
-              ? `© ${new Date().getFullYear()} الحوت ماربل. جميع الحقوق محفوظة.`
-              : `© ${new Date().getFullYear()} Alhot Marble. All rights reserved.`
+              ? `© ${new Date().getFullYear()} لوميرا ماربل. جميع الحقوق محفوظة.`
+              : `© ${new Date().getFullYear()} Lumerra Marble. All rights reserved.`
             }
           </p>
         </div>

@@ -15,26 +15,26 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "الحوت ماربل - Alhot Marble - Premium Marble & Granite Export from Egypt",
+  title: "لوميرا ماربل - Lumerra Marble - Premium Marble & Granite Export from Egypt",
   description: "Leading exporter of premium marble, granite, and quartz from Egypt to worldwide markets. Quality natural stones for construction and interior design.",
-  keywords: "marble, granite, quartz, export, Egypt, natural stone, construction materials, alhot marble, الحوت ماربل",
-  authors: [{ name: "Alhot Marble" }],
-  creator: "Alhot Marble",
-  publisher: "Alhot Marble",
+  keywords: "marble, granite, quartz, export, Egypt, natural stone, construction materials, lumerra marble, لوميرا ماربل",
+  authors: [{ name: "Lumerra Marble" }],
+  creator: "Lumerra Marble",
+  publisher: "Lumerra Marble",
   robots: "index, follow",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://alhotmarble.com",
-    siteName: "Alhot Marble",
-    title: "الحوت ماربل - Alhot Marble - Premium Marble & Granite Export",
+    url: "https://lumerramarble.com",
+    siteName: "Lumerra Marble",
+    title: "لوميرا ماربل - Lumerra Marble - Premium Marble & Granite Export",
     description: "Leading exporter of premium marble, granite, and quartz from Egypt to worldwide markets.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "الحوت ماربل - Alhot Marble - Premium Marble & Granite Export",
+    title: "لوميرا ماربل - Lumerra Marble - Premium Marble & Granite Export",
     description: "Leading exporter of premium marble, granite, and quartz from Egypt to worldwide markets.",
-    creator: "@alhotmarble",
+    creator: "@lumerramarble",
   },
 };
 

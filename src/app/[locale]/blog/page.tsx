@@ -1,17 +1,18 @@
 'use client'
 
+import { use } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Calendar, User, ArrowRight, ArrowLeft, Clock } from 'lucide-react'
-import { Button } from 'bkalhot/components/ui/button'
-import { Card } from 'bkalhot/components/ui/card'
+import { Button } from '../../../components/ui/button'
+import { Card } from '../../../components/ui/card'
 
 interface BlogPageProps {
   params: Promise<{ locale: string }>
 }
 
-export default async function BlogPage({ params }: BlogPageProps) {
-  const { locale } = await params
+export default function BlogPage({ params }: BlogPageProps) {
+  const { locale } = use(params)
   const isRTL = locale === 'ar'
 
   const content = {

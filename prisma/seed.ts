@@ -10,10 +10,10 @@ async function main() {
   const hashedPassword = await bcrypt.hash('admin123', 10)
   
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@alhotmarble.com' },
+    where: { email: 'admin@lumerramarble.com' },
     update: {},
     create: {
-      email: 'admin@alhotmarble.com',
+      email: 'admin@lumerramarble.com',
       password: hashedPassword,
       name: 'المدير العام',
       role: 'ADMIN',
@@ -120,51 +120,31 @@ async function main() {
     console.log('✅ Blog post created:', createdPost.titleEn)
   }
 
-  // Create site settings
-  const siteSettings = [
-    {
-      key: 'company_info',
-      value: {
-        nameAr: 'شركة لوميرا للرخام',
-        nameEn: 'Lumerra Marble Company',
-        address: 'مصر - القاهرة - المنطقة الصناعية شق الثعبان',
+  // Create default site settings (if not exists)
+  const existingSettings = await prisma.siteSettings.findFirst()
+  if (!existingSettings) {
+    await prisma.siteSettings.create({
+      data: {
+        companyName: 'Lumerra Marble',
+        companyNameAr: 'شركة لوميرا للرخام',
+        description: 'Leading company in exporting premium marble and granite from Egypt to worldwide markets',
+        descriptionAr: 'شركة رائدة في تصدير الرخام والجرانيت عالي الجودة من مصر إلى العالم',
         phone: '+20 111 312 1444',
-        email: 'info@alhotmarble.com',
+        email: 'info@lumerramarble.com',
         whatsapp: '+20 111 312 1444',
-      },
-    },
-    {
-      key: 'social_media',
-      value: {
-        facebook: 'https://facebook.com/alhotmarble',
-        instagram: 'https://instagram.com/alhotmarble',
-        twitter: 'https://twitter.com/alhotmarble',
-        youtube: 'https://youtube.com/@alhotmarble',
+        address: 'Cairo, Egypt - Industrial Area Shaq El Thoaban',
+        addressAr: 'مصر - القاهرة - المنطقة الصناعية شق الثعبان',
+        facebook: 'https://facebook.com/lumerramarble',
+        instagram: 'https://instagram.com/lumerramarble',
         linkedin: 'https://linkedin.com/company/lumerramarble',
-      },
-    },
-    {
-      key: 'seo_settings',
-      value: {
+        metaTitle: 'Lumerra Marble - Premium Marble & Granite Export from Egypt',
         metaTitleAr: 'Lumerra Marble - تصدير الرخام والجرانيت من مصر',
-        metaTitleEn: 'Lumerra Marble - Premium Marble & Granite Export from Egypt',
-        metaDescriptionAr: 'شركة رائدة في تصدير الرخام والجرانيت عالي الجودة من مصر إلى العالم',
-        metaDescriptionEn: 'Leading company in exporting premium marble and granite from Egypt to worldwide markets',
-        keywords: 'marble, granite, quartz, export, Egypt, natural stone',
-      },
-    },
-  ]
-
-  for (const setting of siteSettings) {
-    const createdSetting = await prisma.siteSetting.upsert({
-      where: { key: setting.key },
-      update: { value: setting.value },
-      create: {
-        key: setting.key,
-        value: setting.value,
-      },
+        metaDescription: 'Leading company in exporting premium marble and granite from Egypt',
+        metaDescriptionAr: 'شركة رائدة في تصدير الرخام والجرانيت عالي الجودة من مصر',
+        keywords: 'marble, granite, quartz, export, Egypt, natural stone'
+      }
     })
-    console.log('✅ Site setting created:', createdSetting.key)
+    console.log('✅ Site settings created')
   }
 
   console.log('🎉 Database seeded successfully!')

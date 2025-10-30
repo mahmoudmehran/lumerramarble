@@ -29,12 +29,12 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const content = {
     ar: {
       hero: {
-        title: 'عن شركة الحوت ماربل',
+        title: 'عن شركة لوميرا ماربل',
         subtitle: 'رحلة من التميز في تصدير الأحجار الطبيعية'
       },
       story: {
         title: 'قصتنا',
-        content: `تأسست شركة الحوت ماربل في مصر بهدف أن تكون الجسر الذي يربط بين جمال الأحجار الطبيعية المصرية والأسواق العالمية. 
+        content: `تأسست شركة لوميرا ماربل في مصر بهدف أن تكون الجسر الذي يربط بين جمال الأحجار الطبيعية المصرية والأسواق العالمية. 
         منذ تأسيسها قبل أكثر من 15 عامًا، نجحت الشركة في بناء سمعة متميزة في مجال تصدير الرخام والجرانيت والكوارتز عالي الجودة.
         
         نحن لا نقوم بتصدير الأحجار فحسب، بل نصدر قطعًا من الفن المصري الأصيل الذي يحمل في طياته تاريخ وحضارة آلاف السنين. 
@@ -87,12 +87,12 @@ export default async function AboutPage({ params }: AboutPageProps) {
     },
     en: {
       hero: {
-        title: 'About Alhot Marble',
+        title: 'About Lumerra Marble',
         subtitle: 'A Journey of Excellence in Natural Stone Export'
       },
       story: {
         title: 'Our Story',
-        content: `Alhot Marble was founded in Egypt with the vision of becoming the bridge that connects the beauty of Egyptian natural stones with global markets. 
+        content: `Lumerra Marble was founded in Egypt with the vision of becoming the bridge that connects the beauty of Egyptian natural stones with global markets. 
         Since its establishment over 15 years ago, the company has successfully built an outstanding reputation in exporting high-quality marble, granite, and quartz.
         
         We don't just export stones; we export pieces of authentic Egyptian art that carry within them the history and civilization of thousands of years. 
@@ -178,7 +178,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-secondary-900 to-secondary-800">
+      <section className="relative py-20 bg-gradient-to-br from-primary to-primary-800">
         <div className="absolute inset-0">
           <Image
             src={aboutContent?.hero?.backgroundImage || "/images/about-hero.jpg"}
@@ -190,7 +190,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
           />
         </div>
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-quinary">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             {currentContent.hero.title}
           </h1>
@@ -201,14 +201,14 @@ export default async function AboutPage({ params }: AboutPageProps) {
       </section>
 
       {/* Story Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-quinary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-tertiary mb-6">
                 {currentContent.story.title}
               </h2>
-              <div className="text-lg text-secondary-700 leading-relaxed space-y-4">
+              <div className="text-lg text-quaternary leading-relaxed space-y-4">
                 {currentContent.story.content.split('\n\n').map((paragraph, index) => (
                   <p key={index}>{paragraph.trim()}</p>
                 ))}
@@ -230,25 +230,25 @@ export default async function AboutPage({ params }: AboutPageProps) {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-quinary-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-secondary-900 mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-tertiary mb-12">
             {currentContent.mission.title}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <h3 className="text-2xl font-bold text-primary-600 mb-4">
+            <div className="bg-quinary p-8 rounded-lg shadow-md">
+              <h3 className="text-2xl font-bold text-secondary mb-4">
                 {locale === 'ar' ? 'رؤيتنا' : 'Our Vision'}
               </h3>
-              <p className="text-secondary-700 text-lg">
+              <p className="text-quaternary text-lg">
                 {currentContent.mission.vision}
               </p>
             </div>
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <h3 className="text-2xl font-bold text-primary-600 mb-4">
+            <div className="bg-quinary p-8 rounded-lg shadow-md">
+              <h3 className="text-2xl font-bold text-secondary mb-4">
                 {locale === 'ar' ? 'رسالتنا' : 'Our Mission'}
               </h3>
-              <p className="text-secondary-700 text-lg">
+              <p className="text-quaternary text-lg">
                 {currentContent.mission.mission}
               </p>
             </div>
@@ -257,9 +257,9 @@ export default async function AboutPage({ params }: AboutPageProps) {
       </section>
 
       {/* Values Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-quinary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-secondary-900 mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-tertiary mb-12">
             {currentContent.values.title}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -267,13 +267,13 @@ export default async function AboutPage({ params }: AboutPageProps) {
               const IconComponent = value.icon
               return (
                 <div key={index} className="text-center p-6">
-                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <IconComponent className="w-8 h-8 text-primary-600" />
+                  <div className="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <IconComponent className="w-8 h-8 text-secondary" />
                   </div>
-                  <h3 className="text-xl font-bold text-secondary-900 mb-2">
+                  <h3 className="text-xl font-bold text-tertiary mb-2">
                     {value.title}
                   </h3>
-                  <p className="text-secondary-600">
+                  <p className="text-quaternary">
                     {value.description}
                   </p>
                 </div>
@@ -284,22 +284,22 @@ export default async function AboutPage({ params }: AboutPageProps) {
       </section>
 
       {/* Location Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-quinary-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-tertiary mb-6">
                 {currentContent.location.title}
               </h2>
               <div className="flex items-start space-x-3 rtl:space-x-reverse mb-4">
-                <MapPin className="w-6 h-6 text-primary-600 mt-1 flex-shrink-0" />
+                <MapPin className="w-6 h-6 text-secondary mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-lg font-semibold text-secondary-900">
+                  <p className="text-lg font-semibold text-tertiary">
                     {currentContent.location.address}
                   </p>
                 </div>
               </div>
-              <p className="text-lg text-secondary-700 leading-relaxed">
+              <p className="text-lg text-quaternary leading-relaxed">
                 {currentContent.location.description}
               </p>
             </div>
@@ -314,18 +314,18 @@ export default async function AboutPage({ params }: AboutPageProps) {
                 />
               ) : (
                 /* Map placeholder - replace with actual map component */
-                <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
+                <div className="aspect-video bg-quinary rounded-lg flex items-center justify-center">
                   <div className="text-center">
-                    <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-600">
+                    <MapPin className="w-12 h-12 text-quaternary-400 mx-auto mb-2" />
+                    <p className="text-quaternary">
                       {locale === 'ar' ? 'خريطة الموقع' : 'Location Map'}
                     </p>
-                    <p className="text-sm text-gray-500 mt-2">
+                    <p className="text-sm text-quaternary-500 mt-2">
                       <a 
                         href="https://maps.app.goo.gl/4to6WUKDMY7KEjRVA" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-primary-600 hover:text-primary-700"
+                        className="text-secondary hover:text-secondary-700"
                       >
                         {locale === 'ar' ? 'عرض في خرائط Google' : 'View on Google Maps'}
                       </a>
@@ -339,7 +339,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-secondary-900 text-white">
+      <section className="py-16 bg-primary text-quinary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             {currentContent.stats.title}
@@ -349,11 +349,11 @@ export default async function AboutPage({ params }: AboutPageProps) {
               const IconComponent = stat.icon
               return (
                 <div key={index} className="text-center">
-                  <IconComponent className="w-12 h-12 text-primary-400 mx-auto mb-4" />
-                  <div className="text-4xl md:text-5xl font-bold text-primary-400 mb-2">
+                  <IconComponent className="w-12 h-12 text-secondary mx-auto mb-4" />
+                  <div className="text-4xl md:text-5xl font-bold text-secondary mb-2">
                     {stat.number}
                   </div>
-                  <div className="text-secondary-300">{stat.label}</div>
+                  <div className="text-quaternary-300">{stat.label}</div>
                 </div>
               )
             })}
