@@ -7,11 +7,11 @@ import {
   Edit, 
   Trash2, 
   Search, 
-  Eye,
+  // Eye,
   FileText,
   Save,
   X,
-  Globe
+  // Globe
 } from 'lucide-react'
 import { Button } from 'bkalhot/components/ui/button'
 import { Input } from 'bkalhot/components/ui/input'
@@ -65,6 +65,7 @@ export default function BlogManagement() {
 
   useEffect(() => {
     loadPosts()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadPosts = async () => {

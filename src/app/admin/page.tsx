@@ -11,10 +11,10 @@ import { Save, Edit, Eye, Settings, Calculator, LogOut, Building, Ship } from 'l
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('homepage')
-  const [content, setContent] = useState<any>(null)
+  const [content, setContent] = useState<Record<string, unknown> | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [currentLang, setCurrentLang] = useState('ar')
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
@@ -457,7 +457,7 @@ export default function AdminPanel() {
                       قسم الإحصائيات
                     </h3>
                     <div className="space-y-4">
-                      {(content[currentLang]?.homepage?.stats?.items || []).map((stat: any, index: number) => (
+                      {(content[currentLang]?.homepage?.stats?.items || []).map((stat: { number?: string; text?: string }, index: number) => (
                         <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
                           <div>
                             <label className="block text-sm font-medium mb-2">
@@ -512,7 +512,7 @@ export default function AdminPanel() {
                       قسم المميزات
                     </h3>
                     <div className="space-y-4">
-                      {(content[currentLang]?.homepage?.features?.items || []).map((feature: any, index: number) => (
+                      {(content[currentLang]?.homepage?.features?.items || []).map((feature: { title?: string; description?: string; icon?: string }, index: number) => (
                         <div key={index} className="p-4 bg-gray-50 rounded-lg">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -1173,7 +1173,7 @@ export default function AdminPanel() {
                         )}
                       </div>
                       
-                      {(content[currentLang]?.about?.stats?.items || []).map((stat: any, index: number) => (
+                      {(content[currentLang]?.about?.stats?.items || []).map((stat: { number?: string; text?: string }, index: number) => (
                         <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
                           <div>
                             <label className="block text-sm font-medium mb-2">
@@ -1750,7 +1750,7 @@ export default function AdminPanel() {
                   </div>
                 </div>
                 <div className="text-center py-4 text-gray-500">
-                  <p className="text-sm">انقر على "إدارة جميع المنتجات" لإضافة وتعديل المنتجات</p>
+                  <p className="text-sm">انقر على &quot;إدارة جميع المنتجات&quot; لإضافة وتعديل المنتجات</p>
                 </div>
               </Card>
             )}
@@ -1814,7 +1814,7 @@ export default function AdminPanel() {
                   </div>
                 </div>
                 <div className="text-center py-4 text-gray-500">
-                  <p className="text-sm">انقر على "عرض جميع الطلبات" لإدارة طلبات الأسعار</p>
+                  <p className="text-sm">انقر على &quot;عرض جميع الطلبات&quot; لإدارة طلبات الأسعار</p>
                 </div>
               </Card>
             )}
@@ -1878,7 +1878,7 @@ export default function AdminPanel() {
                   </div>
                 </div>
                 <div className="text-center py-4 text-gray-500">
-                  <p className="text-sm">انقر على "إدارة جميع المقالات" لإضافة وتعديل مقالات المدونة</p>
+                  <p className="text-sm">انقر على &quot;إدارة جميع المقالات&quot; لإضافة وتعديل مقالات المدونة</p>
                 </div>
               </Card>
             )}

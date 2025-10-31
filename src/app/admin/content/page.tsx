@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '../../../components/ui/button'
-import { Input } from '../../../components/ui/input'
+// import { Input } from '../../../components/ui/input'
 import { Textarea } from '../../../components/ui/textarea'
 
 interface ContentItem {
@@ -28,6 +28,7 @@ export default function ContentManagementPage() {
 
   useEffect(() => {
     fetchContent()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPage])
 
   const fetchContent = async () => {

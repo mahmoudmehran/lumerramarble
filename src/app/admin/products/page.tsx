@@ -7,8 +7,8 @@ import {
   Edit, 
   Trash2, 
   Search, 
-  Filter,
-  Eye,
+  // Filter,
+  // Eye,
   Package,
   Image as ImageIcon,
   Save,
@@ -70,6 +70,7 @@ export default function ProductsManagement() {
 
   useEffect(() => {
     loadProducts()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadProducts = async () => {
