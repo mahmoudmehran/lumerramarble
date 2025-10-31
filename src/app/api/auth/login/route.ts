@@ -2,14 +2,48 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { prisma } from '../../../../lib/db'
+import { authLimiter, getClientIdentifier } from '../../../../lib/rate-limit'
+import { sanitizeString, validateEmail } from '../../../../lib/validation'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json()
-
-    if (!email || !password) {
+    // ✅ Rate Limiting - منع brute force attacks
+    const identifier = getClientIdentifier(request)
+    const rateLimitResult = await authLimiter.check(identifier)
+    
+    if (!rateLimitResult.success) {
       return NextResponse.json(
-        { message: 'البريد الإلكتروني وكلمة المرور مطلوبان' },
+        { 
+          message: 'لقد تجاوزت الحد المسموح من محاولات تسجيل الدخول. حاول مرة أخرى بعد 15 دقيقة.',
+          retryAfter: rateLimitResult.reset
+        },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+            'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+            'X-RateLimit-Reset': rateLimitResult.reset.toString()
+          }
+        }
+      )
+    }
+
+    const body = await request.json()
+    
+    // ✅ Input Validation & Sanitization
+    const email = sanitizeString(body.email || '')
+    const password = body.password || ''
+
+    if (!email || !validateEmail(email)) {
+      return NextResponse.json(
+        { message: 'البريد الإلكتروني غير صحيح' },
+        { status: 400 }
+      )
+    }
+
+    if (!password || password.length < 8) {
+      return NextResponse.json(
+        { message: 'كلمة المرور يجب أن تكون على الأقل 8 أحرف' },
         { status: 400 }
       )
     }
@@ -78,6 +112,12 @@ export async function POST(request: NextRequest) {
         email: user.email,
         name: user.name,
         role: user.role
+      }
+    }, {
+      headers: {
+        'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+        'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+        'X-RateLimit-Reset': rateLimitResult.reset.toString()
       }
     })
 

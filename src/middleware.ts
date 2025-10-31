@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getCorsHeaders, getSecurityHeaders, handleCorsOptions } from './lib/cors'
 
 // Supported locales
 const locales = ['ar', 'en', 'es', 'fr']
@@ -35,8 +36,34 @@ function isStaticFile(pathname: string): boolean {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Skip middleware for static files and API routes
-  if (isStaticFile(pathname) || isApiPath(pathname)) {
+  // ✅ Handle CORS for API routes
+  if (isApiPath(pathname)) {
+    // Handle OPTIONS request (preflight)
+    if (request.method === 'OPTIONS') {
+      return handleCorsOptions(request)
+    }
+
+    // Add CORS and security headers to API responses
+    const response = NextResponse.next()
+    
+    // CORS headers
+    const origin = request.headers.get('origin')
+    const corsHeaders = getCorsHeaders(origin)
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value)
+    })
+    
+    // Security headers
+    const securityHeaders = getSecurityHeaders()
+    Object.entries(securityHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value)
+    })
+
+    return response
+  }
+
+  // Skip middleware for static files
+  if (isStaticFile(pathname)) {
     return NextResponse.next()
   }
 
