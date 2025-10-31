@@ -175,7 +175,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
     },
     stats: {
       title: aboutContent.stats?.title || content[locale as keyof typeof content]?.stats?.title || content.en.stats.title,
-      items: aboutContent.stats?.items?.map((item: any, index: number) => ({
+      items: aboutContent.stats?.items?.map((item: { number?: string; text?: string }, index: number) => ({
         ...item,
         icon: content[locale as keyof typeof content]?.stats?.items?.[index]?.icon || content.en.stats.items[index]?.icon
       })) || content[locale as keyof typeof content]?.stats?.items || content.en.stats.items
@@ -352,7 +352,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
             {currentContent.stats.title}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {currentContent.stats.items.map((stat: any, index: number) => {
+            {currentContent.stats.items.map((stat: { icon: React.ComponentType<{ className: string }>; number: string; text: string; label?: string }, index: number) => {
               const IconComponent = stat.icon
               return (
                 <div key={index} className="text-center">

@@ -98,6 +98,144 @@ function getDefaultContent(pageKey: string): ContentData {
           en: "Numbers That Speak About Us",
           es: "Números que Hablan de Nosotros",
           fr: "Des Chiffres qui Parlent de Nous"
+        },
+        clients_number: {
+          ar: "500+",
+          en: "500+",
+          es: "500+",
+          fr: "500+"
+        },
+        clients_text: {
+          ar: "عميل راضٍ",
+          en: "Happy Clients",
+          es: "Clientes Satisfechos",
+          fr: "Clients Satisfaits"
+        },
+        projects_number: {
+          ar: "1000+",
+          en: "1000+",
+          es: "1000+",
+          fr: "1000+"
+        },
+        projects_text: {
+          ar: "مشروع منجز",
+          en: "Completed Projects",
+          es: "Proyectos Completados",
+          fr: "Projets Terminés"
+        },
+        countries_number: {
+          ar: "50+",
+          en: "50+",
+          es: "50+",
+          fr: "50+"
+        },
+        countries_text: {
+          ar: "دولة حول العالم",
+          en: "Countries Worldwide",
+          es: "Países en Todo el Mundo",
+          fr: "Pays dans le Monde"
+        },
+        satisfaction_number: {
+          ar: "100%",
+          en: "100%",
+          es: "100%",
+          fr: "100%"
+        },
+        satisfaction_text: {
+          ar: "رضا العملاء",
+          en: "Customer Satisfaction",
+          es: "Satisfacción del Cliente",
+          fr: "Satisfaction Client"
+        }
+      },
+      categories: {
+        title: {
+          ar: "فئات منتجاتنا",
+          en: "Our Product Categories",
+          es: "Nuestras Categorías de Productos",
+          fr: "Nos Catégories de Produits"
+        },
+        subtitle: {
+          ar: "اكتشف مجموعتنا الواسعة من الرخام والجرانيت الفاخر",
+          en: "Discover our wide range of premium marble and granite",
+          es: "Descubra nuestra amplia gama de mármol y granito premium",
+          fr: "Découvrez notre large gamme de marbre et granit premium"
+        }
+      },
+      features: {
+        title: {
+          ar: "لماذا تختارنا؟",
+          en: "Why Choose Us?",
+          es: "¿Por Qué Elegirnos?",
+          fr: "Pourquoi Nous Choisir?"
+        },
+        quality_title: {
+          ar: "جودة عالية",
+          en: "High Quality",
+          es: "Alta Calidad",
+          fr: "Haute Qualité"
+        },
+        quality_description: {
+          ar: "نحن نقدم فقط أفضل أنواع الرخام والجرانيت",
+          en: "We offer only the finest marble and granite",
+          es: "Ofrecemos solo el mejor mármol y granito",
+          fr: "Nous offrons uniquement le meilleur marbre et granit"
+        },
+        global_title: {
+          ar: "توصيل عالمي",
+          en: "Global Delivery",
+          es: "Entrega Global",
+          fr: "Livraison Mondiale"
+        },
+        global_description: {
+          ar: "نصدر إلى جميع أنحاء العالم",
+          en: "We export worldwide",
+          es: "Exportamos a todo el mundo",
+          fr: "Nous exportons dans le monde entier"
+        },
+        service_title: {
+          ar: "خدمة عملاء ممتازة",
+          en: "Excellent Customer Service",
+          es: "Excelente Servicio al Cliente",
+          fr: "Excellent Service Client"
+        },
+        service_description: {
+          ar: "فريقنا متاح دائماً لمساعدتك",
+          en: "Our team is always available to help",
+          es: "Nuestro equipo siempre está disponible para ayudar",
+          fr: "Notre équipe est toujours disponible pour vous aider"
+        },
+        experience_title: {
+          ar: "سنوات من الخبرة",
+          en: "Years of Experience",
+          es: "Años de Experiencia",
+          fr: "Années d'Expérience"
+        },
+        experience_description: {
+          ar: "خبرة واسعة في صناعة الرخام",
+          en: "Extensive experience in marble industry",
+          es: "Amplia experiencia en la industria del mármol",
+          fr: "Vaste expérience dans l'industrie du marbre"
+        }
+      },
+      cta: {
+        title: {
+          ar: "جاهز للبدء؟",
+          en: "Ready to Start?",
+          es: "¿Listo para Comenzar?",
+          fr: "Prêt à Commencer?"
+        },
+        subtitle: {
+          ar: "احصل على عرض سعر مخصص لمشروعك اليوم",
+          en: "Get a custom quote for your project today",
+          es: "Obtenga una cotización personalizada para su proyecto hoy",
+          fr: "Obtenez un devis personnalisé pour votre projet aujourd'hui"
+        },
+        button: {
+          ar: "اطلب عرض سعر الآن",
+          en: "Request Quote Now",
+          es: "Solicitar Cotización Ahora",
+          fr: "Demander un Devis Maintenant"
         }
       }
     }

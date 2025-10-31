@@ -14,9 +14,9 @@ import {
   Save,
   X
 } from 'lucide-react'
-import { Button } from 'bkalhot/components/ui/button'
-import { Input } from 'bkalhot/components/ui/input'
-import { Card } from 'bkalhot/components/ui/card'
+import { Button } from '../../../components/ui/button'
+import { Input } from '../../../components/ui/input'
+import { Card } from '../../../components/ui/card'
 import Image from 'next/image'
 
 interface Product {
@@ -220,7 +220,7 @@ export default function ProductsManagement() {
   })
 
   const getCategoryName = (category: string) => {
-    const categories: any = {
+    const categories: Record<string, string> = {
       'MARBLE': 'رخام',
       'GRANITE': 'جرانيت', 
       'QUARTZ': 'كوارتز',

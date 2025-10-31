@@ -145,6 +145,7 @@ export async function DELETE(request: NextRequest) {
     const fullPath = path.join(process.cwd(), 'public', filePath)
     
     // حذف الملف الأصلي
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const fs = require('fs').promises
     try {
       await fs.unlink(fullPath)

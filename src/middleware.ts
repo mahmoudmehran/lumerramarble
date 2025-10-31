@@ -15,7 +15,7 @@ function getLocale(pathname: string): string | null {
 
 // Check if path is for admin area
 function isAdminPath(pathname: string): boolean {
-  return pathname.includes('/admin')
+  return pathname.startsWith('/admin')
 }
 
 // Check if path is for API routes
@@ -67,6 +67,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Skip locale handling for admin routes
+  if (isAdminPath(pathname)) {
+    return NextResponse.next()
+  }
+
   // Get current locale from pathname
   const currentLocale = getLocale(pathname)
 
@@ -74,18 +79,6 @@ export function middleware(request: NextRequest) {
   if (!currentLocale) {
     const newUrl = new URL(`/${defaultLocale}${pathname}`, request.url)
     return NextResponse.redirect(newUrl)
-  }
-
-  // Admin area protection (basic check - enhance with actual auth)
-  if (isAdminPath(pathname)) {
-    // Check for auth token in cookies
-    const token = request.cookies.get('auth-token')
-    
-    // If no token and not on login page, redirect to login
-    if (!token && !pathname.includes('/admin/login')) {
-      const loginUrl = new URL(`/${currentLocale}/admin/login`, request.url)
-      return NextResponse.redirect(loginUrl)
-    }
   }
 
   // Set locale cookie for client-side access

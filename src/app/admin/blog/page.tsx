@@ -13,9 +13,9 @@ import {
   X,
   // Globe
 } from 'lucide-react'
-import { Button } from 'bkalhot/components/ui/button'
-import { Input } from 'bkalhot/components/ui/input'
-import { Card } from 'bkalhot/components/ui/card'
+import { Button } from '../../../components/ui/button'
+import { Input } from '../../../components/ui/input'
+import { Card } from '../../../components/ui/card'
 
 interface BlogPost {
   id: string

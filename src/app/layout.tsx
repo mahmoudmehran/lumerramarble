@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cairo, Inter } from "next/font/google";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import "./globals.css";
 
 const cairo = Cairo({
@@ -55,6 +56,7 @@ export default function RootLayout({
         className={`${cairo.variable} ${inter.variable} antialiased`}
         suppressHydrationWarning
       >
+        <GoogleAnalytics />
         {children}
       </body>
     </html>

@@ -9,9 +9,7 @@ import {
   Mail, 
   Phone, 
   MapPin,
-  Palette,
-  Type,
-  Image as ImageIcon
+  Palette
 } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'

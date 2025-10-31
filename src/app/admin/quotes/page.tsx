@@ -5,8 +5,8 @@ import {
   Eye, 
   Download, 
   Search, 
-  Filter, 
-  Calendar,
+  // Filter, 
+  // Calendar,
   User,
   Building,
   Package,
@@ -16,15 +16,15 @@ import {
   Mail,
   Phone,
   Send,
-  Edit,
+  // Edit,
   AlertCircle,
   Loader2,
   Copy
 } from 'lucide-react'
-import { Button } from 'bkalhot/components/ui/button'
-import { Input } from 'bkalhot/components/ui/input'
-import { Card } from 'bkalhot/components/ui/card'
-import { ToastProvider, toast } from 'bkalhot/components/ui/toast'
+import { Button } from '../../../components/ui/button'
+import { Input } from '../../../components/ui/input'
+import { Card } from '../../../components/ui/card'
+import { ToastProvider, toast } from '../../../components/ui/toast'
 
 interface QuoteRequest {
   id: string
@@ -53,7 +53,7 @@ interface QuoteRequest {
   finish?: string
   dimensions?: string
   color?: string
-  attachments?: any[]
+  attachments?: unknown[]
   createdAt: Date
   updatedAt: Date
 }
@@ -63,10 +63,10 @@ interface SendQuoteModal {
   quote: QuoteRequest | null
 }
 
-interface StatusUpdateData {
-  quoteId: string
-  newStatus: QuoteRequest['status']
-}
+// interface StatusUpdateData {
+//   quoteId: string
+//   newStatus: QuoteRequest['status']
+// }
 
 export default function QuoteManagement() {
   const [quotes, setQuotes] = useState<QuoteRequest[]>([])
@@ -490,7 +490,7 @@ export default function QuoteManagement() {
       const csvContent = [
         headers.join(','),
         ...exportData.map(row => 
-          headers.map(header => `"${(row as any)[header] || ''}"`).join(',')
+          headers.map(header => `"${(row as Record<string, string>)[header] || ''}"`).join(',')
         )
       ].join('\n')
 
@@ -693,7 +693,8 @@ Phone: +1 (XXX) XXX-XXXX`
         setSubject(titles[language as keyof typeof titles] || titles.en)
         setMessage(generateMessage(language, sendQuoteModal.quote))
       }
-    }, [sendQuoteModal.quote, language])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [language])
 
     const handleSend = async () => {
       if (!sendQuoteModal.quote || !subject || !message) {

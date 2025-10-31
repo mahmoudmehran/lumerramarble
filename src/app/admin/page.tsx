@@ -9,9 +9,14 @@ import { Select } from '../../components/ui/select'
 import { Card } from '../../components/ui/card'
 import { Save, Edit, Eye, Settings, Calculator, LogOut, Building, Ship } from 'lucide-react'
 
+// تعريف نوع المحتوى
+interface ContentData {
+  [key: string]: any
+}
+
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('homepage')
-  const [content, setContent] = useState<Record<string, unknown> | null>(null)
+  const [content, setContent] = useState<ContentData | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [currentLang, setCurrentLang] = useState('ar')
   const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null)
@@ -54,14 +59,14 @@ export default function AdminPanel() {
         } else {
           // Fallback to default content if API fails
           const { getContent } = await import('../../lib/content')
-          const defaultContent = getContent()
+          const defaultContent = await getContent()
           setContent(defaultContent)
         }
       } catch (error) {
         console.error('Error loading content:', error)
         // Fallback to default content
         const { getContent } = await import('../../lib/content')
-        const defaultContent = getContent()
+        const defaultContent = await getContent()
         setContent(defaultContent)
       }
       setIsLoading(false)
@@ -1202,18 +1207,18 @@ export default function AdminPanel() {
                             </label>
                             {isEditing ? (
                               <Input
-                                value={stat.label || ''}
+                                value={stat.text || ''}
                                 onChange={(e) => {
                                   const newContent = JSON.parse(JSON.stringify(content))
                                   if (!newContent[currentLang]?.about?.stats?.items) return
-                                  newContent[currentLang].about.stats.items[index].label = e.target.value
+                                  newContent[currentLang].about.stats.items[index].text = e.target.value
                                   setContent(newContent)
                                 }}
                                 placeholder="سنوات من الخبرة"
                               />
                             ) : (
                               <div className="p-2 bg-white rounded border">
-                                {stat.label || 'غير محدد'}
+                                {stat.text || 'غير محدد'}
                               </div>
                             )}
                           </div>

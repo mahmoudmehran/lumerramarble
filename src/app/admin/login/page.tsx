@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
-import { Button } from 'bkalhot/components/ui/button'
-import { Input } from 'bkalhot/components/ui/input'
-import { Card } from 'bkalhot/components/ui/card'
+import { Button } from '../../../components/ui/button'
+import { Input } from '../../../components/ui/input'
+import { Card } from '../../../components/ui/card'
 
 export default function AdminLogin() {
   const [formData, setFormData] = useState({

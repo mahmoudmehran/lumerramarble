@@ -68,14 +68,18 @@ function verifyAdmin(request: NextRequest) {
     }
 
     const token = authHeader.substring(7)
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as {
+      role: string
+      userId: string
+      email: string
+    }
     
     if (decoded.role !== 'admin') {
       return null
     }
 
     return decoded
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -173,7 +177,7 @@ export async function PUT(request: NextRequest) {
     } = body
 
     // Get existing settings or create new one
-    let existingSettings = await prisma.siteSettings.findFirst()
+    const existingSettings = await prisma.siteSettings.findFirst()
     
     let settings
     if (existingSettings) {
