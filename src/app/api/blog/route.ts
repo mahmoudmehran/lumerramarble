@@ -5,13 +5,29 @@ export async function GET() {
   try {
     const posts = await prisma.blogPost.findMany({
       where: { published: true },
+      include: {
+        author: {
+          select: {
+            name: true
+          }
+        },
+        category: {
+          select: {
+            nameAr: true,
+            nameEn: true,
+            nameEs: true,
+            nameFr: true,
+            slug: true
+          }
+        }
+      },
       orderBy: [
         { featured: 'desc' },
         { createdAt: 'desc' }
       ]
     })
 
-    return NextResponse.json(posts)
+    return NextResponse.json({ posts })
   } catch (error) {
     console.error('Error fetching blog posts:', error)
     return NextResponse.json({ error: 'Failed to fetch blog posts' }, { status: 500 })

@@ -1,3 +1,5 @@
+'use client'
+
 // JSON-LD Structured Data Component
 // استخدم هذا الكومبوننت لإضافة structured data لـ Google
 
@@ -57,6 +59,7 @@ export function OrganizationSchema({ locale = 'ar' }: OrganizationSchemaProps) {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      suppressHydrationWarning
     />
   )
 }
@@ -105,6 +108,7 @@ export function ProductSchema({ product, locale = 'ar' }: ProductSchemaProps) {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      suppressHydrationWarning
     />
   )
 }
@@ -132,6 +136,7 @@ export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      suppressHydrationWarning
     />
   )
 }
@@ -183,6 +188,7 @@ export function BlogPostSchema({ post, locale = 'ar' }: BlogPostSchemaProps) {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      suppressHydrationWarning
     />
   )
 }

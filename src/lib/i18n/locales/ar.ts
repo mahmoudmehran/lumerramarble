@@ -26,7 +26,9 @@ export const arTranslations: TranslationKeys = {
     home: 'الرئيسية',
     blog: 'المدونة',
     export: 'التصدير',
-    quote: 'عرض سعر'
+    quote: 'عرض سعر',
+    language: 'اللغة',
+    active: 'نشط'
   },
 
   navigation: {

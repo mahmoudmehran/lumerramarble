@@ -18,7 +18,7 @@ interface ContentCache {
 }
 
 let contentCache: ContentCache = {}
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+const CACHE_DURATION = 0 // Disabled cache for testing
 let lastCacheUpdate = 0
 
 export async function getContent(pageKey: string = 'homepage'): Promise<ContentData> {

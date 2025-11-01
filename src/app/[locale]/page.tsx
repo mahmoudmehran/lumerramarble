@@ -73,6 +73,13 @@ export default async function HomePage({ params }: HomePageProps) {
   }
   
   // بيانات الفئات
+  const categoriesData = {
+    marble: { ar: 'رخام', en: 'Marble', es: 'Mármol', fr: 'Marbre' },
+    granite: { ar: 'جرانيت', en: 'Granite', es: 'Granito', fr: 'Granit' },
+    quartz: { ar: 'كوارتز', en: 'Quartz', es: 'Cuarzo', fr: 'Quartz' },
+    special: { ar: 'أحجار خاصة', en: 'Special Stones', es: 'Piedras Especiales', fr: 'Pierres Spéciales' }
+  }
+  
   const categories = [
     { 
       key: 'marble',
@@ -134,16 +141,18 @@ export default async function HomePage({ params }: HomePageProps) {
         variant="white"
         centered
       >
-        <Grid cols={4} gap={8}>
-          {['clients', 'projects', 'countries', 'satisfaction'].map((statKey, index) => (
-            <StatCard
-              key={index}
-              number={getText('stats', `${statKey}_number`)}
-              label={getText('stats', `${statKey}_text`)}
-              variant="light"
-            />
-          ))}
-        </Grid>
+        <div className="max-w-3xl mx-auto px-12">
+          <Grid cols={4} gap={8}>
+            {['clients', 'projects', 'countries', 'satisfaction'].map((statKey, index) => (
+              <StatCard
+                key={index}
+                number={getText('stats', `${statKey}_number`)}
+                label={getText('stats', `${statKey}_text`)}
+                variant="light"
+              />
+            ))}
+          </Grid>
+        </div>
       </ContentSection>
 
       {/* Categories Section */}
@@ -153,30 +162,32 @@ export default async function HomePage({ params }: HomePageProps) {
         variant="light"
         centered
       >
-        <Grid cols={4} gap={8}>
-          {categories.map((category, index) => (
-            <Link
-              key={index}
-              href={`/${locale}${category.href}`}
-              className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            >
-              <div className="aspect-square relative">
-                <Image
-                  src={category.image}
-                  alt={`${category.key} category`}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-[var(--color-quinary)] font-bold text-xl mb-2">
-                    {category.key}
-                  </h3>
+        <div className="max-w-4xl mx-auto px-12">
+          <Grid cols={4} gap={8}>
+            {categories.map((category, index) => (
+              <Link
+                key={index}
+                href={`/${locale}${category.href}`}
+                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div className="aspect-square relative">
+                  <Image
+                    src={category.image}
+                    alt={`${categoriesData[category.key as keyof typeof categoriesData][locale as keyof typeof categoriesData.marble]} category`}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-[var(--color-quinary)] font-bold text-xl mb-2">
+                      {categoriesData[category.key as keyof typeof categoriesData][locale as keyof typeof categoriesData.marble]}
+                    </h3>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </Grid>
+              </Link>
+            ))}
+          </Grid>
+        </div>
       </ContentSection>
 
       {/* Features Section */}
@@ -185,19 +196,21 @@ export default async function HomePage({ params }: HomePageProps) {
         variant="white"
         centered
       >
-        <Grid cols={4} gap={8}>
-          {features.map((feature, index) => {
-            const IconComponent = feature.icon
-            return (
-              <FeatureCard
-                key={index}
-                icon={<IconComponent className="w-8 h-8" />}
-                title={getText('features', `${feature.key}_title`)}
-                description={getText('features', `${feature.key}_description`)}
-              />
-            )
-          })}
-        </Grid>
+        <div className="max-w-4xl mx-auto px-12">
+          <Grid cols={4} gap={8}>
+            {features.map((feature, index) => {
+              const IconComponent = feature.icon
+              return (
+                <FeatureCard
+                  key={index}
+                  icon={<IconComponent className="w-10 h-10 flex-shrink-0" strokeWidth={2} />}
+                  title={getText('features', `${feature.key}_title`)}
+                  description={getText('features', `${feature.key}_description`)}
+                />
+              )
+            })}
+          </Grid>
+        </div>
       </ContentSection>
 
       {/* CTA Section */}

@@ -1,0 +1,27 @@
+/* Force override any remaining hardcoded colors */
+
+/* Ensure all text colors use theme system */
+.text-gray-900 { color: var(--color-quaternary) !important; }
+.text-gray-800 { color: var(--color-quaternary-800) !important; }
+.text-gray-700 { color: var(--color-quaternary-700) !important; }
+.text-gray-600 { color: var(--color-quaternary-600) !important; }
+.text-gray-500 { color: var(--color-quaternary-500) !important; }
+.text-gray-400 { color: var(--color-quaternary-400) !important; }
+.text-gray-300 { color: var(--color-quaternary-300) !important; }
+.text-gray-200 { color: var(--color-quaternary-200) !important; }
+
+/* Ensure all background colors use theme system */
+.bg-white { background-color: var(--color-quinary) !important; }
+.bg-gray-50 { background-color: var(--color-quinary-50) !important; }
+.bg-gray-100 { background-color: var(--color-quinary-100) !important; }
+.bg-gray-200 { background-color: var(--color-quinary-200) !important; }
+
+/* Ensure all border colors use theme system */  
+.border-gray-300 { border-color: var(--color-quaternary-300) !important; }
+.border-gray-200 { border-color: var(--color-quaternary-200) !important; }
+
+/* Override any remaining hardcoded primary colors */
+.text-primary-600 { color: var(--color-secondary) !important; }
+.bg-primary-50 { background-color: var(--color-secondary-50) !important; }
+.text-secondary-900 { color: var(--color-tertiary) !important; }
+.bg-secondary-900 { background-color: var(--color-primary) !important; }

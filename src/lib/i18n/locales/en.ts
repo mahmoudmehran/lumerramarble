@@ -26,7 +26,9 @@ export const enTranslations: TranslationKeys = {
     home: 'Home',
     blog: 'Blog',
     export: 'Export',
-    quote: 'Quote'
+    quote: 'Quote',
+    language: 'Language',
+    active: 'Active'
   },
 
   navigation: {

@@ -14,25 +14,25 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-quaternary mb-2">
+          <label className="block text-sm font-medium text-[var(--color-quaternary)] mb-2">
             {label}
             {props.required && <span className="text-red-500 ml-1 rtl:ml-0 rtl:mr-1">*</span>}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <div className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 text-quaternary-400 z-10 pointer-events-none">
+            <div className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 text-[var(--color-quaternary-400)] z-10 pointer-events-none">
               {icon}
             </div>
           )}
           <input
             type={type}
             className={cn(
-              "flex h-10 w-full rounded-md border border-quaternary-300 bg-quinary px-3 py-2 text-sm transition-colors placeholder:text-quaternary-400 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary disabled:cursor-not-allowed disabled:opacity-50",
+              "flex h-9 w-full rounded-md border bg-[var(--color-quinary)] px-3 py-2 text-sm font-normal transition-colors text-[var(--color-quaternary)] placeholder:text-[var(--color-quaternary-400)] focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-[var(--color-secondary)] disabled:cursor-not-allowed disabled:opacity-50",
               icon ? "pl-10 pr-3 rtl:pl-3 rtl:pr-10" : "px-3",
               error 
                 ? "border-red-300 focus:border-red-500 focus:ring-red-500" 
-                : "border-quaternary-300",
+                : "border-[var(--color-quaternary-300)]",
               className
             )}
             ref={ref}
@@ -43,7 +43,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <p className="mt-2 text-sm text-red-600">{error}</p>
         )}
         {helperText && !error && (
-          <p className="mt-2 text-sm text-quaternary-500">{helperText}</p>
+          <p className="mt-2 text-sm text-[var(--color-quaternary-500)]">{helperText}</p>
         )}
       </div>
     )

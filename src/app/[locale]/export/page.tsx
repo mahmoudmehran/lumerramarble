@@ -11,11 +11,20 @@ import {
   Package,
   Truck,
   FileText,
-  Award
+  Award,
+  TrendingUp,
+  Users
 } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
-import { Card } from '../../../components/ui/card'
 import { fetchContentFromAPI, getContent } from '../../../lib/content'
+import {
+  PageHeader,
+  ContentSection,
+  FeatureCard,
+  StatCard,
+  Grid,
+  CTASection
+} from '../../../components/ui/page-sections'
 
 // إجبار dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -289,187 +298,174 @@ export default async function ExportPage({ params }: ExportPageProps) {
   } : (content[locale as keyof typeof content] || content.en)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--color-quinary-50)]">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-r from-primary-600 to-primary-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-white">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                {currentContent.hero.title}
-              </h1>
-              <p className="text-xl text-primary-100 mb-8 leading-relaxed">
-                {currentContent.hero.subtitle}
-              </p>
-              <Link href={`/${locale}/quote`}>
-                <Button variant="secondary" size="lg" className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                  {currentContent.hero.cta}
-                  {isRTL ? <ArrowLeft className="ml-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-                </Button>
-              </Link>
-            </div>
-            <div className="relative">
-              <div className="relative h-96 rounded-lg overflow-hidden shadow-2xl">
-                <Image
-                  src={exportContent?.hero?.backgroundImage || "/images/export-hero.jpg"}
-                  alt="Export Services"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHeader
+        title={currentContent.hero.title}
+        subtitle={currentContent.hero.subtitle}
+        image={exportContent?.hero?.backgroundImage || "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1200"}
+      />
 
-      {/* Services Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
-              {currentContent.services.title}
-            </h2>
-            <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
-              {currentContent.services.subtitle}
-            </p>
-            {exportContent?.services?.image && (
-              <div className="mt-8 relative w-full max-w-2xl mx-auto">
-                <Image
-                  src={exportContent.services.image}
-                  alt="Export Services"
-                  width={800}
-                  height={400}
-                  className="rounded-lg shadow-lg object-cover"
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {currentContent.services.items.map((service, index) => {
-              const IconComponent = service.icon
-              return (
-                <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
-                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
-                    <IconComponent className="w-6 h-6 text-primary-600" />
-                  </div>
-                  <h3 className="font-bold text-xl text-secondary-900 mb-3">
-                    {service.title}
-                  </h3>
-                  <p className="text-secondary-600">
-                    {service.description}
-                  </p>
-                </Card>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
-              {currentContent.process.title}
-            </h2>
-            <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
-              {currentContent.process.subtitle}
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {currentContent.process.steps.map((step, index) => (
-              <div key={index} className="relative">
-                <Card className="p-6 h-full">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">
-                      {step.number}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-lg text-secondary-900 mb-2">
-                        {step.title}
-                      </h3>
-                      <p className="text-secondary-600">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-                {index < currentContent.process.steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-6 -right-4 w-8 h-0.5 bg-primary-200"></div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Countries Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
-              {currentContent.countries.title}
-            </h2>
-            <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
-              {currentContent.countries.subtitle}
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentContent.countries.regions.map((region, index) => (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
-                <div className="text-4xl mb-4">{region.flag}</div>
-                <h3 className="font-bold text-lg text-secondary-900 mb-2">
-                  {region.name}
-                </h3>
-                <p className="text-primary-600 font-semibold">
-                  {region.count}
-                </p>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
-              {currentContent.features.title}
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-            {currentContent.features.items.map((feature, index) => (
-              <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-lg">
-                <CheckCircle className="w-5 h-5 text-primary-600 flex-shrink-0" />
-                <span className="text-secondary-700">{feature}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-secondary-900 to-secondary-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            {currentContent.cta.title}
-          </h2>
-          <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-            {currentContent.cta.subtitle}
-          </p>
+      {/* CTA Button Section */}
+      <ContentSection variant="white">
+        <div className="text-center -mt-8">
           <Link href={`/${locale}/quote`}>
-            <Button variant="secondary" size="lg" className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl">
-              {currentContent.cta.button}
+            <Button size="lg" className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              {currentContent.hero.cta}
               {isRTL ? <ArrowLeft className="ml-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
             </Button>
           </Link>
         </div>
-      </section>
+      </ContentSection>
+
+      {/* Services Section */}
+      <ContentSection
+        title={currentContent.services.title}
+        subtitle={currentContent.services.subtitle}
+        variant="white"
+        centered
+      >
+        <Grid cols={3} gap={8}>
+          {currentContent.services.items.map((service, index) => {
+            const IconComponent = service.icon
+            return (
+              <FeatureCard
+                key={index}
+                icon={<IconComponent className="w-10 h-10" strokeWidth={2} />}
+                title={service.title}
+                description={service.description}
+              />
+            )
+          })}
+        </Grid>
+      </ContentSection>
+
+      {/* Process Section */}
+      <ContentSection
+        title={currentContent.process.title}
+        subtitle={currentContent.process.subtitle}
+        variant="light"
+        centered
+      >
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {currentContent.process.steps.map((step, index) => (
+            <div 
+              key={index} 
+              className="relative bg-[var(--color-quinary)] p-8 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-all duration-300 group"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] text-[var(--color-quinary)] rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  {step.number}
+                </div>
+                <div>
+                  <h3 className="font-bold text-xl text-[var(--color-secondary-900)] mb-3">
+                    {step.title}
+                  </h3>
+                  <p className="text-[var(--color-quaternary)] leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Connection line for desktop */}
+              {index < currentContent.process.steps.length - 1 && index % 3 !== 2 && (
+                <div className="hidden lg:block absolute top-8 -right-4 w-8 h-0.5 bg-gradient-to-r from-[var(--color-primary)] to-transparent z-10"></div>
+              )}
+            </div>
+          ))}
+        </div>
+      </ContentSection>
+
+      {/* Countries Section */}
+      <ContentSection
+        title={currentContent.countries.title}
+        subtitle={currentContent.countries.subtitle}
+        variant="white"
+        centered
+      >
+        <Grid cols={3} gap={6}>
+          {currentContent.countries.regions.map((region, index) => (
+            <div 
+              key={index} 
+              className="bg-[var(--color-quinary)] p-8 text-center rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+            >
+              <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                {region.flag}
+              </div>
+              <h3 className="font-bold text-xl text-[var(--color-secondary-900)] mb-2">
+                {region.name}
+              </h3>
+              <p className="text-[var(--color-primary)] font-bold text-lg">
+                {region.count}
+              </p>
+            </div>
+          ))}
+        </Grid>
+      </ContentSection>
+
+      {/* Features Section */}
+      <ContentSection
+        title={currentContent.features.title}
+        variant="light"
+        centered
+      >
+        <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          {currentContent.features.items.map((feature, index) => (
+            <div 
+              key={index} 
+              className="flex items-center gap-3 p-6 bg-[var(--color-quinary)] rounded-xl shadow-md border border-[var(--color-quaternary-100)] hover:shadow-lg hover:border-[var(--color-primary-200)] transition-all duration-300"
+            >
+              <div className="w-10 h-10 bg-[var(--color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="w-5 h-5 text-[var(--color-primary)]" strokeWidth={2.5} />
+              </div>
+              <span className="text-[var(--color-quaternary)] font-medium">{feature}</span>
+            </div>
+          ))}
+        </div>
+      </ContentSection>
+
+      {/* Stats Section */}
+      <ContentSection variant="primary" centered>
+        <Grid cols={4} gap={8}>
+          <StatCard
+            number="50+"
+            label={locale === 'ar' ? 'دولة نصدر إليها' : 'Countries Exported To'}
+            variant="light"
+          />
+          <StatCard
+            number="1000+"
+            label={locale === 'ar' ? 'شحنة ناجحة' : 'Successful Shipments'}
+            variant="light"
+          />
+          <StatCard
+            number="15+"
+            label={locale === 'ar' ? 'سنوات خبرة' : 'Years Experience'}
+            variant="light"
+          />
+          <StatCard
+            number="100%"
+            label={locale === 'ar' ? 'رضا العملاء' : 'Customer Satisfaction'}
+            variant="light"
+          />
+        </Grid>
+      </ContentSection>
+
+      {/* CTA Section */}
+      <CTASection
+        title={currentContent.cta.title}
+        subtitle={currentContent.cta.subtitle}
+        variant="secondary"
+      >
+        <Link href={`/${locale}/quote`}>
+          <Button 
+            size="lg" 
+            className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl"
+          >
+            {currentContent.cta.button}
+            {isRTL ? <ArrowLeft className="ml-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
+          </Button>
+        </Link>
+      </CTASection>
     </div>
   )
 }

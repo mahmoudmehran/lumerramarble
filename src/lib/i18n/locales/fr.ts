@@ -26,7 +26,9 @@ export const frTranslations: TranslationKeys = {
     home: 'Accueil',
     blog: 'Blog',
     export: 'Exportation',
-    quote: 'Devis'
+    quote: 'Devis',
+    language: 'Langue',
+    active: 'Actif'
   },
 
   navigation: {

@@ -182,21 +182,24 @@ interface FeatureCardProps {
 export function FeatureCard({ icon, title, description, className }: FeatureCardProps) {
   return (
     <div className={cn(
-      'text-center p-6 rounded-lg transition-colors',
+      'text-center p-8 rounded-lg transition-all duration-300 h-full',
       'bg-[var(--color-quinary)] hover:bg-[var(--color-quinary-100)]',
       'border border-[var(--color-quaternary-100)]',
+      'hover:shadow-lg hover:-translate-y-1',
+      'flex flex-col items-center justify-start',
+      'min-h-[280px]',
       className
     )}>
-      <div className="w-16 h-16 bg-[var(--color-secondary-100)] rounded-full flex items-center justify-center mx-auto mb-4">
-        <div className="text-[var(--color-secondary)]">
+      <div className="w-20 h-20 bg-[var(--color-secondary-100)] rounded-full flex items-center justify-center flex-shrink-0 mb-6">
+        <div className="text-[var(--color-secondary)] flex items-center justify-center">
           {icon}
         </div>
       </div>
-      <h3 className="font-bold text-xl text-[var(--color-tertiary)] mb-2">
-        {title}
+      <h3 className="font-bold text-xl text-[var(--color-tertiary)] mb-3">
+        {title || '\u00A0'}
       </h3>
-      <p className="text-[var(--color-quaternary)]">
-        {description}
+      <p className="text-[var(--color-quaternary)] text-base leading-relaxed">
+        {description || '\u00A0'}
       </p>
     </div>
   )
@@ -337,7 +340,7 @@ export function Grid({ cols = 3, gap = 8, className, children }: GridProps) {
   }
 
   return (
-    <div className={cn('grid', gridCols[cols], gridGap[gap], className)}>
+    <div className={cn('grid items-stretch', gridCols[cols], gridGap[gap], className)}>
       {children}
     </div>
   )

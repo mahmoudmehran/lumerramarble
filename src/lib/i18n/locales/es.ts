@@ -26,7 +26,9 @@ export const esTranslations: TranslationKeys = {
     home: 'Inicio',
     blog: 'Blog',
     export: 'Exportación',
-    quote: 'Cotización'
+    quote: 'Cotización',
+    language: 'Idioma',
+    active: 'Activo'
   },
 
   navigation: {

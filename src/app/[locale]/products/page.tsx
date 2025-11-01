@@ -15,77 +15,23 @@ interface ProductsPageProps {
   searchParams: Promise<{ category?: string; search?: string }>
 }
 
-// Mock products data - would be fetched from database
-const mockProducts = [
-  {
-    id: '1',
-    nameAr: 'رخام كرارا أبيض',
-    nameEn: 'Carrara White Marble',
-    nameEs: 'Mármol Blanco Carrara',
-    nameFr: 'Marbre Blanc de Carrare',
-    category: 'MARBLE',
-    images: [
-      'https://picsum.photos/400/400?random=1',
-      'https://picsum.photos/400/400?random=2',
-      'https://picsum.photos/400/400?random=3'
-    ],
-    originCountry: 'مصر',
-    thickness: '18mm, 20mm, 30mm',
-    finishes: 'مصقول، مطفي، مضغوط'
-  },
-  {
-    id: '2',
-    nameAr: 'جرانيت أسود جالاكسي',
-    nameEn: 'Black Galaxy Granite',
-    nameEs: 'Granito Negro Galaxia',
-    nameFr: 'Granit Noir Galaxie',
-    category: 'GRANITE',
-    images: [
-      'https://picsum.photos/400/400?random=5',
-      'https://picsum.photos/400/400?random=6',
-      'https://picsum.photos/400/400?random=7'
-    ],
-    originCountry: 'مصر',
-    thickness: '20mm, 30mm',
-    finishes: 'مصقول، مطفي'
-  },
-  {
-    id: '3',
-    nameAr: 'رخام كالاكاتا ذهبي',
-    nameEn: 'Calacatta Gold Marble',
-    nameEs: 'Mármol Calacatta Oro',
-    nameFr: 'Marbre Calacatta Or',
-    category: 'MARBLE',
-    images: [
-      'https://picsum.photos/400/400?random=9',
-      'https://picsum.photos/400/400?random=10',
-      'https://picsum.photos/400/400?random=11'
-    ],
-    originCountry: 'إيطاليا',
-    thickness: '20mm, 30mm',
-    finishes: 'مصقول، مطفي'
-  },
-  {
-    id: '4',
-    nameAr: 'جرانيت أحمر إمبريال',
-    nameEn: 'Imperial Red Granite',
-    nameEs: 'Granito Rojo Imperial',
-    nameFr: 'Granit Rouge Impérial',
-    category: 'GRANITE',
-    images: [
-      'https://picsum.photos/400/400?random=13',
-      'https://picsum.photos/400/400?random=14',
-      'https://picsum.photos/400/400?random=15'
-    ],
-    originCountry: 'الهند',
-    thickness: '18mm, 20mm, 30mm',
-    finishes: 'مصقول، مطفي، محكك'
-  }
-]
+interface Product {
+  id: string
+  nameAr: string
+  nameEn: string
+  nameEs: string
+  nameFr: string
+  category: string
+  images: string | string[]
+  originCountry: string
+  thickness: string
+  finishes: string
+  slug: string
+}
 
 // Product Card Component with hover gallery
 function ProductCard({ product, locale, viewMode, currentContent }: {
-  product: any
+  product: Product
   locale: string
   viewMode: 'grid' | 'list'
   currentContent: any
@@ -94,34 +40,46 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
 
+  // Parse images if it's a JSON string
+  const images = typeof product.images === 'string' 
+    ? (product.images.startsWith('[') ? JSON.parse(product.images) : [product.images])
+    : product.images
+
   // Auto-cycle through images on hover
   useEffect(() => {
     let interval: NodeJS.Timeout
-    if (isHovered && product.images.length > 1) {
+    if (isHovered && images.length > 1) {
       interval = setInterval(() => {
         setCurrentImageIndex((prev) => 
-          prev === product.images.length - 1 ? 0 : prev + 1
+          prev === images.length - 1 ? 0 : prev + 1
         )
       }, 1500) // Change image every 1.5 seconds
     }
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [isHovered, product.images.length])
+  }, [isHovered, images.length])
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Prevent navigation if clicking on action buttons
-    const target = e.target as HTMLElement
-    if (target.closest('button') || target.closest('a[href*="quote"]')) {
-      return
-    }
+  const handleCardClick = () => {
+    console.log('Card clicked, navigating to:', `/${locale}/products/${product.id}`)
     router.push(`/${locale}/products/${product.id}`)
   }
 
   const handleQuoteClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`/${locale}/contact?product=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`)
+    console.log('Quote button clicked')
+    router.push(`/${locale}/quote?product=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`)
   }
+
+  const handleViewDetailsClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    console.log('View details clicked, navigating to:', `/${locale}/products/${product.id}`)
+    router.push(`/${locale}/products/${product.id}`)
+  }
+
+  // Default placeholder image
+  const placeholderImage = `https://via.placeholder.com/400x400/e5e7eb/6b7280?text=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`
+  const currentImage = images[currentImageIndex] || placeholderImage
 
   return (
     <div
@@ -137,7 +95,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
     >
       <div className={`relative ${viewMode === 'list' ? 'w-64 flex-shrink-0' : 'aspect-square'} overflow-hidden`}>
         <Image
-          src={product.images[currentImageIndex] || `https://via.placeholder.com/400x400/e5e7eb/6b7280?text=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`}
+          src={currentImage}
           alt={locale === 'ar' ? product.nameAr : product.nameEn}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -146,9 +104,9 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
         />
         
         {/* Image indicators */}
-        {product.images.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
-            {product.images.map((_: any, index: number) => (
+        {images.length > 1 && (
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
+            {images.map((_: any, index: number) => (
               <div
                 key={index}
                 className={`w-2 h-2 rounded-full transition-colors duration-300 ${
@@ -163,7 +121,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
         
         {/* Click to view hint */}
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
           <div className="bg-black/70 text-[var(--color-quinary)] text-xs px-2 py-1 rounded">
             {locale === 'ar' ? 'اضغط للتفاصيل' : 'Click for details'}
           </div>
@@ -186,10 +144,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
         <div className="flex gap-2 mt-4">
           <Button 
             className="flex-1 group/btn transition-all duration-300 hover:scale-105 hover:shadow-lg"
-            onClick={(e) => {
-              e.stopPropagation()
-              router.push(`/${locale}/products/${product.id}`)
-            }}
+            onClick={handleViewDetailsClick}
           >
             {currentContent.viewDetails}
           </Button>
@@ -211,10 +166,40 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
   const { category, search } = use(searchParams)
   const router = useRouter()
   const isRTL = locale === 'ar'
-  const [products, setProducts] = useState(mockProducts)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [searchTerm, setSearchTerm] = useState(search || '')
   const [selectedCategory, setSelectedCategory] = useState(category || 'all')
+
+  // Fetch products from API
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/products')
+        if (response.ok) {
+          const data = await response.json()
+          setProducts(data.products || [])
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProducts()
+  }, [])
+
+  // Update state when URL params change
+  useEffect(() => {
+    if (search !== undefined && search !== searchTerm) {
+      setSearchTerm(search)
+    }
+    if (category !== undefined && category !== selectedCategory) {
+      setSelectedCategory(category)
+    }
+  }, [search, category])
 
   const content = {
     ar: {
@@ -259,6 +244,28 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
 
   const currentContent = content[locale as keyof typeof content] || content.en
 
+  // Handle search
+  const handleSearch = (value: string) => {
+    setSearchTerm(value)
+    const params = new URLSearchParams()
+    if (value) params.set('search', value)
+    if (selectedCategory !== 'all') params.set('category', selectedCategory)
+    
+    const queryString = params.toString()
+    router.push(`/${locale}/products${queryString ? '?' + queryString : ''}`, { scroll: false })
+  }
+
+  // Handle category change
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value)
+    const params = new URLSearchParams()
+    if (searchTerm) params.set('search', searchTerm)
+    if (value !== 'all') params.set('category', value)
+    
+    const queryString = params.toString()
+    router.push(`/${locale}/products${queryString ? '?' + queryString : ''}`, { scroll: false })
+  }
+
   const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory === 'all' || 
       product.category.toLowerCase() === selectedCategory.toLowerCase()
@@ -271,6 +278,22 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
     return matchesCategory && matchesSearch
   })
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[var(--color-quinary-50)]">
+        <PageHeader
+          title={currentContent.title}
+          subtitle={currentContent.subtitle}
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <p className="text-xl text-[var(--color-quaternary)]">جاري التحميل...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-[var(--color-quinary-50)]">
       {/* Header Section */}
@@ -282,27 +305,30 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
       {/* Filters Section */}
       <section className="bg-[var(--color-quinary)] border-b border-[var(--color-quaternary-200)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            {/* Search */}
-            <div className="flex-1 max-w-md">
+          <div className="flex flex-col lg:flex-row gap-4 items-stretch">
+            {/* Search - Large and prominent */}
+            <div className="w-full lg:max-w-2xl">
               <div className="relative">
-                <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 text-[var(--color-quaternary-400)] w-5 h-5" />
+                <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 transform -translate-y-1/2 text-[var(--color-quaternary-400)] w-4 h-4 z-10" />
                 <Input
                   type="text"
                   placeholder={currentContent.searchPlaceholder}
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 rtl:pl-3 rtl:pr-10"
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="pl-10 rtl:pl-3 rtl:pr-10 w-full"
                 />
               </div>
             </div>
 
-            {/* Category Filter */}
-            <div className="flex items-center gap-4">
+            {/* Spacer - pushes everything to the sides */}
+            <div className="flex-1"></div>
+
+            {/* Category Filter and View Mode - All together */}
+            <div className="flex items-center gap-0 w-full lg:w-auto">
               <select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2 border border-[var(--color-quaternary-300)] rounded-md focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] bg-[var(--color-quinary)] text-[var(--color-quaternary)]"
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="h-10 px-3 py-2 border border-r-0 border-[var(--color-quaternary-300)] rounded-l-md focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] bg-[var(--color-quinary)] text-[var(--color-quaternary)] text-sm font-normal flex-1 lg:flex-initial lg:w-auto cursor-pointer"
               >
                 {Object.entries(currentContent.categories).map(([key, value]) => (
                   <option key={key} value={key}>
@@ -311,29 +337,31 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
                 ))}
               </select>
 
-              {/* View Mode Toggle */}
-              <div className="flex border border-[var(--color-quaternary-300)] rounded-md">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 transition-colors ${
-                    viewMode === 'grid' 
-                      ? 'bg-[var(--color-primary)] text-[var(--color-quinary)]' 
-                      : 'text-[var(--color-quaternary-500)]'
-                  }`}
-                >
-                  <GridIcon className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 transition-colors ${
-                    viewMode === 'list' 
-                      ? 'bg-[var(--color-primary)] text-[var(--color-quinary)]' 
-                      : 'text-[var(--color-quaternary-500)]'
-                  }`}
-                >
-                  <List className="w-5 h-5" />
-                </button>
-              </div>
+              {/* View Mode Toggle - Attached to filter */}
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`w-10 h-10 border border-r-0 border-[var(--color-quaternary-300)] transition-all duration-200 flex items-center justify-center flex-shrink-0 ${
+                  viewMode === 'grid' 
+                    ? 'bg-[var(--color-primary)] text-[var(--color-quinary)] border-[var(--color-primary)]' 
+                    : 'text-[var(--color-quaternary-500)] hover:bg-[var(--color-quaternary-100)] bg-[var(--color-quinary)]'
+                }`}
+                title="Grid View"
+                style={{ width: '40px', height: '40px' }}
+              >
+                <GridIcon className="w-5 h-5" strokeWidth={2} />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`w-10 h-10 border border-[var(--color-quaternary-300)] rounded-r-md transition-all duration-200 flex items-center justify-center flex-shrink-0 ${
+                  viewMode === 'list' 
+                    ? 'bg-[var(--color-primary)] text-[var(--color-quinary)] border-[var(--color-primary)]' 
+                    : 'text-[var(--color-quaternary-500)] hover:bg-[var(--color-quaternary-100)] bg-[var(--color-quinary)]'
+                }`}
+                title="List View"
+                style={{ width: '40px', height: '40px' }}
+              >
+                <List className="w-5 h-5" strokeWidth={2} />
+              </button>
             </div>
           </div>
         </div>

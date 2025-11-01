@@ -1,12 +1,15 @@
 import Image from 'next/image'
-import { MapPin, Award, Users, Globe, Clock, Shield } from 'lucide-react'
+import Link from 'next/link'
+import { MapPin, Award, Users, Globe, Clock, Shield, Target, Eye, Heart, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react'
 import { fetchContentFromAPI, getContent } from '../../../lib/content'
+import { Button } from '../../../components/ui/button'
 import {
   PageHeader,
   ContentSection,
   FeatureCard,
   StatCard,
-  Grid
+  Grid,
+  CTASection
 } from '../../../components/ui/page-sections'
 
 // إجبار dynamic rendering
@@ -57,23 +60,33 @@ export default async function AboutPage({ params }: AboutPageProps) {
         items: [
           {
             icon: Award,
-            title: 'الجودة',
-            description: 'نلتزم بأعلى معايير الجودة في جميع منتجاتنا وخدماتنا'
+            title: 'الجودة العالية',
+            description: 'نلتزم بأعلى معايير الجودة العالمية في جميع منتجاتنا'
           },
           {
             icon: Shield,
-            title: 'الثقة',
-            description: 'نبني علاقات طويلة المدى مع عملائنا القائمة على الثقة المتبادلة'
+            title: 'الثقة والمصداقية',
+            description: 'نبني علاقات طويلة الأمد مع عملائنا على أساس الثقة'
           },
           {
             icon: Globe,
-            title: 'التميز العالمي',
-            description: 'نسعى للتميز في الأسواق العالمية وتمثيل مصر بأفضل صورة'
+            title: 'الانتشار العالمي',
+            description: 'نخدم عملاء في أكثر من 50 دولة حول العالم'
           },
           {
             icon: Users,
-            title: 'العمل الجماعي',
-            description: 'نؤمن بقوة الفريق الواحد في تحقيق النجاح'
+            title: 'خدمة العملاء',
+            description: 'فريق محترف متاح دائماً لخدمتكم'
+          },
+          {
+            icon: Target,
+            title: 'الدقة والالتزام',
+            description: 'التزام تام بالمواعيد والمواصفات المتفق عليها'
+          },
+          {
+            icon: Heart,
+            title: 'الشغف بالتميز',
+            description: 'شغف حقيقي بتقديم أفضل الأحجار الطبيعية'
           }
         ]
       },
@@ -115,23 +128,33 @@ export default async function AboutPage({ params }: AboutPageProps) {
         items: [
           {
             icon: Award,
-            title: 'Quality',
-            description: 'We commit to the highest quality standards in all our products and services'
+            title: 'High Quality',
+            description: 'We commit to the highest international quality standards'
           },
           {
             icon: Shield,
-            title: 'Trust',
-            description: 'We build long-term relationships with our customers based on mutual trust'
+            title: 'Trust & Credibility',
+            description: 'Building long-term relationships based on trust'
           },
           {
             icon: Globe,
-            title: 'Global Excellence',
-            description: 'We strive for excellence in global markets and represent Egypt in the best way'
+            title: 'Global Reach',
+            description: 'Serving customers in over 50 countries worldwide'
           },
           {
             icon: Users,
-            title: 'Teamwork',
-            description: 'We believe in the power of one team in achieving success'
+            title: 'Customer Service',
+            description: 'Professional team always available to serve you'
+          },
+          {
+            icon: Target,
+            title: 'Precision & Commitment',
+            description: 'Full commitment to deadlines and agreed specifications'
+          },
+          {
+            icon: Heart,
+            title: 'Passion for Excellence',
+            description: 'Genuine passion for delivering the finest natural stones'
           }
         ]
       },
@@ -183,159 +206,158 @@ export default async function AboutPage({ params }: AboutPageProps) {
   } : (content[locale as keyof typeof content] || content.en)
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[var(--color-quinary-50)]">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-primary to-primary-800">
-        <div className="absolute inset-0">
-          <Image
-            src={aboutContent?.hero?.backgroundImage || "/images/about-hero.jpg"}
-            alt="About Lumerra Marble"
-            fill
-            className="object-cover opacity-20"
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-          />
-        </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-quinary">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            {currentContent.hero.title}
-          </h1>
-          <p className="text-xl md:text-2xl max-w-3xl mx-auto">
-            {currentContent.hero.subtitle}
-          </p>
-        </div>
-      </section>
+      <PageHeader
+        title={currentContent.hero.title}
+        subtitle={currentContent.hero.subtitle}
+        image={aboutContent?.hero?.backgroundImage || "/images/about-hero.jpg"}
+      />
 
       {/* Story Section */}
-      <section className="py-16 bg-quinary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-tertiary mb-6">
-                {currentContent.story.title}
-              </h2>
-              <div className="text-lg text-quaternary leading-relaxed space-y-4">
-                {currentContent.story.content.split('\n\n').map((paragraph, index) => (
-                  <p key={index}>{paragraph.trim()}</p>
-                ))}
-              </div>
+      <ContentSection variant="white">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="order-2 lg:order-1">
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary-900)] mb-6">
+              {currentContent.story.title}
+            </h2>
+            <div className="text-lg text-[var(--color-quaternary)] leading-relaxed space-y-4">
+              {currentContent.story.content.split('\n\n').map((paragraph, index) => (
+                <p key={index} className="text-base md:text-lg">
+                  {paragraph.trim()}
+                </p>
+              ))}
             </div>
-            <div className="relative">
+          </div>
+          <div className="order-1 lg:order-2 relative">
+            <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src={aboutContent?.mission?.image || "/images/factory.jpg"}
+                src={aboutContent?.mission?.image || "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800"}
                 alt="Lumerra Marble Factory"
-                width={600}
-                height={400}
-                className="rounded-lg shadow-lg"
+                fill
+                className="object-cover"
                 placeholder="blur"
                 blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
               />
+              {/* Decorative element */}
+              <div className="absolute -top-4 -right-4 w-32 h-32 bg-[var(--color-primary)] opacity-20 rounded-full blur-3xl"></div>
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[var(--color-secondary)] opacity-20 rounded-full blur-3xl"></div>
             </div>
           </div>
         </div>
-      </section>
+      </ContentSection>
 
       {/* Mission & Vision */}
-      <section className="py-16 bg-quinary-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-tertiary mb-12">
-            {currentContent.mission.title}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-quinary p-8 rounded-lg shadow-md">
-              <h3 className="text-2xl font-bold text-secondary mb-4">
+      <ContentSection variant="light" title={currentContent.mission.title}>
+        <Grid cols={2} gap={8}>
+          <div className="bg-[var(--color-quinary)] p-8 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-[var(--color-primary-100)] rounded-full flex items-center justify-center">
+                <Eye className="w-6 h-6 text-[var(--color-primary)]" />
+              </div>
+              <h3 className="text-2xl font-bold text-[var(--color-secondary-900)]">
                 {locale === 'ar' ? 'رؤيتنا' : 'Our Vision'}
               </h3>
-              <p className="text-quaternary text-lg">
-                {currentContent.mission.vision}
-              </p>
             </div>
-            <div className="bg-quinary p-8 rounded-lg shadow-md">
-              <h3 className="text-2xl font-bold text-secondary mb-4">
+            <p className="text-[var(--color-quaternary)] text-lg leading-relaxed">
+              {currentContent.mission.vision}
+            </p>
+          </div>
+          <div className="bg-[var(--color-quinary)] p-8 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-[var(--color-secondary-100)] rounded-full flex items-center justify-center">
+                <Target className="w-6 h-6 text-[var(--color-secondary)]" />
+              </div>
+              <h3 className="text-2xl font-bold text-[var(--color-secondary-900)]">
                 {locale === 'ar' ? 'رسالتنا' : 'Our Mission'}
               </h3>
-              <p className="text-quaternary text-lg">
-                {currentContent.mission.mission}
-              </p>
             </div>
+            <p className="text-[var(--color-quaternary)] text-lg leading-relaxed">
+              {currentContent.mission.mission}
+            </p>
           </div>
-        </div>
-      </section>
+        </Grid>
+      </ContentSection>
 
       {/* Values Section */}
-      <section className="py-16 bg-quinary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-tertiary mb-12">
-            {currentContent.values.title}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {currentContent.values.items.map((value, index) => {
-              const IconComponent = value.icon
-              return (
-                <div key={index} className="text-center p-6">
-                  <div className="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <IconComponent className="w-8 h-8 text-secondary" />
-                  </div>
-                  <h3 className="text-xl font-bold text-tertiary mb-2">
-                    {value.title}
-                  </h3>
-                  <p className="text-quaternary">
-                    {value.description}
-                  </p>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+      <ContentSection variant="white" title={currentContent.values.title} centered>
+        <Grid cols={3} gap={8}>
+          {currentContent.values.items.map((value, index) => {
+            const IconComponent = value.icon
+            return (
+              <FeatureCard
+                key={index}
+                icon={<IconComponent className="w-10 h-10" strokeWidth={2} />}
+                title={value.title}
+                description={value.description}
+              />
+            )
+          })}
+        </Grid>
+      </ContentSection>
+
+      {/* Stats Section */}
+      <ContentSection variant="primary" title={currentContent.stats.title} centered>
+        <Grid cols={4} gap={8}>
+          {currentContent.stats.items.map((stat: { icon: React.ComponentType<{ className: string }>; number: string; text: string; label?: string }, index: number) => (
+            <StatCard
+              key={index}
+              number={stat.number}
+              label={stat.label || stat.text}
+              variant="light"
+            />
+          ))}
+        </Grid>
+      </ContentSection>
 
       {/* Location Section */}
-      <section className="py-16 bg-quinary-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-tertiary mb-6">
-                {currentContent.location.title}
-              </h2>
-              <div className="flex items-start space-x-3 rtl:space-x-reverse mb-4">
-                <MapPin className="w-6 h-6 text-secondary mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-lg font-semibold text-tertiary">
-                    {currentContent.location.address}
-                  </p>
-                </div>
+      <ContentSection variant="light" title={currentContent.location.title}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="flex items-start gap-4 mb-6 p-6 bg-[var(--color-quinary)] rounded-xl shadow-md border border-[var(--color-quaternary-100)]">
+              <div className="w-12 h-12 bg-[var(--color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-6 h-6 text-[var(--color-primary)]" />
               </div>
-              <p className="text-lg text-quaternary leading-relaxed">
-                {currentContent.location.description}
-              </p>
+              <div>
+                <h3 className="text-lg font-semibold text-[var(--color-secondary-900)] mb-2">
+                  {locale === 'ar' ? 'العنوان' : 'Address'}
+                </h3>
+                <p className="text-[var(--color-quaternary)]">
+                  {currentContent.location.address}
+                </p>
+              </div>
             </div>
-            <div className="relative">
+            <p className="text-lg text-[var(--color-quaternary)] leading-relaxed">
+              {currentContent.location.description}
+            </p>
+            <div className="mt-6">
+              <a 
+                href="https://maps.app.goo.gl/4to6WUKDMY7KEjRVA" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[var(--color-primary)] hover:text-[var(--color-primary-700)] font-semibold transition-colors"
+              >
+                <Globe className="w-5 h-5" />
+                {locale === 'ar' ? 'عرض في خرائط Google' : 'View on Google Maps'}
+                {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+              </a>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl">
               {aboutContent?.location?.image ? (
                 <Image
                   src={aboutContent.location.image}
                   alt="Our Location"
-                  width={600}
-                  height={400}
-                  className="rounded-lg shadow-lg object-cover"
+                  fill
+                  className="object-cover"
                 />
               ) : (
-                /* Map placeholder - replace with actual map component */
-                <div className="aspect-video bg-quinary rounded-lg flex items-center justify-center">
+                <div className="w-full h-full bg-gradient-to-br from-[var(--color-primary-100)] to-[var(--color-secondary-100)] flex items-center justify-center">
                   <div className="text-center">
-                    <MapPin className="w-12 h-12 text-quaternary-400 mx-auto mb-2" />
-                    <p className="text-quaternary">
-                      {locale === 'ar' ? 'خريطة الموقع' : 'Location Map'}
-                    </p>
-                    <p className="text-sm text-quaternary-500 mt-2">
-                      <a 
-                        href="https://maps.app.goo.gl/4to6WUKDMY7KEjRVA" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-secondary hover:text-secondary-700"
-                      >
-                        {locale === 'ar' ? 'عرض في خرائط Google' : 'View on Google Maps'}
-                      </a>
+                    <MapPin className="w-16 h-16 text-[var(--color-primary)] mx-auto mb-4" />
+                    <p className="text-[var(--color-quaternary)] font-medium">
+                      {locale === 'ar' ? 'موقعنا على الخريطة' : 'Our Location on Map'}
                     </p>
                   </div>
                 </div>
@@ -343,30 +365,35 @@ export default async function AboutPage({ params }: AboutPageProps) {
             </div>
           </div>
         </div>
-      </section>
+      </ContentSection>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-primary text-quinary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            {currentContent.stats.title}
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {currentContent.stats.items.map((stat: { icon: React.ComponentType<{ className: string }>; number: string; text: string; label?: string }, index: number) => {
-              const IconComponent = stat.icon
-              return (
-                <div key={index} className="text-center">
-                  <IconComponent className="w-12 h-12 text-secondary mx-auto mb-4" />
-                  <div className="text-4xl md:text-5xl font-bold text-secondary mb-2">
-                    {stat.number}
-                  </div>
-                  <div className="text-quaternary-300">{stat.label}</div>
-                </div>
-              )
-            })}
-          </div>
+      {/* CTA Section */}
+      <CTASection
+        title={locale === 'ar' ? 'هل أنت مستعد للعمل معنا؟' : 'Ready to Work With Us?'}
+        subtitle={locale === 'ar' ? 'احصل على عرض سعر مخصص لمشروعك اليوم' : 'Get a custom quote for your project today'}
+        variant="secondary"
+      >
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link href={`/${locale}/quote`}>
+            <Button 
+              size="lg" 
+              className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            >
+              {locale === 'ar' ? 'طلب عرض سعر' : 'Request Quote'}
+              {isRTL ? <ArrowLeft className="ml-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
+            </Button>
+          </Link>
+          <Link href={`/${locale}/contact`}>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="text-lg px-8 py-3 border-2 border-[var(--color-quinary)] text-[var(--color-quinary)] bg-transparent hover:bg-[var(--color-quinary)] hover:text-[var(--color-secondary)] group transition-all duration-300 hover:scale-105"
+            >
+              {locale === 'ar' ? 'تواصل معنا' : 'Contact Us'}
+            </Button>
+          </Link>
         </div>
-      </section>
+      </CTASection>
     </div>
   )
 }

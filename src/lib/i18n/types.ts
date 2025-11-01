@@ -39,6 +39,8 @@ export interface TranslationKeys {
     blog: string
     export: string
     quote: string
+    language: string
+    active: string
   }
 
   // Navigation
