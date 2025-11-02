@@ -216,85 +216,117 @@ export default async function AboutPage({ params }: AboutPageProps) {
 
       {/* Story Section */}
       <ContentSection variant="white">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="order-2 lg:order-1">
-            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary-900)] mb-6">
-              {currentContent.story.title}
-            </h2>
-            <div className="text-lg text-[var(--color-quaternary)] leading-relaxed space-y-4">
-              {currentContent.story.content.split('\n\n').map((paragraph, index) => (
-                <p key={index} className="text-base md:text-lg">
-                  {paragraph.trim()}
-                </p>
-              ))}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div className="order-2 lg:order-1">
+              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary-900)] mb-6">
+                {currentContent.story.title}
+              </h2>
+              <div className="text-[var(--color-quaternary)] leading-relaxed space-y-4">
+                {currentContent.story.content.split('\n\n').map((paragraph, index) => (
+                  <p key={index} className="text-base md:text-lg break-words">
+                    {paragraph.trim()}
+                  </p>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="order-1 lg:order-2 relative">
-            <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl">
-              <Image
-                src={aboutContent?.mission?.image || "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800"}
-                alt="Lumerra Marble Factory"
-                fill
-                className="object-cover"
-                placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-              />
-              {/* Decorative element */}
-              <div className="absolute -top-4 -right-4 w-32 h-32 bg-[var(--color-primary)] opacity-20 rounded-full blur-3xl"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[var(--color-secondary)] opacity-20 rounded-full blur-3xl"></div>
+            <div className="order-1 lg:order-2 relative">
+              <div className="relative h-[350px] md:h-[400px] rounded-2xl overflow-hidden shadow-2xl">
+                <Image
+                  src={aboutContent?.mission?.image || "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800"}
+                  alt="Lumerra Marble Factory"
+                  fill
+                  className="object-cover"
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                />
+                {/* Decorative element */}
+                <div className="absolute -top-4 -right-4 w-24 h-24 md:w-32 md:h-32 bg-[var(--color-primary)] opacity-20 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-4 -left-4 w-24 h-24 md:w-32 md:h-32 bg-[var(--color-secondary)] opacity-20 rounded-full blur-3xl"></div>
+              </div>
             </div>
           </div>
         </div>
       </ContentSection>
 
-      {/* Mission & Vision */}
-      <ContentSection variant="light" title={currentContent.mission.title}>
-        <Grid cols={2} gap={8}>
-          <div className="bg-[var(--color-quinary)] p-8 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-shadow duration-300">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-[var(--color-primary-100)] rounded-full flex items-center justify-center">
-                <Eye className="w-6 h-6 text-[var(--color-primary)]" />
-              </div>
-              <h3 className="text-2xl font-bold text-[var(--color-secondary-900)]">
-                {locale === 'ar' ? 'رؤيتنا' : 'Our Vision'}
-              </h3>
-            </div>
-            <p className="text-[var(--color-quaternary)] text-lg leading-relaxed">
-              {currentContent.mission.vision}
-            </p>
-          </div>
-          <div className="bg-[var(--color-quinary)] p-8 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-shadow duration-300">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-[var(--color-secondary-100)] rounded-full flex items-center justify-center">
-                <Target className="w-6 h-6 text-[var(--color-secondary)]" />
-              </div>
-              <h3 className="text-2xl font-bold text-[var(--color-secondary-900)]">
-                {locale === 'ar' ? 'رسالتنا' : 'Our Mission'}
-              </h3>
-            </div>
-            <p className="text-[var(--color-quaternary)] text-lg leading-relaxed">
-              {currentContent.mission.mission}
-            </p>
-          </div>
-        </Grid>
-      </ContentSection>
+      {/* Values, Mission & Vision Section with Background Image */}
+      <div className="relative bg-[var(--color-quinary-50)] py-16 md:py-24 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://images.unsplash.com/photo-1615971677499-5467cbab01c0?w=1600"
+            alt="Background"
+            fill
+            className="object-cover opacity-10"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-quinary-50)]/95 to-[var(--color-quinary-50)]/90"></div>
+        </div>
 
-      {/* Values Section */}
-      <ContentSection variant="white" title={currentContent.values.title} centered>
-        <Grid cols={3} gap={8}>
-          {currentContent.values.items.map((value, index) => {
-            const IconComponent = value.icon
-            return (
-              <FeatureCard
-                key={index}
-                icon={<IconComponent className="w-10 h-10" strokeWidth={2} />}
-                title={value.title}
-                description={value.description}
-              />
-            )
-          })}
-        </Grid>
-      </ContentSection>
+        <div className="relative z-10 container mx-auto px-4">
+          {/* Section Title */}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary-900)] mb-4">
+              {currentContent.values.title}
+            </h2>
+          </div>
+
+          {/* All Cards in 2 Rows x 4 Columns Grid */}
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Vision Card */}
+              <div className="bg-white/80 backdrop-blur-sm p-10 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-shadow duration-300">
+                <div className="flex flex-col items-center text-center h-full">
+                  <div className="w-24 h-24 bg-[var(--color-primary-100)] rounded-full flex items-center justify-center mb-6 flex-shrink-0">
+                    <Eye className="w-12 h-12 text-[var(--color-primary)]" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] mb-5">
+                    {locale === 'ar' ? 'رؤيتنا' : 'Our Vision'}
+                  </h3>
+                  <p className="text-[var(--color-quaternary)] text-base leading-relaxed">
+                    {currentContent.mission.vision}
+                  </p>
+                </div>
+              </div>
+
+              {/* Mission Card */}
+              <div className="bg-white/80 backdrop-blur-sm p-10 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-shadow duration-300">
+                <div className="flex flex-col items-center text-center h-full">
+                  <div className="w-24 h-24 bg-[var(--color-secondary-100)] rounded-full flex items-center justify-center mb-6 flex-shrink-0">
+                    <Target className="w-12 h-12 text-[var(--color-secondary)]" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] mb-5">
+                    {locale === 'ar' ? 'رسالتنا' : 'Our Mission'}
+                  </h3>
+                  <p className="text-[var(--color-quaternary)] text-base leading-relaxed">
+                    {currentContent.mission.mission}
+                  </p>
+                </div>
+              </div>
+
+              {/* Values Cards */}
+              {currentContent.values.items.map((value, index) => {
+                const IconComponent = value.icon
+                return (
+                  <div key={index} className="bg-white/80 backdrop-blur-sm p-10 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-shadow duration-300">
+                    <div className="flex flex-col items-center text-center h-full">
+                      <div className="w-24 h-24 bg-gradient-to-br from-[var(--color-primary-100)] to-[var(--color-secondary-100)] rounded-full flex items-center justify-center mb-6 flex-shrink-0">
+                        <IconComponent className="w-12 h-12 text-[var(--color-primary)]" strokeWidth={2} />
+                      </div>
+                      <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] mb-5">
+                        {value.title}
+                      </h3>
+                      <p className="text-[var(--color-quaternary)] text-base leading-relaxed">
+                        {value.description}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Stats Section */}
       <ContentSection variant="primary" title={currentContent.stats.title} centered>
@@ -312,56 +344,77 @@ export default async function AboutPage({ params }: AboutPageProps) {
 
       {/* Location Section */}
       <ContentSection variant="light" title={currentContent.location.title}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="flex items-start gap-4 mb-6 p-6 bg-[var(--color-quinary)] rounded-xl shadow-md border border-[var(--color-quaternary-100)]">
-              <div className="w-12 h-12 bg-[var(--color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-6 h-6 text-[var(--color-primary)]" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-[var(--color-secondary-900)] mb-2">
-                  {locale === 'ar' ? 'العنوان' : 'Address'}
-                </h3>
-                <p className="text-[var(--color-quaternary)]">
-                  {currentContent.location.address}
-                </p>
-              </div>
-            </div>
-            <p className="text-lg text-[var(--color-quaternary)] leading-relaxed">
-              {currentContent.location.description}
-            </p>
-            <div className="mt-6">
-              <a 
-                href="https://maps.app.goo.gl/4to6WUKDMY7KEjRVA" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-[var(--color-primary)] hover:text-[var(--color-primary-700)] font-semibold transition-colors"
-              >
-                <Globe className="w-5 h-5" />
-                {locale === 'ar' ? 'عرض في خرائط Google' : 'View on Google Maps'}
-                {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
-              </a>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl">
-              {aboutContent?.location?.image ? (
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Location Info Container - Clickable with Map Background */}
+            <a 
+              href="https://maps.app.goo.gl/4to6WUKDMY7KEjRVA" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="relative block overflow-hidden p-10 rounded-2xl shadow-2xl border-2 border-[var(--color-primary-200)] hover:shadow-3xl hover:border-[var(--color-primary)] transition-all duration-300 min-h-[400px] group cursor-pointer"
+            >
+              {/* Background Map Image */}
+              <div className="absolute inset-0 z-0">
                 <Image
-                  src={aboutContent.location.image}
-                  alt="Our Location"
+                  src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+f74e4e(31.2357,30.0444)/31.2357,30.0444,12,0/800x600@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw"
+                  alt="Map Location"
                   fill
-                  className="object-cover"
+                  className="object-cover opacity-15 group-hover:opacity-25 transition-opacity duration-300"
                 />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-[var(--color-primary-100)] to-[var(--color-secondary-100)] flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="w-16 h-16 text-[var(--color-primary)] mx-auto mb-4" />
-                    <p className="text-[var(--color-quaternary)] font-medium">
-                      {locale === 'ar' ? 'موقعنا على الخريطة' : 'Our Location on Map'}
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-quinary)]/95 to-[var(--color-primary-50)]/90"></div>
+              </div>
+
+              {/* Content */}
+              <div className="relative z-10">
+                {/* Click to View Header */}
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center gap-3 text-[var(--color-primary)] font-bold text-lg">
+                    <Globe className="w-6 h-6" />
+                    <span className="border-b-2 border-[var(--color-primary)] pb-1 group-hover:border-[var(--color-primary-700)] transition-colors">
+                      {locale === 'ar' ? 'اضغط لعرض موقعنا على الخريطة' : 'Click to View Our Location on Map'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Address Details */}
+                <div className="space-y-6">
+                  <div className="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-lg">
+                    <h4 className="text-sm font-semibold text-[var(--color-primary)] mb-3 uppercase tracking-wide">
+                      {locale === 'ar' ? 'العنوان' : 'Address'}
+                    </h4>
+                    <div className="space-y-2">
+                      <p className="text-lg font-bold text-[var(--color-secondary-900)]">
+                        {locale === 'ar' ? 'مصر' : 'Egypt'}
+                      </p>
+                      <p className="text-base text-[var(--color-quaternary)] font-medium">
+                        {locale === 'ar' ? 'القاهرة - المنطقة الصناعية' : 'Cairo - Industrial Zone'}
+                      </p>
+                      <p className="text-base text-[var(--color-quaternary)] font-medium">
+                        {locale === 'ar' ? 'شق الثعبان' : 'Shaq Al-Thuban'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Description */}
+                  <div className="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-lg">
+                    <p className="text-[var(--color-quaternary)] text-base leading-relaxed">
+                      {currentContent.location.description}
                     </p>
                   </div>
                 </div>
-              )}
+              </div>
+            </a>
+
+            {/* Map/Image Container */}
+            <div className="relative min-h-[400px] rounded-2xl overflow-hidden shadow-2xl border-2 border-[var(--color-primary-200)]">
+              <Image
+                src="https://images.unsplash.com/photo-1577495508326-19a1b3cf65b7?w=800"
+                alt="Our Location"
+                fill
+                className="object-cover"
+              />
+              {/* Overlay with gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
             </div>
           </div>
         </div>

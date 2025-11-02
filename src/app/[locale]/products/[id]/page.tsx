@@ -212,7 +212,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </Card>
 
             {/* CTA Button */}
-            <Link href={`/${locale}/quote?product=${product.id}`} className="block">
+            <Link href={`/${locale}/quote?productId=${product.id}&product=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`} className="block">
               <Button size="lg" className="w-full group transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 {currentLabels.requestQuote}
                 {isRTL ? (

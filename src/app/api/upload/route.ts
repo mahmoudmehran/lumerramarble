@@ -11,11 +11,19 @@ export const config = {
   },
 }
 
-// الحد الأقصى لحجم الملف: 5MB
-const MAX_FILE_SIZE = 5 * 1024 * 1024
+// الحد الأقصى لحجم الملف: 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 // الامتدادات المسموحة
-const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+const ALLOWED_TYPES = [
+  'image/jpeg', 
+  'image/jpg', 
+  'image/png', 
+  'image/webp',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+]
 
 // أبعاد الصور المختلفة
 const IMAGE_SIZES = {
@@ -33,57 +41,56 @@ async function ensureUploadDir(uploadDir: string) {
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
-    const files = formData.getAll('files') as File[]
+    const file = formData.get('file') as File
     
-    if (!files || files.length === 0) {
+    if (!file) {
       return NextResponse.json(
-        { error: 'No files uploaded' },
+        { error: 'No file uploaded' },
         { status: 400 }
       )
     }
 
-    const uploadedFiles: string[] = []
     const uploadDir = path.join(process.cwd(), 'public', 'uploads')
     
     // التأكد من وجود مجلد uploads
     await ensureUploadDir(uploadDir)
 
-    for (const file of files) {
-      // التحقق من نوع الملف
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        return NextResponse.json(
-          { error: `Invalid file type: ${file.type}. Allowed types: JPEG, PNG, WebP` },
-          { status: 400 }
-        )
-      }
+    // التحقق من نوع الملف
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return NextResponse.json(
+        { error: `Invalid file type: ${file.type}. Allowed types: Images, PDF, DOC, DOCX` },
+        { status: 400 }
+      )
+    }
 
-      // التحقق من حجم الملف
-      if (file.size > MAX_FILE_SIZE) {
-        return NextResponse.json(
-          { error: `File too large: ${file.name}. Max size: 5MB` },
-          { status: 400 }
-        )
-      }
+    // التحقق من حجم الملف
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: `File too large: ${file.name}. Max size: 10MB` },
+        { status: 400 }
+      )
+    }
 
-      // إنشاء اسم فريد للملف
-      const timestamp = Date.now()
-      const randomString = Math.random().toString(36).substring(7)
-      const fileExtension = path.extname(file.name)
-      const fileName = `${timestamp}-${randomString}${fileExtension}`
-      
-      // تحويل الملف إلى buffer
-      const bytes = await file.arrayBuffer()
-      const buffer = Buffer.from(bytes)
+    // إنشاء اسم فريد للملف
+    const timestamp = Date.now()
+    const randomString = Math.random().toString(36).substring(7)
+    const fileExtension = path.extname(file.name)
+    const fileName = `${timestamp}-${randomString}${fileExtension}`
+    
+    // تحويل الملف إلى buffer
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
 
-      // معالجة الصورة بـ sharp
+    const filePath = path.join(uploadDir, fileName)
+    
+    // إذا كان الملف صورة، معالجته بـ sharp
+    if (file.type.startsWith('image/')) {
       const image = sharp(buffer)
-      const metadata = await image.metadata()
-
+      
       // حفظ الصورة الأصلية (مع تحسين الجودة)
-      const originalPath = path.join(uploadDir, fileName)
       await image
         .jpeg({ quality: 90, progressive: true })
-        .toFile(originalPath)
+        .toFile(filePath)
 
       // إنشاء نسخ بأحجام مختلفة
       const sizes = ['thumbnail', 'medium', 'large'] as const
@@ -101,15 +108,16 @@ export async function POST(request: NextRequest) {
           .jpeg({ quality: 85 })
           .toFile(sizePath)
       }
-
-      // إضافة المسار النسبي للملف
-      uploadedFiles.push(`/uploads/${fileName}`)
+    } else {
+      // إذا كان الملف PDF أو Word، حفظه مباشرة
+      await writeFile(filePath, buffer)
     }
 
+    // إرجاع مسار الملف المرفوع
     return NextResponse.json({
       success: true,
-      files: uploadedFiles,
-      message: `${uploadedFiles.length} file(s) uploaded successfully`,
+      url: `/uploads/${fileName}`,
+      message: 'File uploaded successfully',
     })
 
   } catch (error) {

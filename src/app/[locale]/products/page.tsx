@@ -68,7 +68,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
   const handleQuoteClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     console.log('Quote button clicked')
-    router.push(`/${locale}/quote?product=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`)
+    router.push(`/${locale}/quote?productId=${product.id}&product=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`)
   }
 
   const handleViewDetailsClick = (e: React.MouseEvent) => {
@@ -325,17 +325,24 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
 
             {/* Category Filter and View Mode - All together */}
             <div className="flex items-center gap-0 w-full lg:w-auto">
-              <select
-                value={selectedCategory}
-                onChange={(e) => handleCategoryChange(e.target.value)}
-                className="h-10 px-3 py-2 border border-r-0 border-[var(--color-quaternary-300)] rounded-l-md focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] bg-[var(--color-quinary)] text-[var(--color-quaternary)] text-sm font-normal flex-1 lg:flex-initial lg:w-auto cursor-pointer"
-              >
-                {Object.entries(currentContent.categories).map(([key, value]) => (
-                  <option key={key} value={key}>
-                    {value}
-                  </option>
-                ))}
-              </select>
+              <div className="relative flex-1 lg:flex-initial lg:w-auto">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => handleCategoryChange(e.target.value)}
+                  className="h-10 px-3 py-2 pr-8 border border-r-0 border-[var(--color-quaternary-300)] rounded-l-md rtl:rounded-l-none rtl:rounded-r-md rtl:border-r rtl:border-l-0 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] bg-[var(--color-quinary)] text-[var(--color-quaternary)] text-sm font-normal w-full appearance-none cursor-pointer"
+                >
+                  {Object.entries(currentContent.categories).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 pr-2 rtl:pr-0 rtl:pl-2 flex items-center pointer-events-none">
+                  <svg className="w-4 h-4 text-[var(--color-quaternary-400)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
 
               {/* View Mode Toggle - Attached to filter */}
               <button

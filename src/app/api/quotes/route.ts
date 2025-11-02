@@ -28,6 +28,37 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.json()
+    
+    // ✅ Verify reCAPTCHA token if provided
+    if (formData.recaptchaToken) {
+      const secretKey = process.env.RECAPTCHA_SECRET_KEY
+      
+      if (secretKey) {
+        try {
+          const verifyUrl = 'https://www.google.com/recaptcha/api/siteverify'
+          const verifyResponse = await fetch(verifyUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `secret=${secretKey}&response=${formData.recaptchaToken}`,
+          })
+          
+          const verifyData = await verifyResponse.json()
+          
+          // Check reCAPTCHA score (0.0 - 1.0)
+          if (!verifyData.success || (verifyData.score && verifyData.score < 0.5)) {
+            return NextResponse.json(
+              { message: 'فشل التحقق الأمني. يبدو أن هذا الطلب مشبوه.' },
+              { status: 403 }
+            )
+          }
+        } catch (error) {
+          console.error('reCAPTCHA verification error:', error)
+          // Continue even if reCAPTCHA fails to avoid blocking legitimate users
+        }
+      }
+    }
 
     // ✅ Input Validation & Sanitization
     const fullName = sanitizeString(formData.fullName || '')
@@ -35,7 +66,7 @@ export async function POST(request: NextRequest) {
     const phone = sanitizeString(formData.phone || '')
     const country = sanitizeString(formData.country || '')
     const projectType = sanitizeString(formData.projectType || '')
-    const productType = sanitizeString(formData.productType || '')
+    const productName = sanitizeString(formData.productName || formData.productType || '') // Support both productName and productType
     
     // التحقق من الحقول المطلوبة
     if (!fullName || fullName.length < 2) {
@@ -59,7 +90,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!country || !projectType || !productType) {
+    if (!country || !projectType || !productName) {
       return NextResponse.json(
         { message: 'البيانات المطلوبة ناقصة' },
         { status: 400 }
@@ -87,7 +118,7 @@ export async function POST(request: NextRequest) {
         projectName: formData.projectName ? sanitizeString(formData.projectName) : null,
         expectedDate: formData.expectedDate ? new Date(formData.expectedDate) : null,
         budget: formData.budget ? sanitizeString(formData.budget) : null,
-        productType,
+        productType: productName, // Save productName in productType field
         quantity: quantity.toString(), // تحويل إلى string لأن schema يستخدم String
         thickness: formData.thickness ? sanitizeString(formData.thickness) : null,
         finish: formData.finish ? sanitizeString(formData.finish) : null,

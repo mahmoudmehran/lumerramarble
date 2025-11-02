@@ -29,6 +29,38 @@ export async function POST(request: NextRequest) {
 
     // ✅ Input Validation & Sanitization
     const rawData = await request.json()
+    
+    // ✅ Verify reCAPTCHA token if provided
+    if (rawData.recaptchaToken) {
+      const secretKey = process.env.RECAPTCHA_SECRET_KEY
+      
+      if (secretKey) {
+        try {
+          const verifyUrl = 'https://www.google.com/recaptcha/api/siteverify'
+          const verifyResponse = await fetch(verifyUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `secret=${secretKey}&response=${rawData.recaptchaToken}`,
+          })
+          
+          const verifyData = await verifyResponse.json()
+          
+          // Check reCAPTCHA score (0.0 - 1.0)
+          if (!verifyData.success || (verifyData.score && verifyData.score < 0.5)) {
+            return NextResponse.json(
+              { error: 'فشل التحقق الأمني. يبدو أن هذا الطلب مشبوه.' },
+              { status: 403 }
+            )
+          }
+        } catch (error) {
+          console.error('reCAPTCHA verification error:', error)
+          // Continue even if reCAPTCHA fails to avoid blocking legitimate users
+        }
+      }
+    }
+    
     const validationResult = await validateData(contactFormSchema, rawData)
     
     if (!validationResult.success) {
@@ -49,7 +81,7 @@ export async function POST(request: NextRequest) {
         name: data.name,
         email: data.email,
         phone: data.phone,
-        company: '', // الحقل موجود في schema القديم
+        company: rawData.company || '', // Support company field from raw data
         subject: data.subject,
         message: data.message
       }

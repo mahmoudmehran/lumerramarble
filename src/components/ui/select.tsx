@@ -24,7 +24,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         <div className="relative">
           <select
             className={cn(
-              "flex h-10 w-full rounded-md border border-quaternary-300 bg-quinary px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer",
+              "flex h-10 w-full rounded-md border border-quaternary-300 bg-quinary px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer pr-10",
               error 
                 ? "border-red-300 focus:border-red-500 focus:ring-red-500" 
                 : "border-quaternary-300",
@@ -44,7 +44,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               </option>
             ))}
           </select>
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 pr-3 rtl:pr-0 rtl:pl-3 flex items-center pointer-events-none">
             <ChevronDown className="w-5 h-5 text-quaternary-400" />
           </div>
         </div>

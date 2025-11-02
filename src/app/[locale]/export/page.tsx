@@ -325,19 +325,22 @@ export default async function ExportPage({ params }: ExportPageProps) {
         variant="white"
         centered
       >
-        <Grid cols={3} gap={8}>
-          {currentContent.services.items.map((service, index) => {
-            const IconComponent = service.icon
-            return (
-              <FeatureCard
-                key={index}
-                icon={<IconComponent className="w-10 h-10" strokeWidth={2} />}
-                title={service.title}
-                description={service.description}
-              />
-            )
-          })}
-        </Grid>
+        <div className="max-w-7xl mx-auto">
+          <Grid cols={3} gap={8}>
+            {currentContent.services.items.map((service, index) => {
+              const IconComponent = service.icon
+              return (
+                <div key={index} className="h-full">
+                  <FeatureCard
+                    icon={<IconComponent className="w-10 h-10" strokeWidth={2} />}
+                    title={service.title}
+                    description={service.description}
+                  />
+                </div>
+              )
+            })}
+          </Grid>
+        </div>
       </ContentSection>
 
       {/* Process Section */}
@@ -347,32 +350,34 @@ export default async function ExportPage({ params }: ExportPageProps) {
         variant="light"
         centered
       >
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {currentContent.process.steps.map((step, index) => (
-            <div 
-              key={index} 
-              className="relative bg-[var(--color-quinary)] p-8 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-all duration-300 group"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] text-[var(--color-quinary)] rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  {step.number}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {currentContent.process.steps.map((step, index) => (
+              <div 
+                key={index} 
+                className="relative bg-[var(--color-quinary)] p-6 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-all duration-300 group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] text-[var(--color-quinary)] rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {step.number}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-lg text-[var(--color-secondary-900)] mb-2 break-words">
+                      {step.title}
+                    </h3>
+                    <p className="text-[var(--color-quaternary)] text-sm leading-relaxed break-words">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-xl text-[var(--color-secondary-900)] mb-3">
-                    {step.title}
-                  </h3>
-                  <p className="text-[var(--color-quaternary)] leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
+                
+                {/* Connection line for desktop */}
+                {index < currentContent.process.steps.length - 1 && index % 3 !== 2 && (
+                  <div className="hidden lg:block absolute top-8 -right-4 w-8 h-0.5 bg-gradient-to-r from-[var(--color-primary)] to-transparent z-10"></div>
+                )}
               </div>
-              
-              {/* Connection line for desktop */}
-              {index < currentContent.process.steps.length - 1 && index % 3 !== 2 && (
-                <div className="hidden lg:block absolute top-8 -right-4 w-8 h-0.5 bg-gradient-to-r from-[var(--color-primary)] to-transparent z-10"></div>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </ContentSection>
 
@@ -383,24 +388,26 @@ export default async function ExportPage({ params }: ExportPageProps) {
         variant="white"
         centered
       >
-        <Grid cols={3} gap={6}>
-          {currentContent.countries.regions.map((region, index) => (
-            <div 
-              key={index} 
-              className="bg-[var(--color-quinary)] p-8 text-center rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
-            >
-              <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                {region.flag}
+        <div className="max-w-6xl mx-auto">
+          <Grid cols={3} gap={6}>
+            {currentContent.countries.regions.map((region, index) => (
+              <div 
+                key={index} 
+                className="bg-[var(--color-quinary)] p-6 text-center rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+              >
+                <div className="text-5xl mb-3 transform group-hover:scale-110 transition-transform duration-300">
+                  {region.flag}
+                </div>
+                <h3 className="font-bold text-lg text-[var(--color-secondary-900)] mb-1 break-words">
+                  {region.name}
+                </h3>
+                <p className="text-[var(--color-primary)] font-bold text-base">
+                  {region.count}
+                </p>
               </div>
-              <h3 className="font-bold text-xl text-[var(--color-secondary-900)] mb-2">
-                {region.name}
-              </h3>
-              <p className="text-[var(--color-primary)] font-bold text-lg">
-                {region.count}
-              </p>
-            </div>
-          ))}
-        </Grid>
+            ))}
+          </Grid>
+        </div>
       </ContentSection>
 
       {/* Features Section */}
@@ -409,16 +416,16 @@ export default async function ExportPage({ params }: ExportPageProps) {
         variant="light"
         centered
       >
-        <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-4 max-w-5xl mx-auto">
           {currentContent.features.items.map((feature, index) => (
             <div 
               key={index} 
-              className="flex items-center gap-3 p-6 bg-[var(--color-quinary)] rounded-xl shadow-md border border-[var(--color-quaternary-100)] hover:shadow-lg hover:border-[var(--color-primary-200)] transition-all duration-300"
+              className="flex items-start gap-3 p-5 bg-[var(--color-quinary)] rounded-xl shadow-md border border-[var(--color-quaternary-100)] hover:shadow-lg hover:border-[var(--color-primary-200)] transition-all duration-300"
             >
-              <div className="w-10 h-10 bg-[var(--color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-9 h-9 bg-[var(--color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                 <CheckCircle className="w-5 h-5 text-[var(--color-primary)]" strokeWidth={2.5} />
               </div>
-              <span className="text-[var(--color-quaternary)] font-medium">{feature}</span>
+              <span className="text-[var(--color-quaternary)] font-medium text-sm leading-relaxed break-words flex-1">{feature}</span>
             </div>
           ))}
         </div>

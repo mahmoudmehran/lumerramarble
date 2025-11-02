@@ -197,18 +197,25 @@ export function SearchWithFilters({
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {filter.label}
                 </label>
-                <select
-                  value={selectedFilters[filter.id] || 'all'}
-                  onChange={(e) => handleFilterChange(filter.id, e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
-                >
-                  <option value="all">الكل</option>
-                  {filter.options.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select
+                    value={selectedFilters[filter.id] || 'all'}
+                    onChange={(e) => handleFilterChange(filter.id, e.target.value)}
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent appearance-none cursor-pointer"
+                  >
+                    <option value="all">الكل</option>
+                    {filter.options.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 pr-3 rtl:pr-0 rtl:pl-3 flex items-center pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
