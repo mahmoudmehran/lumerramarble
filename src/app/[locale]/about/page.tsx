@@ -275,11 +275,9 @@ export default async function AboutPage({ params }: AboutPageProps) {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Vision Card */}
-              <div className="bg-white/80 backdrop-blur-sm p-10 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-shadow duration-300">
+              <div className="bg-gradient-to-br from-[var(--color-primary-100)] via-[var(--color-secondary-50)] to-[var(--color-tertiary-50)] backdrop-blur-sm p-10 rounded-2xl shadow-lg border border-[var(--color-quaternary-200)] hover:shadow-xl hover:from-[var(--color-secondary-100)] hover:via-[var(--color-primary-100)] hover:to-[var(--color-quinary)] transition-all duration-300">
                 <div className="flex flex-col items-center text-center h-full">
-                  <div className="w-24 h-24 bg-[var(--color-primary-100)] rounded-full flex items-center justify-center mb-6 flex-shrink-0">
-                    <Eye className="w-12 h-12 text-[var(--color-primary)]" />
-                  </div>
+                  <Eye className="w-16 h-16 text-[var(--color-primary)] mb-6 flex-shrink-0" strokeWidth={1.5} />
                   <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] mb-5">
                     {locale === 'ar' ? 'رؤيتنا' : 'Our Vision'}
                   </h3>
@@ -290,11 +288,9 @@ export default async function AboutPage({ params }: AboutPageProps) {
               </div>
 
               {/* Mission Card */}
-              <div className="bg-white/80 backdrop-blur-sm p-10 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-shadow duration-300">
+              <div className="bg-gradient-to-br from-[var(--color-primary-100)] via-[var(--color-secondary-50)] to-[var(--color-tertiary-50)] backdrop-blur-sm p-10 rounded-2xl shadow-lg border border-[var(--color-quaternary-200)] hover:shadow-xl hover:from-[var(--color-secondary-100)] hover:via-[var(--color-primary-100)] hover:to-[var(--color-quinary)] transition-all duration-300">
                 <div className="flex flex-col items-center text-center h-full">
-                  <div className="w-24 h-24 bg-[var(--color-secondary-100)] rounded-full flex items-center justify-center mb-6 flex-shrink-0">
-                    <Target className="w-12 h-12 text-[var(--color-secondary)]" />
-                  </div>
+                  <Target className="w-16 h-16 text-[var(--color-primary)] mb-6 flex-shrink-0" strokeWidth={1.5} />
                   <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] mb-5">
                     {locale === 'ar' ? 'رسالتنا' : 'Our Mission'}
                   </h3>
@@ -308,11 +304,9 @@ export default async function AboutPage({ params }: AboutPageProps) {
               {currentContent.values.items.map((value, index) => {
                 const IconComponent = value.icon
                 return (
-                  <div key={index} className="bg-white/80 backdrop-blur-sm p-10 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-shadow duration-300">
+                  <div key={index} className="bg-gradient-to-br from-[var(--color-primary-100)] via-[var(--color-secondary-50)] to-[var(--color-tertiary-50)] backdrop-blur-sm p-10 rounded-2xl shadow-lg border border-[var(--color-quaternary-200)] hover:shadow-xl hover:from-[var(--color-secondary-100)] hover:via-[var(--color-primary-100)] hover:to-[var(--color-quinary)] transition-all duration-300">
                     <div className="flex flex-col items-center text-center h-full">
-                      <div className="w-24 h-24 bg-gradient-to-br from-[var(--color-primary-100)] to-[var(--color-secondary-100)] rounded-full flex items-center justify-center mb-6 flex-shrink-0">
-                        <IconComponent className="w-12 h-12 text-[var(--color-primary)]" strokeWidth={2} />
-                      </div>
+                      <IconComponent className="w-16 h-16 text-[var(--color-primary)] mb-6 flex-shrink-0" strokeWidth={1.5} />
                       <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] mb-5">
                         {value.title}
                       </h3>
@@ -343,7 +337,15 @@ export default async function AboutPage({ params }: AboutPageProps) {
       </ContentSection>
 
       {/* Location Section */}
-      <ContentSection variant="light" title={currentContent.location.title}>
+      <ContentSection variant="light">
+        {/* Title in the middle of the page */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary-900)] mb-4">
+            {currentContent.location.title}
+          </h2>
+          <div className="w-24 h-1 bg-[var(--color-primary)] mx-auto rounded-full"></div>
+        </div>
+
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Location Info Container - Clickable with Map Background */}

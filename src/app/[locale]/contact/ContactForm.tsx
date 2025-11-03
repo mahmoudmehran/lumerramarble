@@ -6,6 +6,7 @@ import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
 import { Textarea } from '../../../components/ui/textarea'
 import { useRecaptcha } from '../../../hooks/useRecaptcha'
+import { useRecaptchaConfig } from '../../../contexts/RecaptchaContext'
 
 interface ContactFormProps {
   locale: string
@@ -172,9 +173,12 @@ export default function ContactForm({ locale }: ContactFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   
-  // reCAPTCHA
-  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
-  const { isLoaded: isRecaptchaLoaded, executeRecaptcha } = useRecaptcha(recaptchaSiteKey)
+  // reCAPTCHA from settings
+  const recaptchaConfig = useRecaptchaConfig()
+  const { isLoaded: isRecaptchaLoaded, executeRecaptcha, isEnabled } = useRecaptcha({
+    siteKey: recaptchaConfig.siteKey,
+    enabled: recaptchaConfig.enabled
+  })
 
   // Helper function to get text based on locale
   const getText = (key: string): string => {
@@ -271,10 +275,10 @@ export default function ContactForm({ locale }: ContactFormProps) {
     try {
       // Execute reCAPTCHA if available
       let recaptchaToken = null
-      if (recaptchaSiteKey && isRecaptchaLoaded) {
+      if (isEnabled && isRecaptchaLoaded) {
         recaptchaToken = await executeRecaptcha('contact_form')
         
-        if (recaptchaToken) {
+        if (recaptchaToken && recaptchaToken !== 'disabled') {
           // Verify reCAPTCHA token
           const verifyResponse = await fetch('/api/verify-recaptcha', {
             method: 'POST',
@@ -469,7 +473,7 @@ export default function ContactForm({ locale }: ContactFormProps) {
       </Button>
       
       {/* reCAPTCHA Notice */}
-      {recaptchaSiteKey && (
+      {isEnabled && (
         <div className="text-center">
           <p className="text-xs text-[var(--color-quaternary-500)]">
             {getText('recaptcha_notice')}

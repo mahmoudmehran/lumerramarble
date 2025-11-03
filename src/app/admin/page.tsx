@@ -18,21 +18,41 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('homepage')
   const [content, setContent] = useState<ContentData | null>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [currentLang, setCurrentLang] = useState('ar')
+  const [editingLang, setEditingLang] = useState('ar') // اللغة النشطة للتحرير
   const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
 
 
-  // Check authentication and load content
+  // Check authentication and load content with session management
   useEffect(() => {
     const token = localStorage.getItem('admin_token')
     const userData = localStorage.getItem('admin_user')
+    const loginTime = localStorage.getItem('admin_login_time')
 
+    // التحقق من وجود Token
     if (!token || !userData) {
       router.push('/admin/login')
       return
+    }
+
+    // التحقق من انتهاء مدة الجلسة (8 ساعات)
+    const SESSION_TIMEOUT = 8 * 60 * 60 * 1000 // 8 hours in milliseconds
+    if (loginTime) {
+      const loginTimestamp = parseInt(loginTime)
+      const currentTime = Date.now()
+      const sessionDuration = currentTime - loginTimestamp
+      
+      if (sessionDuration > SESSION_TIMEOUT) {
+        // انتهت الجلسة
+        localStorage.removeItem('admin_token')
+        localStorage.removeItem('admin_user')
+        localStorage.removeItem('admin_login_time')
+        alert('انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى')
+        router.push('/admin/login')
+        return
+      }
     }
 
     try {
@@ -40,9 +60,15 @@ export default function AdminPanel() {
       setUser(parsedUser)
     } catch (error) {
       console.error('Error parsing user data:', error)
+      localStorage.removeItem('admin_token')
+      localStorage.removeItem('admin_user')
+      localStorage.removeItem('admin_login_time')
       router.push('/admin/login')
       return
     }
+
+    // تحديث آخر نشاط
+    localStorage.setItem('admin_last_activity', Date.now().toString())
 
     // Load content from API/database
     const loadContent = async () => {
@@ -56,6 +82,13 @@ export default function AdminPanel() {
         if (response.ok) {
           const apiContent = await response.json()
           setContent(apiContent)
+        } else if (response.status === 401) {
+          // Token غير صالح
+          localStorage.removeItem('admin_token')
+          localStorage.removeItem('admin_user')
+          localStorage.removeItem('admin_login_time')
+          router.push('/admin/login')
+          return
         } else {
           // Fallback to default content if API fails
           const { getContent } = await import('../../lib/content')
@@ -73,6 +106,23 @@ export default function AdminPanel() {
     }
     
     loadContent()
+
+    // مراقبة النشاط وتحديث آخر نشاط
+    const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart']
+    const updateActivity = () => {
+      localStorage.setItem('admin_last_activity', Date.now().toString())
+    }
+    
+    activityEvents.forEach(event => {
+      window.addEventListener(event, updateActivity)
+    })
+
+    // تنظيف Event Listeners
+    return () => {
+      activityEvents.forEach(event => {
+        window.removeEventListener(event, updateActivity)
+      })
+    }
   }, [router])
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, section?: string, subSection?: string, imageKey?: string) => {
@@ -117,21 +167,25 @@ export default function AdminPanel() {
 
       const { filePath } = await response.json()
 
-      // Update content with new image path
+      // Update content with new image path for all languages
       const newContent = JSON.parse(JSON.stringify(content))
-      if (!newContent[currentLang]) newContent[currentLang] = {}
+      const languages = ['ar', 'en', 'fr', 'es']
+      
+      languages.forEach(lang => {
+        if (!newContent[lang]) newContent[lang] = {}
 
-      if (section && subSection && imageKey) {
-        // For specific sections like about.hero.backgroundImage
-        if (!newContent[currentLang][section]) newContent[currentLang][section] = {}
-        if (!newContent[currentLang][section][subSection]) newContent[currentLang][section][subSection] = {}
-        newContent[currentLang][section][subSection][imageKey] = filePath
-      } else {
-        // Default to homepage hero background
-        if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-        if (!newContent[currentLang].homepage.hero) newContent[currentLang].homepage.hero = {}
-        newContent[currentLang].homepage.hero.backgroundImage = filePath
-      }
+        if (section && subSection && imageKey) {
+          // For specific sections like about.hero.backgroundImage
+          if (!newContent[lang][section]) newContent[lang][section] = {}
+          if (!newContent[lang][section][subSection]) newContent[lang][section][subSection] = {}
+          newContent[lang][section][subSection][imageKey] = filePath
+        } else {
+          // Default to homepage hero background
+          if (!newContent[lang].homepage) newContent[lang].homepage = {}
+          if (!newContent[lang].homepage.hero) newContent[lang].homepage.hero = {}
+          newContent[lang].homepage.hero.backgroundImage = filePath
+        }
+      })
 
       setContent(newContent)
       console.log('تم رفع الصورة بنجاح:', filePath)
@@ -192,8 +246,11 @@ export default function AdminPanel() {
   }
 
   const handleLogout = () => {
+    // تنظيف جميع بيانات الجلسة
     localStorage.removeItem('admin_token')
     localStorage.removeItem('admin_user')
+    localStorage.removeItem('admin_login_time')
+    localStorage.removeItem('admin_last_activity')
     router.push('/admin/login')
   }
 
@@ -231,20 +288,6 @@ export default function AdminPanel() {
               <p className="text-gray-600">مرحباً {user?.name} - إدارة محتوى الموقع</p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium">اللغة:</label>
-                <Select
-                  value={currentLang}
-                  onChange={(e) => setCurrentLang(e.target.value)}
-                  options={[
-                    { value: "ar", label: "العربية" },
-                    { value: "en", label: "English" },
-                    { value: "fr", label: "Français" },
-                    { value: "es", label: "Español" }
-                  ]}
-                />
-
-              </div>
               {content?._lastUpdated && (
                 <div className="text-sm text-gray-500">
                   آخر تحديث: {new Date(content._lastUpdated).toLocaleString('ar-EG')}
@@ -283,7 +326,13 @@ export default function AdminPanel() {
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => {
+                        if (tab.id === 'settings') {
+                          router.push('/admin/settings')
+                        } else {
+                          setActiveTab(tab.id)
+                        }
+                      }}
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-right transition-colors ${
                         activeTab === tab.id
                           ? 'bg-primary-100 text-primary-700 font-medium'
@@ -313,6 +362,32 @@ export default function AdminPanel() {
                   </Button>
                 </div>
 
+                {/* Language Tabs */}
+                {isEditing && (
+                  <div className="mb-6 border-b">
+                    <div className="flex gap-2">
+                      {[
+                        { code: 'ar', name: 'العربية' },
+                        { code: 'en', name: 'English' },
+                        { code: 'fr', name: 'Français' },
+                        { code: 'es', name: 'Español' }
+                      ].map(lang => (
+                        <button
+                          key={lang.code}
+                          onClick={() => setEditingLang(lang.code)}
+                          className={`px-4 py-2 font-medium transition-colors ${
+                            editingLang === lang.code
+                              ? 'border-b-2 border-primary-600 text-primary-700'
+                              : 'text-gray-500 hover:text-gray-700'
+                          }`}
+                        >
+                          {lang.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-8">
                   {/* Hero Section */}
                   <div className="bg-white p-6 rounded-lg border">
@@ -326,20 +401,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.homepage?.hero?.title || ''}
+                            value={content[editingLang]?.homepage?.hero?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-                              if (!newContent[currentLang].homepage.hero) newContent[currentLang].homepage.hero = {}
-                              newContent[currentLang].homepage.hero.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].homepage) newContent[editingLang].homepage = {}
+                              if (!newContent[editingLang].homepage.hero) newContent[editingLang].homepage.hero = {}
+                              newContent[editingLang].homepage.hero.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="أدخل العنوان الرئيسي"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.homepage?.hero?.title || 'غير محدد'}
+                            {content[editingLang]?.homepage?.hero?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -351,20 +426,20 @@ export default function AdminPanel() {
                         {isEditing ? (
                           <Textarea
                             rows={3}
-                            value={content[currentLang]?.homepage?.hero?.subtitle || ''}
+                            value={content[editingLang]?.homepage?.hero?.subtitle || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-                              if (!newContent[currentLang].homepage.hero) newContent[currentLang].homepage.hero = {}
-                              newContent[currentLang].homepage.hero.subtitle = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].homepage) newContent[editingLang].homepage = {}
+                              if (!newContent[editingLang].homepage.hero) newContent[editingLang].homepage.hero = {}
+                              newContent[editingLang].homepage.hero.subtitle = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="أدخل النص التوضيحي"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.homepage?.hero?.subtitle || 'غير محدد'}
+                            {content[editingLang]?.homepage?.hero?.subtitle || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -376,20 +451,20 @@ export default function AdminPanel() {
                           </label>
                           {isEditing ? (
                             <Input
-                              value={content[currentLang]?.homepage?.hero?.primaryButton || ''}
+                              value={content[editingLang]?.homepage?.hero?.primaryButton || ''}
                               onChange={(e) => {
                                 const newContent = JSON.parse(JSON.stringify(content))
-                                if (!newContent[currentLang]) newContent[currentLang] = {}
-                                if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-                                if (!newContent[currentLang].homepage.hero) newContent[currentLang].homepage.hero = {}
-                                newContent[currentLang].homepage.hero.primaryButton = e.target.value
+                                if (!newContent[editingLang]) newContent[editingLang] = {}
+                                if (!newContent[editingLang].homepage) newContent[editingLang].homepage = {}
+                                if (!newContent[editingLang].homepage.hero) newContent[editingLang].homepage.hero = {}
+                                newContent[editingLang].homepage.hero.primaryButton = e.target.value
                                 setContent(newContent)
                               }}
                               placeholder="نص الزر الأساسي"
                             />
                           ) : (
                             <div className="p-3 bg-gray-50 rounded-md">
-                              {content[currentLang]?.homepage?.hero?.primaryButton || 'غير محدد'}
+                              {content[editingLang]?.homepage?.hero?.primaryButton || 'غير محدد'}
                             </div>
                           )}
                         </div>
@@ -400,20 +475,20 @@ export default function AdminPanel() {
                           </label>
                           {isEditing ? (
                             <Input
-                              value={content[currentLang]?.homepage?.hero?.secondaryButton || ''}
+                              value={content[editingLang]?.homepage?.hero?.secondaryButton || ''}
                               onChange={(e) => {
                                 const newContent = JSON.parse(JSON.stringify(content))
-                                if (!newContent[currentLang]) newContent[currentLang] = {}
-                                if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-                                if (!newContent[currentLang].homepage.hero) newContent[currentLang].homepage.hero = {}
-                                newContent[currentLang].homepage.hero.secondaryButton = e.target.value
+                                if (!newContent[editingLang]) newContent[editingLang] = {}
+                                if (!newContent[editingLang].homepage) newContent[editingLang].homepage = {}
+                                if (!newContent[editingLang].homepage.hero) newContent[editingLang].homepage.hero = {}
+                                newContent[editingLang].homepage.hero.secondaryButton = e.target.value
                                 setContent(newContent)
                               }}
                               placeholder="نص الزر الثانوي"
                             />
                           ) : (
                             <div className="p-3 bg-gray-50 rounded-md">
-                              {content[currentLang]?.homepage?.hero?.secondaryButton || 'غير محدد'}
+                              {content[editingLang]?.homepage?.hero?.secondaryButton || 'غير محدد'}
                             </div>
                           )}
                         </div>
@@ -436,13 +511,13 @@ export default function AdminPanel() {
                             </div>
                           ) : (
                             <div className="p-3 bg-gray-50 rounded-md">
-                              {content[currentLang]?.homepage?.hero?.backgroundImage || 'غير محدد'}
+                              {content[editingLang]?.homepage?.hero?.backgroundImage || 'غير محدد'}
                             </div>
                           )}
-                          {content[currentLang]?.homepage?.hero?.backgroundImage && (
+                          {content[editingLang]?.homepage?.hero?.backgroundImage && (
                             <div className="mt-2">
                               <img 
-                                src={content[currentLang].homepage.hero.backgroundImage} 
+                                src={content[editingLang].homepage.hero.backgroundImage} 
                                 alt="صورة الخلفية" 
                                 className="w-32 h-20 object-cover rounded border"
                                 onError={(e) => {
@@ -462,7 +537,7 @@ export default function AdminPanel() {
                       قسم الإحصائيات
                     </h3>
                     <div className="space-y-4">
-                      {(content[currentLang]?.homepage?.stats?.items || []).map((stat: { number?: string; text?: string }, index: number) => (
+                      {(content[editingLang]?.homepage?.stats?.items || []).map((stat: { number?: string; text?: string }, index: number) => (
                         <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
                           <div>
                             <label className="block text-sm font-medium mb-2">
@@ -473,8 +548,8 @@ export default function AdminPanel() {
                                 value={stat.number || ''}
                                 onChange={(e) => {
                                   const newContent = JSON.parse(JSON.stringify(content))
-                                  if (!newContent[currentLang]?.homepage?.stats?.items) return
-                                  newContent[currentLang].homepage.stats.items[index].number = e.target.value
+                                  if (!newContent[editingLang]?.homepage?.stats?.items) return
+                                  newContent[editingLang].homepage.stats.items[index].number = e.target.value
                                   setContent(newContent)
                                 }}
                                 placeholder="15+"
@@ -494,8 +569,8 @@ export default function AdminPanel() {
                                 value={stat.text || ''}
                                 onChange={(e) => {
                                   const newContent = JSON.parse(JSON.stringify(content))
-                                  if (!newContent[currentLang]?.homepage?.stats?.items) return
-                                  newContent[currentLang].homepage.stats.items[index].text = e.target.value
+                                  if (!newContent[editingLang]?.homepage?.stats?.items) return
+                                  newContent[editingLang].homepage.stats.items[index].text = e.target.value
                                   setContent(newContent)
                                 }}
                                 placeholder="سنوات من الخبرة"
@@ -517,7 +592,7 @@ export default function AdminPanel() {
                       قسم المميزات
                     </h3>
                     <div className="space-y-4">
-                      {(content[currentLang]?.homepage?.features?.items || []).map((feature: { title?: string; description?: string; icon?: string }, index: number) => (
+                      {(content[editingLang]?.homepage?.features?.items || []).map((feature: { title?: string; description?: string; icon?: string }, index: number) => (
                         <div key={index} className="p-4 bg-gray-50 rounded-lg">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -529,8 +604,8 @@ export default function AdminPanel() {
                                   value={feature.title || ''}
                                   onChange={(e) => {
                                     const newContent = JSON.parse(JSON.stringify(content))
-                                    if (!newContent[currentLang]?.homepage?.features) return
-                                    newContent[currentLang].homepage.features.items[index].title = e.target.value
+                                    if (!newContent[editingLang]?.homepage?.features) return
+                                    newContent[editingLang].homepage.features.items[index].title = e.target.value
                                     setContent(newContent)
                                   }}
                                   placeholder="جودة عالمية"
@@ -551,8 +626,8 @@ export default function AdminPanel() {
                                   value={feature.description || ''}
                                   onChange={(e) => {
                                     const newContent = JSON.parse(JSON.stringify(content))
-                                    if (!newContent[currentLang]?.homepage?.features) return
-                                    newContent[currentLang].homepage.features.items[index].description = e.target.value
+                                    if (!newContent[editingLang]?.homepage?.features) return
+                                    newContent[editingLang].homepage.features.items[index].description = e.target.value
                                     setContent(newContent)
                                   }}
                                   placeholder="منتجات معتمدة بشهادات الجودة العالمية"
@@ -581,20 +656,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.homepage?.categories?.title || ''}
+                            value={content[editingLang]?.homepage?.categories?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-                              if (!newContent[currentLang].homepage.categories) newContent[currentLang].homepage.categories = {}
-                              newContent[currentLang].homepage.categories.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].homepage) newContent[editingLang].homepage = {}
+                              if (!newContent[editingLang].homepage.categories) newContent[editingLang].homepage.categories = {}
+                              newContent[editingLang].homepage.categories.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="فئات المنتجات"
                           />
                         ) : (
                           <div className="p-2 bg-white rounded border">
-                            {content[currentLang]?.homepage?.categories?.title || 'غير محدد'}
+                            {content[editingLang]?.homepage?.categories?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -605,13 +680,13 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Textarea
-                            value={content[currentLang]?.homepage?.categories?.subtitle || ''}
+                            value={content[editingLang]?.homepage?.categories?.subtitle || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-                              if (!newContent[currentLang].homepage.categories) newContent[currentLang].homepage.categories = {}
-                              newContent[currentLang].homepage.categories.subtitle = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].homepage) newContent[editingLang].homepage = {}
+                              if (!newContent[editingLang].homepage.categories) newContent[editingLang].homepage.categories = {}
+                              newContent[editingLang].homepage.categories.subtitle = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="استكشف مجموعتنا المتنوعة من الرخام والجرانيت"
@@ -619,7 +694,7 @@ export default function AdminPanel() {
                           />
                         ) : (
                           <div className="p-2 bg-white rounded border">
-                            {content[currentLang]?.homepage?.categories?.subtitle || 'غير محدد'}
+                            {content[editingLang]?.homepage?.categories?.subtitle || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -638,20 +713,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.homepage?.cta?.title || ''}
+                            value={content[editingLang]?.homepage?.cta?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-                              if (!newContent[currentLang].homepage.cta) newContent[currentLang].homepage.cta = {}
-                              newContent[currentLang].homepage.cta.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].homepage) newContent[editingLang].homepage = {}
+                              if (!newContent[editingLang].homepage.cta) newContent[editingLang].homepage.cta = {}
+                              newContent[editingLang].homepage.cta.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="جاهز للبدء؟"
                           />
                         ) : (
                           <div className="p-2 bg-white rounded border">
-                            {content[currentLang]?.homepage?.cta?.title || 'غير محدد'}
+                            {content[editingLang]?.homepage?.cta?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -662,13 +737,13 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Textarea
-                            value={content[currentLang]?.homepage?.cta?.subtitle || ''}
+                            value={content[editingLang]?.homepage?.cta?.subtitle || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-                              if (!newContent[currentLang].homepage.cta) newContent[currentLang].homepage.cta = {}
-                              newContent[currentLang].homepage.cta.subtitle = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].homepage) newContent[editingLang].homepage = {}
+                              if (!newContent[editingLang].homepage.cta) newContent[editingLang].homepage.cta = {}
+                              newContent[editingLang].homepage.cta.subtitle = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="احصل على عرض سعر مجاني لمشروعك اليوم"
@@ -676,7 +751,7 @@ export default function AdminPanel() {
                           />
                         ) : (
                           <div className="p-2 bg-white rounded border">
-                            {content[currentLang]?.homepage?.cta?.subtitle || 'غير محدد'}
+                            {content[editingLang]?.homepage?.cta?.subtitle || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -687,20 +762,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.homepage?.cta?.button || ''}
+                            value={content[editingLang]?.homepage?.cta?.button || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].homepage) newContent[currentLang].homepage = {}
-                              if (!newContent[currentLang].homepage.cta) newContent[currentLang].homepage.cta = {}
-                              newContent[currentLang].homepage.cta.button = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].homepage) newContent[editingLang].homepage = {}
+                              if (!newContent[editingLang].homepage.cta) newContent[editingLang].homepage.cta = {}
+                              newContent[editingLang].homepage.cta.button = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="احصل على عرض سعر"
                           />
                         ) : (
                           <div className="p-2 bg-white rounded border">
-                            {content[currentLang]?.homepage?.cta?.button || 'غير محدد'}
+                            {content[editingLang]?.homepage?.cta?.button || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -719,21 +794,21 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.siteInfo?.phone || ''}
+                            value={content[editingLang]?.siteInfo?.phone || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]?.siteInfo) {
-                                if (!newContent[currentLang]) newContent[currentLang] = {}
-                                newContent[currentLang].siteInfo = {}
+                              if (!newContent[editingLang]?.siteInfo) {
+                                if (!newContent[editingLang]) newContent[editingLang] = {}
+                                newContent[editingLang].siteInfo = {}
                               }
-                              newContent[currentLang].siteInfo.phone = e.target.value
+                              newContent[editingLang].siteInfo.phone = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="+20 111 312 1444"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.siteInfo?.phone || 'غير محدد'}
+                            {content[editingLang]?.siteInfo?.phone || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -744,68 +819,51 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.siteInfo?.email || ''}
+                            value={content[editingLang]?.siteInfo?.email || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]?.siteInfo) {
-                                if (!newContent[currentLang]) newContent[currentLang] = {}
-                                newContent[currentLang].siteInfo = {}
+                              if (!newContent[editingLang]?.siteInfo) {
+                                if (!newContent[editingLang]) newContent[editingLang] = {}
+                                newContent[editingLang].siteInfo = {}
                               }
-                              newContent[currentLang].siteInfo.email = e.target.value
+                              newContent[editingLang].siteInfo.email = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="info@alhotmarble.com"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.siteInfo?.email || 'غير محدد'}
+                            {content[editingLang]?.siteInfo?.email || 'غير محدد'}
                           </div>
                         )}
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium mb-2">
-                          {currentLang === 'ar' ? 'العنوان' : 'Address'}
+                          {editingLang === 'ar' ? 'العنوان' : 'Address'}
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.siteInfo?.address || ''}
+                            value={content[editingLang]?.siteInfo?.address || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]?.siteInfo) {
-                                if (!newContent[currentLang]) newContent[currentLang] = {}
-                                newContent[currentLang].siteInfo = {}
+                              if (!newContent[editingLang]?.siteInfo) {
+                                if (!newContent[editingLang]) newContent[editingLang] = {}
+                                newContent[editingLang].siteInfo = {}
                               }
-                              newContent[currentLang].siteInfo.address = e.target.value
+                              newContent[editingLang].siteInfo.address = e.target.value
                               setContent(newContent)
                             }}
-                            placeholder={currentLang === 'ar' ? 'العنوان' : 'Address'}
+                            placeholder={editingLang === 'ar' ? 'العنوان' : 'Address'}
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.siteInfo?.address || 'غير محدد'}
+                            {content[editingLang]?.siteInfo?.address || 'غير محدد'}
                           </div>
                         )}
                       </div>
                     </div>
                   </div>
-
-                  {/* Language Sync Warning */}
-                  {isEditing && (
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">!</span>
-                        </div>
-                        <p className="text-yellow-800 font-medium">
-                          {currentLang === 'ar' 
-                            ? 'تذكر: يجب تحديث المحتوى لكل اللغات المدعومة (العربية والإنجليزية)'
-                            : 'Remember: Content should be updated for all supported languages (Arabic and English)'
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </Card>
             )}
@@ -822,6 +880,32 @@ export default function AdminPanel() {
                   </Button>
                 </div>
 
+                {/* Language Tabs */}
+                {isEditing && (
+                  <div className="mb-6 border-b">
+                    <div className="flex gap-2">
+                      {[
+                        { code: 'ar', name: 'العربية' },
+                        { code: 'en', name: 'English' },
+                        { code: 'fr', name: 'Français' },
+                        { code: 'es', name: 'Español' }
+                      ].map(lang => (
+                        <button
+                          key={lang.code}
+                          onClick={() => setEditingLang(lang.code)}
+                          className={`px-4 py-2 font-medium transition-colors ${
+                            editingLang === lang.code
+                              ? 'border-b-2 border-primary-600 text-primary-700'
+                              : 'text-gray-500 hover:text-gray-700'
+                          }`}
+                        >
+                          {lang.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-8">
                   {/* Hero Section */}
                   <div className="bg-white p-6 rounded-lg border">
@@ -835,20 +919,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.about?.hero?.title || ''}
+                            value={content[editingLang]?.about?.hero?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
-                              if (!newContent[currentLang].about.hero) newContent[currentLang].about.hero = {}
-                              newContent[currentLang].about.hero.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].about) newContent[editingLang].about = {}
+                              if (!newContent[editingLang].about.hero) newContent[editingLang].about.hero = {}
+                              newContent[editingLang].about.hero.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="من نحن"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.hero?.title || 'غير محدد'}
+                            {content[editingLang]?.about?.hero?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -860,20 +944,20 @@ export default function AdminPanel() {
                         {isEditing ? (
                           <Textarea
                             rows={4}
-                            value={content[currentLang]?.about?.hero?.description || ''}
+                            value={content[editingLang]?.about?.hero?.description || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
-                              if (!newContent[currentLang].about.hero) newContent[currentLang].about.hero = {}
-                              newContent[currentLang].about.hero.description = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].about) newContent[editingLang].about = {}
+                              if (!newContent[editingLang].about.hero) newContent[editingLang].about.hero = {}
+                              newContent[editingLang].about.hero.description = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="وصف موجز عن الشركة"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.hero?.description || 'غير محدد'}
+                            {content[editingLang]?.about?.hero?.description || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -896,13 +980,13 @@ export default function AdminPanel() {
                           </div>
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.hero?.backgroundImage || 'غير محدد'}
+                            {content[editingLang]?.about?.hero?.backgroundImage || 'غير محدد'}
                           </div>
                         )}
-                        {content[currentLang]?.about?.hero?.backgroundImage && (
+                        {content[editingLang]?.about?.hero?.backgroundImage && (
                           <div className="mt-2">
                             <img 
-                              src={content[currentLang].about.hero.backgroundImage} 
+                              src={content[editingLang].about.hero.backgroundImage} 
                               alt="صورة الخلفية" 
                               className="w-32 h-20 object-cover rounded border"
                               onError={(e) => {
@@ -927,20 +1011,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.about?.mission?.title || ''}
+                            value={content[editingLang]?.about?.mission?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
-                              if (!newContent[currentLang].about.mission) newContent[currentLang].about.mission = {}
-                              newContent[currentLang].about.mission.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].about) newContent[editingLang].about = {}
+                              if (!newContent[editingLang].about.mission) newContent[editingLang].about.mission = {}
+                              newContent[editingLang].about.mission.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="رؤيتنا ورسالتنا"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.mission?.title || 'غير محدد'}
+                            {content[editingLang]?.about?.mission?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -952,20 +1036,20 @@ export default function AdminPanel() {
                         {isEditing ? (
                           <Textarea
                             rows={3}
-                            value={content[currentLang]?.about?.mission?.vision || ''}
+                            value={content[editingLang]?.about?.mission?.vision || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
-                              if (!newContent[currentLang].about.mission) newContent[currentLang].about.mission = {}
-                              newContent[currentLang].about.mission.vision = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].about) newContent[editingLang].about = {}
+                              if (!newContent[editingLang].about.mission) newContent[editingLang].about.mission = {}
+                              newContent[editingLang].about.mission.vision = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="رؤية الشركة"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.mission?.vision || 'غير محدد'}
+                            {content[editingLang]?.about?.mission?.vision || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -977,20 +1061,20 @@ export default function AdminPanel() {
                         {isEditing ? (
                           <Textarea
                             rows={3}
-                            value={content[currentLang]?.about?.mission?.mission || ''}
+                            value={content[editingLang]?.about?.mission?.mission || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
-                              if (!newContent[currentLang].about.mission) newContent[currentLang].about.mission = {}
-                              newContent[currentLang].about.mission.mission = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].about) newContent[editingLang].about = {}
+                              if (!newContent[editingLang].about.mission) newContent[editingLang].about.mission = {}
+                              newContent[editingLang].about.mission.mission = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="رسالة الشركة"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.mission?.mission || 'غير محدد'}
+                            {content[editingLang]?.about?.mission?.mission || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1013,13 +1097,13 @@ export default function AdminPanel() {
                           </div>
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.mission?.image || 'غير محدد'}
+                            {content[editingLang]?.about?.mission?.image || 'غير محدد'}
                           </div>
                         )}
-                        {content[currentLang]?.about?.mission?.image && (
+                        {content[editingLang]?.about?.mission?.image && (
                           <div className="mt-2">
                             <img 
-                              src={content[currentLang].about.mission.image} 
+                              src={content[editingLang].about.mission.image} 
                               alt="صورة الرؤية والرسالة" 
                               className="w-32 h-20 object-cover rounded border"
                               onError={(e) => {
@@ -1044,20 +1128,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.about?.location?.title || ''}
+                            value={content[editingLang]?.about?.location?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
-                              if (!newContent[currentLang].about.location) newContent[currentLang].about.location = {}
-                              newContent[currentLang].about.location.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].about) newContent[editingLang].about = {}
+                              if (!newContent[editingLang].about.location) newContent[editingLang].about.location = {}
+                              newContent[editingLang].about.location.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="موقعنا"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.location?.title || 'غير محدد'}
+                            {content[editingLang]?.about?.location?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1068,20 +1152,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.about?.location?.address || ''}
+                            value={content[editingLang]?.about?.location?.address || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
-                              if (!newContent[currentLang].about.location) newContent[currentLang].about.location = {}
-                              newContent[currentLang].about.location.address = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].about) newContent[editingLang].about = {}
+                              if (!newContent[editingLang].about.location) newContent[editingLang].about.location = {}
+                              newContent[editingLang].about.location.address = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="العنوان التفصيلي"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.location?.address || 'غير محدد'}
+                            {content[editingLang]?.about?.location?.address || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1093,20 +1177,20 @@ export default function AdminPanel() {
                         {isEditing ? (
                           <Textarea
                             rows={3}
-                            value={content[currentLang]?.about?.location?.description || ''}
+                            value={content[editingLang]?.about?.location?.description || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
-                              if (!newContent[currentLang].about.location) newContent[currentLang].about.location = {}
-                              newContent[currentLang].about.location.description = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].about) newContent[editingLang].about = {}
+                              if (!newContent[editingLang].about.location) newContent[editingLang].about.location = {}
+                              newContent[editingLang].about.location.description = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="وصف الموقع ومزاياه"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.location?.description || 'غير محدد'}
+                            {content[editingLang]?.about?.location?.description || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1129,13 +1213,13 @@ export default function AdminPanel() {
                           </div>
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.location?.image || 'غير محدد'}
+                            {content[editingLang]?.about?.location?.image || 'غير محدد'}
                           </div>
                         )}
-                        {content[currentLang]?.about?.location?.image && (
+                        {content[editingLang]?.about?.location?.image && (
                           <div className="mt-2">
                             <img 
-                              src={content[currentLang].about.location.image} 
+                              src={content[editingLang].about.location.image} 
                               alt="صورة الموقع" 
                               className="w-32 h-20 object-cover rounded border"
                               onError={(e) => {
@@ -1160,25 +1244,25 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.about?.stats?.title || ''}
+                            value={content[editingLang]?.about?.stats?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].about) newContent[currentLang].about = {}
-                              if (!newContent[currentLang].about.stats) newContent[currentLang].about.stats = {}
-                              newContent[currentLang].about.stats.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].about) newContent[editingLang].about = {}
+                              if (!newContent[editingLang].about.stats) newContent[editingLang].about.stats = {}
+                              newContent[editingLang].about.stats.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="إنجازاتنا بالأرقام"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.about?.stats?.title || 'غير محدد'}
+                            {content[editingLang]?.about?.stats?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
                       
-                      {(content[currentLang]?.about?.stats?.items || []).map((stat: { number?: string; text?: string }, index: number) => (
+                      {(content[editingLang]?.about?.stats?.items || []).map((stat: { number?: string; text?: string }, index: number) => (
                         <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
                           <div>
                             <label className="block text-sm font-medium mb-2">
@@ -1189,8 +1273,8 @@ export default function AdminPanel() {
                                 value={stat.number || ''}
                                 onChange={(e) => {
                                   const newContent = JSON.parse(JSON.stringify(content))
-                                  if (!newContent[currentLang]?.about?.stats?.items) return
-                                  newContent[currentLang].about.stats.items[index].number = e.target.value
+                                  if (!newContent[editingLang]?.about?.stats?.items) return
+                                  newContent[editingLang].about.stats.items[index].number = e.target.value
                                   setContent(newContent)
                                 }}
                                 placeholder="15+"
@@ -1210,8 +1294,8 @@ export default function AdminPanel() {
                                 value={stat.text || ''}
                                 onChange={(e) => {
                                   const newContent = JSON.parse(JSON.stringify(content))
-                                  if (!newContent[currentLang]?.about?.stats?.items) return
-                                  newContent[currentLang].about.stats.items[index].text = e.target.value
+                                  if (!newContent[editingLang]?.about?.stats?.items) return
+                                  newContent[editingLang].about.stats.items[index].text = e.target.value
                                   setContent(newContent)
                                 }}
                                 placeholder="سنوات من الخبرة"
@@ -1226,23 +1310,6 @@ export default function AdminPanel() {
                       ))}
                     </div>
                   </div>
-
-                  {/* Language Sync Warning */}
-                  {isEditing && (
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">!</span>
-                        </div>
-                        <p className="text-yellow-800 font-medium">
-                          {currentLang === 'ar'
-                            ? 'تذكر: يجب تحديث المحتوى لكل اللغات المدعومة (العربية والإنجليزية)'
-                            : 'Remember: Content should be updated for all supported languages (Arabic and English)'
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </Card>
             )}
@@ -1259,6 +1326,32 @@ export default function AdminPanel() {
                   </Button>
                 </div>
 
+                {/* Language Tabs */}
+                {isEditing && (
+                  <div className="mb-6 border-b">
+                    <div className="flex gap-2">
+                      {[
+                        { code: 'ar', name: 'العربية' },
+                        { code: 'en', name: 'English' },
+                        { code: 'fr', name: 'Français' },
+                        { code: 'es', name: 'Español' }
+                      ].map(lang => (
+                        <button
+                          key={lang.code}
+                          onClick={() => setEditingLang(lang.code)}
+                          className={`px-4 py-2 font-medium transition-colors ${
+                            editingLang === lang.code
+                              ? 'border-b-2 border-primary-600 text-primary-700'
+                              : 'text-gray-500 hover:text-gray-700'
+                          }`}
+                        >
+                          {lang.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-8">
                   {/* Hero Section */}
                   <div className="bg-white p-6 rounded-lg border">
@@ -1272,20 +1365,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.export?.hero?.title || ''}
+                            value={content[editingLang]?.export?.hero?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
-                              if (!newContent[currentLang].export.hero) newContent[currentLang].export.hero = {}
-                              newContent[currentLang].export.hero.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                              if (!newContent[editingLang].export.hero) newContent[editingLang].export.hero = {}
+                              newContent[editingLang].export.hero.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="خدمات التصدير الاحترافية"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.hero?.title || 'غير محدد'}
+                            {content[editingLang]?.export?.hero?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1297,20 +1390,20 @@ export default function AdminPanel() {
                         {isEditing ? (
                           <Textarea
                             rows={4}
-                            value={content[currentLang]?.export?.hero?.subtitle || ''}
+                            value={content[editingLang]?.export?.hero?.subtitle || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
-                              if (!newContent[currentLang].export.hero) newContent[currentLang].export.hero = {}
-                              newContent[currentLang].export.hero.subtitle = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                              if (!newContent[editingLang].export.hero) newContent[editingLang].export.hero = {}
+                              newContent[editingLang].export.hero.subtitle = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="وصف خدمات التصدير"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.hero?.subtitle || 'غير محدد'}
+                            {content[editingLang]?.export?.hero?.subtitle || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1321,20 +1414,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.export?.hero?.cta || ''}
+                            value={content[editingLang]?.export?.hero?.cta || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
-                              if (!newContent[currentLang].export.hero) newContent[currentLang].export.hero = {}
-                              newContent[currentLang].export.hero.cta = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                              if (!newContent[editingLang].export.hero) newContent[editingLang].export.hero = {}
+                              newContent[editingLang].export.hero.cta = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="طلب عرض سعر للتصدير"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.hero?.cta || 'غير محدد'}
+                            {content[editingLang]?.export?.hero?.cta || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1357,13 +1450,13 @@ export default function AdminPanel() {
                           </div>
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.hero?.backgroundImage || 'غير محدد'}
+                            {content[editingLang]?.export?.hero?.backgroundImage || 'غير محدد'}
                           </div>
                         )}
-                        {content[currentLang]?.export?.hero?.backgroundImage && (
+                        {content[editingLang]?.export?.hero?.backgroundImage && (
                           <div className="mt-2">
                             <img 
-                              src={content[currentLang].export.hero.backgroundImage} 
+                              src={content[editingLang].export.hero.backgroundImage} 
                               alt="صورة القسم الرئيسي" 
                               className="w-32 h-20 object-cover rounded border"
                               onError={(e) => {
@@ -1388,20 +1481,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.export?.services?.title || ''}
+                            value={content[editingLang]?.export?.services?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
-                              if (!newContent[currentLang].export.services) newContent[currentLang].export.services = {}
-                              newContent[currentLang].export.services.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                              if (!newContent[editingLang].export.services) newContent[editingLang].export.services = {}
+                              newContent[editingLang].export.services.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="خدماتنا"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.services?.title || 'غير محدد'}
+                            {content[editingLang]?.export?.services?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1413,20 +1506,20 @@ export default function AdminPanel() {
                         {isEditing ? (
                           <Textarea
                             rows={2}
-                            value={content[currentLang]?.export?.services?.subtitle || ''}
+                            value={content[editingLang]?.export?.services?.subtitle || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
-                              if (!newContent[currentLang].export.services) newContent[currentLang].export.services = {}
-                              newContent[currentLang].export.services.subtitle = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                              if (!newContent[editingLang].export.services) newContent[editingLang].export.services = {}
+                              newContent[editingLang].export.services.subtitle = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="نقدم خدمات تصدير متكاملة من الاستشارة إلى التسليم"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.services?.subtitle || 'غير محدد'}
+                            {content[editingLang]?.export?.services?.subtitle || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1449,13 +1542,13 @@ export default function AdminPanel() {
                           </div>
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.services?.image || 'غير محدد'}
+                            {content[editingLang]?.export?.services?.image || 'غير محدد'}
                           </div>
                         )}
-                        {content[currentLang]?.export?.services?.image && (
+                        {content[editingLang]?.export?.services?.image && (
                           <div className="mt-2">
                             <img 
-                              src={content[currentLang].export.services.image} 
+                              src={content[editingLang].export.services.image} 
                               alt="صورة الخدمات" 
                               className="w-32 h-20 object-cover rounded border"
                               onError={(e) => {
@@ -1480,20 +1573,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.export?.countries?.title || ''}
+                            value={content[editingLang]?.export?.countries?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
-                              if (!newContent[currentLang].export.countries) newContent[currentLang].export.countries = {}
-                              newContent[currentLang].export.countries.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                              if (!newContent[editingLang].export.countries) newContent[editingLang].export.countries = {}
+                              newContent[editingLang].export.countries.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="الدول التي نصدر إليها"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.countries?.title || 'غير محدد'}
+                            {content[editingLang]?.export?.countries?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1505,20 +1598,20 @@ export default function AdminPanel() {
                         {isEditing ? (
                           <Textarea
                             rows={2}
-                            value={content[currentLang]?.export?.countries?.subtitle || ''}
+                            value={content[editingLang]?.export?.countries?.subtitle || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
-                              if (!newContent[currentLang].export.countries) newContent[currentLang].export.countries = {}
-                              newContent[currentLang].export.countries.subtitle = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                              if (!newContent[editingLang].export.countries) newContent[editingLang].export.countries = {}
+                              newContent[editingLang].export.countries.subtitle = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="نصل إلى أكثر من 50 دولة في 6 قارات"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.countries?.subtitle || 'غير محدد'}
+                            {content[editingLang]?.export?.countries?.subtitle || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1541,13 +1634,13 @@ export default function AdminPanel() {
                           </div>
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.countries?.image || 'غير محدد'}
+                            {content[editingLang]?.export?.countries?.image || 'غير محدد'}
                           </div>
                         )}
-                        {content[currentLang]?.export?.countries?.image && (
+                        {content[editingLang]?.export?.countries?.image && (
                           <div className="mt-2">
                             <img 
-                              src={content[currentLang].export.countries.image} 
+                              src={content[editingLang].export.countries.image} 
                               alt="صورة الدول المستوردة" 
                               className="w-32 h-20 object-cover rounded border"
                               onError={(e) => {
@@ -1572,20 +1665,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.export?.cta?.title || ''}
+                            value={content[editingLang]?.export?.cta?.title || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
-                              if (!newContent[currentLang].export.cta) newContent[currentLang].export.cta = {}
-                              newContent[currentLang].export.cta.title = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                              if (!newContent[editingLang].export.cta) newContent[editingLang].export.cta = {}
+                              newContent[editingLang].export.cta.title = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="ابدأ مشروع التصدير الخاص بك"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.cta?.title || 'غير محدد'}
+                            {content[editingLang]?.export?.cta?.title || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1597,20 +1690,20 @@ export default function AdminPanel() {
                         {isEditing ? (
                           <Textarea
                             rows={2}
-                            value={content[currentLang]?.export?.cta?.subtitle || ''}
+                            value={content[editingLang]?.export?.cta?.subtitle || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
-                              if (!newContent[currentLang].export.cta) newContent[currentLang].export.cta = {}
-                              newContent[currentLang].export.cta.subtitle = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                              if (!newContent[editingLang].export.cta) newContent[editingLang].export.cta = {}
+                              newContent[editingLang].export.cta.subtitle = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="احصل على عرض سعر مخصص وابدأ رحلة التصدير معنا اليوم"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.cta?.subtitle || 'غير محدد'}
+                            {content[editingLang]?.export?.cta?.subtitle || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1621,20 +1714,20 @@ export default function AdminPanel() {
                         </label>
                         {isEditing ? (
                           <Input
-                            value={content[currentLang]?.export?.cta?.button || ''}
+                            value={content[editingLang]?.export?.cta?.button || ''}
                             onChange={(e) => {
                               const newContent = JSON.parse(JSON.stringify(content))
-                              if (!newContent[currentLang]) newContent[currentLang] = {}
-                              if (!newContent[currentLang].export) newContent[currentLang].export = {}
-                              if (!newContent[currentLang].export.cta) newContent[currentLang].export.cta = {}
-                              newContent[currentLang].export.cta.button = e.target.value
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                              if (!newContent[editingLang].export.cta) newContent[editingLang].export.cta = {}
+                              newContent[editingLang].export.cta.button = e.target.value
                               setContent(newContent)
                             }}
                             placeholder="طلب عرض سعر الآن"
                           />
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.cta?.button || 'غير محدد'}
+                            {content[editingLang]?.export?.cta?.button || 'غير محدد'}
                           </div>
                         )}
                       </div>
@@ -1657,13 +1750,13 @@ export default function AdminPanel() {
                           </div>
                         ) : (
                           <div className="p-3 bg-gray-50 rounded-md">
-                            {content[currentLang]?.export?.cta?.backgroundImage || 'غير محدد'}
+                            {content[editingLang]?.export?.cta?.backgroundImage || 'غير محدد'}
                           </div>
                         )}
-                        {content[currentLang]?.export?.cta?.backgroundImage && (
+                        {content[editingLang]?.export?.cta?.backgroundImage && (
                           <div className="mt-2">
                             <img 
-                              src={content[currentLang].export.cta.backgroundImage} 
+                              src={content[editingLang].export.cta.backgroundImage} 
                               alt="صورة خلفية دعوة العمل" 
                               className="w-32 h-20 object-cover rounded border"
                               onError={(e) => {
@@ -1675,23 +1768,6 @@ export default function AdminPanel() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Language Sync Warning */}
-                  {isEditing && (
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">!</span>
-                        </div>
-                        <p className="text-yellow-800 font-medium">
-                          {currentLang === 'ar'
-                            ? 'تذكر: يجب تحديث المحتوى لكل اللغات المدعومة (العربية والإنجليزية)'
-                            : 'Remember: Content should be updated for all supported languages (Arabic and English)'
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </Card>
             )}
@@ -1884,39 +1960,6 @@ export default function AdminPanel() {
                 </div>
                 <div className="text-center py-4 text-gray-500">
                   <p className="text-sm">انقر على &quot;إدارة جميع المقالات&quot; لإضافة وتعديل مقالات المدونة</p>
-                </div>
-              </Card>
-            )}
-
-            {activeTab === 'settings' && (
-              <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-6">إعدادات الموقع</h2>
-                <div className="space-y-6">
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h3 className="font-semibold text-blue-800 mb-2">معلومات النظام</h3>
-                    <div className="text-sm text-blue-700 space-y-1">
-                      <p><strong>حالة الخادم:</strong> يعمل على البورت 3002</p>
-                      <p><strong>نوع المحتوى:</strong> Dynamic Content (تحديث فوري)</p>
-                      <p><strong>مسار الملفات:</strong> src/data/content.json</p>
-                      <p><strong>آخر تحديث:</strong> {content?._lastUpdated ? new Date(content._lastUpdated).toLocaleString('ar-EG') : 'غير متاح'}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <h3 className="font-semibold text-green-800 mb-2">حالة المزامنة</h3>
-                    <div className="text-sm text-green-700">
-                      <p>✅ التغييرات تظهر فوراً في الموقع</p>
-                      <p>✅ دعم متعدد اللغات (العربية، الإنجليزية، الفرنسية، الإسبانية)</p>
-                      <p>✅ تحميل الصور مدعوم</p>
-                      <p>✅ حفظ تلقائي في قاعدة البيانات</p>
-                    </div>
-                  </div>
-                  
-                  <div className="text-center py-4 text-gray-500">
-                    <Settings className="w-12 h-12 mx-auto mb-4" />
-                    <p>إعدادات إضافية قيد التطوير</p>
-                    <p className="text-sm">ستتمكن من تغيير الألوان والخطوط قريباً</p>
-                  </div>
                 </div>
               </Card>
             )}

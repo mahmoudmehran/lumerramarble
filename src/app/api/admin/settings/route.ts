@@ -74,7 +74,8 @@ function verifyAdmin(request: NextRequest) {
       email: string
     }
     
-    if (decoded.role !== 'admin') {
+    // التحقق من role - يقبل ADMIN أو admin
+    if (decoded.role !== 'ADMIN' && decoded.role !== 'admin') {
       return null
     }
 

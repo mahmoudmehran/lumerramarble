@@ -181,11 +181,15 @@ model Newsletter {
 
 model SiteSettings {
   id                String   @id @default(cuid())
-  // Company Information
+  // Company Information (4 languages)
   companyName       String   @default("Lumerra Marble")
   companyNameAr     String   @default("شركة لوميرا للرخام")
+  companyNameEs     String   @default("Lumerra Marble")
+  companyNameFr     String   @default("Lumerra Marble")
   description       String?
   descriptionAr     String?
+  descriptionEs     String?
+  descriptionFr     String?
   
   // Contact Information
   phone             String?
@@ -193,6 +197,8 @@ model SiteSettings {
   whatsapp          String?
   address           String?
   addressAr         String?
+  addressEs         String?
+  addressFr         String?
   
   // Social Media
   facebook          String?
@@ -200,17 +206,95 @@ model SiteSettings {
   linkedin          String?
   youtube           String?
   
-  // SEO Settings
+  // SEO Settings (4 languages)
   metaTitle         String?
   metaTitleAr       String?
+  metaTitleEs       String?
+  metaTitleFr       String?
   metaDescription   String?
   metaDescriptionAr String?
+  metaDescriptionEs String?
+  metaDescriptionFr String?
   keywords          String?
   keywordsAr        String?
+  keywordsEs        String?
+  keywordsFr        String?
   
-  // Business Information
+  // Business Information (4 languages)
   businessHours     String?
   businessHoursAr   String?
+  businessHoursEs   String?
+  businessHoursFr   String?
+  
+  // Email/SMTP Settings
+  smtpHost          String?  @default("smtp.gmail.com")
+  smtpPort          Int?     @default(587)
+  smtpUser          String?
+  smtpPassword      String?  // Should be encrypted in production
+  smtpSecure        Boolean? @default(false)  // true for 465, false for other ports
+  emailFrom         String?  // Default sender email
+  emailFromName     String?  // Default sender name
+  notificationEmail String?  // Email to receive notifications
+  
+  // Image Settings
+  maxImageSize      Int?     @default(5242880)    // Max size in bytes (default: 5MB)
+  allowedImageTypes String?  @default("image/jpeg,image/png,image/webp,image/gif")  // Allowed MIME types
+  imageQuality      Int?     @default(80)         // Compression quality (1-100)
+  autoOptimize      Boolean? @default(true)       // Auto-optimize uploaded images
+  thumbnailWidth    Int?     @default(300)        // Thumbnail width in pixels
+  thumbnailHeight   Int?     @default(300)        // Thumbnail height in pixels
+  maxWidth          Int?     @default(1920)       // Max image width
+  maxHeight         Int?     @default(1080)       // Max image height
+  
+  // SEO & Analytics Settings
+  googleAnalyticsId String?  // Google Analytics GA4 ID (G-XXXXXXXXXX)
+  googleTagManagerId String? // Google Tag Manager ID (GTM-XXXXXXX)
+  facebookPixelId   String?  // Facebook Pixel ID
+  linkedinPartnerId String?  // LinkedIn Insight Tag Partner ID
+  tiktokPixelId     String?  // TikTok Pixel ID
+  bingAdsId         String?  // Microsoft Bing Ads UET Tag ID
+  seoIndexing       Boolean? @default(true)       // Allow search engines to index
+  seoFollowLinks    Boolean? @default(true)       // Allow search engines to follow links
+  canonicalUrl      String?  // Canonical domain URL
+  robotsTxt         String?  // Custom robots.txt content
+  
+  // Legal Settings (4 languages)
+  privacyPolicyAr   String?  // Privacy Policy in Arabic
+  privacyPolicyEn   String?  // Privacy Policy in English
+  privacyPolicyEs   String?  // Privacy Policy in Spanish
+  privacyPolicyFr   String?  // Privacy Policy in French
+  termsConditionsAr String?  // Terms & Conditions in Arabic
+  termsConditionsEn String?  // Terms & Conditions in English
+  termsConditionsEs String?  // Terms & Conditions in Spanish
+  termsConditionsFr String?  // Terms & Conditions in French
+  copyrightText     String?  @default("© 2024 Lumerra Marble. All rights reserved.")
+  
+  // Advanced Appearance Settings
+  fontFamily        String?  @default("Inter")    // Primary font family
+  fontSize          String?  @default("16px")     // Base font size
+  borderRadius      String?  @default("8px")      // Default border radius
+  boxShadow         String?  @default("0 1px 3px rgba(0,0,0,0.1)")  // Default shadow
+  buttonStyle       String?  @default("rounded")  // Button style: rounded, square, pill
+  animationsEnabled Boolean? @default(true)       // Enable page animations
+  darkModeEnabled   Boolean? @default(false)      // Enable dark mode
+  
+  // Security Settings
+  enableRecaptcha   Boolean? @default(true)       // Enable reCAPTCHA
+  recaptchaSiteKey  String?  // reCAPTCHA Site Key
+  recaptchaSecretKey String? // reCAPTCHA Secret Key
+  maxLoginAttempts  Int?     @default(5)          // Max login attempts before lockout
+  sessionTimeout    Int?     @default(480)        // Session timeout in minutes (8 hours)
+  enableTwoFactor   Boolean? @default(false)      // Enable 2FA for admin
+  allowedIPs        String?  // Comma-separated allowed IP addresses (optional)
+  blockedIPs        String?  // Comma-separated blocked IP addresses
+  
+  // Advanced Contact Settings
+  whatsappAutoReply String?  // Auto-reply message for WhatsApp
+  whatsappGreeting  String?  @default("مرحباً! كيف يمكنني مساعدتك؟")  // WhatsApp greeting message
+  whatsappButtonText String? @default("تواصل عبر واتساب") // WhatsApp button text
+  whatsappShowOnMobile Boolean? @default(true)   // Show WhatsApp button on mobile
+  whatsappShowOnDesktop Boolean? @default(true)  // Show WhatsApp button on desktop
+  whatsappPosition  String?  @default("bottom-right") // Position: bottom-right, bottom-left
   
   // Theme Colors (5-color system)
   primaryColor      String   @default("#f59000")    // Header/Footer/Main sections

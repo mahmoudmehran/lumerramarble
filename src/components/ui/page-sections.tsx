@@ -183,17 +183,16 @@ export function FeatureCard({ icon, title, description, className }: FeatureCard
   return (
     <div className={cn(
       'text-center p-8 rounded-lg transition-all duration-300 h-full',
-      'bg-[var(--color-quinary)] hover:bg-[var(--color-quinary-100)]',
-      'border border-[var(--color-quaternary-100)]',
-      'hover:shadow-lg hover:-translate-y-1',
+      'bg-gradient-to-br from-[var(--color-primary-100)] via-[var(--color-secondary-50)] to-[var(--color-tertiary-50)]',
+      'hover:from-[var(--color-secondary-100)] hover:via-[var(--color-primary-100)] hover:to-[var(--color-quinary)]',
+      'border border-[var(--color-quaternary-200)]',
+      'hover:shadow-xl hover:-translate-y-1 hover:border-[var(--color-primary-300)]',
       'flex flex-col items-center justify-start',
       'min-h-[280px]',
       className
     )}>
-      <div className="w-20 h-20 bg-[var(--color-secondary-100)] rounded-full flex items-center justify-center flex-shrink-0 mb-6">
-        <div className="text-[var(--color-secondary)] flex items-center justify-center">
-          {icon}
-        </div>
+      <div className="text-[var(--color-secondary)] flex items-center justify-center mb-6 flex-shrink-0">
+        {icon}
       </div>
       <h3 className="font-bold text-xl text-[var(--color-tertiary)] mb-3">
         {title || '\u00A0'}

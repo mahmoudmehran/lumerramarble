@@ -5,8 +5,10 @@ import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { Menu, X, Globe, ChevronDown } from 'lucide-react'
 import { Button } from '../ui/button'
+import { DarkModeToggle } from '../ui/dark-mode-toggle'
 import { useTranslation, useNavTranslation } from '../../hooks/useTranslation'
 import { useLanguage } from '../../contexts/LanguageContext'
+import { useSiteSettings } from '../../contexts/ThemeContext'
 import type { Locale } from '../../lib/i18n/types'
 
 interface NavbarProps {
@@ -20,6 +22,7 @@ export default function Navbar({ locale }: NavbarProps) {
   const { t } = useTranslation()
   const nav = useNavTranslation()
   const { supportedLocales, setLocale } = useLanguage()
+  const siteSettings = useSiteSettings()
   
   const langDropdownRef = useRef<HTMLDivElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
@@ -133,6 +136,9 @@ export default function Navbar({ locale }: NavbarProps) {
 
           {/* Right Side Actions - Desktop */}
           <div className="hidden md:flex items-center gap-4 flex-shrink-0">
+            {/* Dark Mode Toggle */}
+            <DarkModeToggle enabled={siteSettings?.darkModeEnabled ?? false} />
+            
             {/* Language Selector */}
             <div className="relative" ref={langDropdownRef}>
               <button

@@ -10,7 +10,10 @@ export interface InputProps
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, error, icon, helperText, ...props }, ref) => {
+  ({ className, type, label, error, icon, helperText, value, ...props }, ref) => {
+    // تأكد من أن القيمة دائماً string وليست null أو undefined
+    const safeValue = value === null || value === undefined ? '' : value
+    
     return (
       <div className="w-full">
         {label && (
@@ -27,6 +30,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
           <input
             type={type}
+            value={safeValue}
             className={cn(
               "flex h-9 w-full rounded-md border bg-[var(--color-quinary)] px-3 py-2 text-sm font-normal transition-colors text-[var(--color-quaternary)] placeholder:text-[var(--color-quaternary-400)] focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-[var(--color-secondary)] disabled:cursor-not-allowed disabled:opacity-50",
               icon ? "pl-10 pr-3 rtl:pl-3 rtl:pr-10" : "px-3",

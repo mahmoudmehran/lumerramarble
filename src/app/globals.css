@@ -440,3 +440,15 @@ section {
   animation: gradient 3s ease infinite;
 }
 
+/* Disable animations when turned off in settings */
+.no-animations * {
+  animation: none !important;
+  transition: none !important;
+}
+
+.no-animations .animate-fadeIn,
+.no-animations .animate-bounce,
+.no-animations .bg-gradient-animate {
+  animation: none !important;
+}
+

@@ -3,6 +3,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
 import sharp from 'sharp'
+import { getSiteSettings } from '@/lib/settings'
 
 // تعطيل body parser الافتراضي
 export const config = {
@@ -11,11 +12,11 @@ export const config = {
   },
 }
 
-// الحد الأقصى لحجم الملف: 10MB
-const MAX_FILE_SIZE = 10 * 1024 * 1024
+// الحد الأقصى لحجم الملف: 10MB (قيمة افتراضية، يمكن تغييرها من الإعدادات)
+const DEFAULT_MAX_FILE_SIZE = 10 * 1024 * 1024
 
-// الامتدادات المسموحة
-const ALLOWED_TYPES = [
+// الامتدادات المسموحة (قيمة افتراضية)
+const DEFAULT_ALLOWED_TYPES = [
   'image/jpeg', 
   'image/jpg', 
   'image/png', 
@@ -40,6 +41,21 @@ async function ensureUploadDir(uploadDir: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    // جلب إعدادات الموقع
+    const settings = await getSiteSettings()
+    
+    // استخدام الإعدادات أو القيم الافتراضية
+    const maxFileSize = (settings.maxImageSize || 10) * 1024 * 1024 // تحويل MB إلى bytes
+    const allowedTypes = settings.allowedImageTypes 
+      ? settings.allowedImageTypes.split(',').map(t => t.trim())
+      : DEFAULT_ALLOWED_TYPES
+    const imageQuality = settings.imageQuality || 90
+    const autoOptimize = settings.autoOptimize ?? true
+    const maxWidth = settings.maxWidth || 1920
+    const maxHeight = settings.maxHeight || 1080
+    const thumbnailWidth = settings.thumbnailWidth || 300
+    const thumbnailHeight = settings.thumbnailHeight || 300
+    
     const formData = await request.formData()
     const file = formData.get('file') as File
     
@@ -56,17 +72,25 @@ export async function POST(request: NextRequest) {
     await ensureUploadDir(uploadDir)
 
     // التحقق من نوع الملف
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    const fileTypeAllowed = allowedTypes.some(type => {
+      if (type.startsWith('image/')) {
+        return file.type === type
+      }
+      return file.type === type
+    })
+    
+    if (!fileTypeAllowed) {
       return NextResponse.json(
-        { error: `Invalid file type: ${file.type}. Allowed types: Images, PDF, DOC, DOCX` },
+        { error: `Invalid file type: ${file.type}. Allowed types: ${allowedTypes.join(', ')}` },
         { status: 400 }
       )
     }
 
     // التحقق من حجم الملف
-    if (file.size > MAX_FILE_SIZE) {
+    if (file.size > maxFileSize) {
+      const maxSizeMB = Math.round(maxFileSize / (1024 * 1024))
       return NextResponse.json(
-        { error: `File too large: ${file.name}. Max size: 10MB` },
+        { error: `File too large: ${file.name}. Max size: ${maxSizeMB}MB` },
         { status: 400 }
       )
     }
@@ -85,28 +109,52 @@ export async function POST(request: NextRequest) {
     
     // إذا كان الملف صورة، معالجته بـ sharp
     if (file.type.startsWith('image/')) {
-      const image = sharp(buffer)
+      let image = sharp(buffer)
       
-      // حفظ الصورة الأصلية (مع تحسين الجودة)
-      await image
-        .jpeg({ quality: 90, progressive: true })
-        .toFile(filePath)
-
-      // إنشاء نسخ بأحجام مختلفة
-      const sizes = ['thumbnail', 'medium', 'large'] as const
+      // الحصول على metadata للتحقق من الأبعاد
+      const metadata = await image.metadata()
       
-      for (const size of sizes) {
-        const { width, height } = IMAGE_SIZES[size]
-        const sizeFileName = `${timestamp}-${randomString}-${size}${fileExtension}`
-        const sizePath = path.join(uploadDir, sizeFileName)
+      // تطبيق التحسين التلقائي إذا كان مفعلاً
+      if (autoOptimize) {
+        // تقليل الحجم إذا تجاوز الحد الأقصى
+        if (metadata.width && metadata.width > maxWidth || metadata.height && metadata.height > maxHeight) {
+          image = image.resize(maxWidth, maxHeight, {
+            fit: 'inside',
+            withoutEnlargement: false,
+          })
+        }
+        
+        // حفظ الصورة بجودة محددة من الإعدادات
+        if (file.type === 'image/png') {
+          await image
+            .png({ quality: imageQuality, compressionLevel: 9 })
+            .toFile(filePath)
+        } else if (file.type === 'image/webp') {
+          await image
+            .webp({ quality: imageQuality })
+            .toFile(filePath)
+        } else {
+          // JPEG is default
+          await image
+            .jpeg({ quality: imageQuality, progressive: true })
+            .toFile(filePath)
+        }
+        
+        // إنشاء صورة مصغرة
+        const thumbnailFileName = `${timestamp}-${randomString}-thumbnail${fileExtension}`
+        const thumbnailPath = path.join(uploadDir, thumbnailFileName)
         
         await sharp(buffer)
-          .resize(width, height, {
-            fit: 'inside',
-            withoutEnlargement: true,
+          .resize(thumbnailWidth, thumbnailHeight, {
+            fit: 'cover',
+            position: 'center',
           })
-          .jpeg({ quality: 85 })
-          .toFile(sizePath)
+          .jpeg({ quality: Math.max(imageQuality - 10, 70) })
+          .toFile(thumbnailPath)
+          
+      } else {
+        // حفظ بدون تحسين
+        await writeFile(filePath, buffer)
       }
     } else {
       // إذا كان الملف PDF أو Word، حفظه مباشرة

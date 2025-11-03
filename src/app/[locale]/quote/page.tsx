@@ -23,6 +23,7 @@ import { Textarea } from '../../../components/ui/textarea'
 import { Select } from '../../../components/ui/select'
 import { Card } from '../../../components/ui/card'
 import { useRecaptcha } from '../../../hooks/useRecaptcha'
+import { useRecaptchaConfig } from '../../../contexts/RecaptchaContext'
 
 interface QuotePageProps {
   params: Promise<{ locale: string }>
@@ -37,9 +38,12 @@ export default function QuotePage({ params }: QuotePageProps) {
   const [uploading, setUploading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   
-  // reCAPTCHA
-  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
-  const { isLoaded: isRecaptchaLoaded, executeRecaptcha } = useRecaptcha(recaptchaSiteKey)
+  // reCAPTCHA from settings
+  const recaptchaConfig = useRecaptchaConfig()
+  const { isLoaded: isRecaptchaLoaded, executeRecaptcha, isEnabled } = useRecaptcha({
+    siteKey: recaptchaConfig.siteKey,
+    enabled: recaptchaConfig.enabled
+  })
   
   const [formData, setFormData] = useState({
     // Personal Info
@@ -690,10 +694,10 @@ export default function QuotePage({ params }: QuotePageProps) {
     try {
       // Execute reCAPTCHA if available
       let recaptchaToken = null
-      if (recaptchaSiteKey && isRecaptchaLoaded) {
+      if (isEnabled && isRecaptchaLoaded) {
         recaptchaToken = await executeRecaptcha('submit_quote')
         
-        if (recaptchaToken) {
+        if (recaptchaToken && recaptchaToken !== 'disabled') {
           // Verify reCAPTCHA token
           const verifyResponse = await fetch('/api/verify-recaptcha', {
             method: 'POST',
@@ -1312,7 +1316,7 @@ export default function QuotePage({ params }: QuotePageProps) {
               </div>
               
               {/* reCAPTCHA Notice */}
-              {recaptchaSiteKey && (
+              {isEnabled && (
                 <div className="mt-6 text-center">
                   <p className="text-xs text-[var(--color-quaternary-500)]">
                     {locale === 'ar' 

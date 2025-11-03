@@ -151,7 +151,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
           'دعم فني متخصص',
           'مرونة في طرق الدفع',
           'تتبع الشحنة أونلاين',
-          'ضمان استبدال في حالة التلف'
+          'منتجات عالية الجودة'
         ]
       },
       cta: {
@@ -260,7 +260,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
           'Specialized technical support',
           'Flexible payment methods',
           'Online shipment tracking',
-          'Replacement guarantee in case of damage'
+          'High quality products'
         ]
       },
       cta: {
@@ -326,57 +326,239 @@ export default async function ExportPage({ params }: ExportPageProps) {
         centered
       >
         <div className="max-w-7xl mx-auto">
-          <Grid cols={3} gap={8}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {currentContent.services.items.map((service, index) => {
               const IconComponent = service.icon
+              // صور خلفية مناسبة لكل خدمة
+              const backgroundImages = [
+                'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800', // استشارة
+                'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', // تغليف
+                'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800', // شحن
+                'https://images.unsplash.com/photo-1568667256549-094345857637?w=800', // جودة
+                'https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?w=800', // وقت
+                'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800'  // خدمة عملاء
+              ]
+              
               return (
-                <div key={index} className="h-full">
-                  <FeatureCard
-                    icon={<IconComponent className="w-10 h-10" strokeWidth={2} />}
-                    title={service.title}
-                    description={service.description}
+                <div 
+                  key={index} 
+                  className="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                >
+                  {/* Background Image */}
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                    style={{
+                      backgroundImage: `url(${backgroundImages[index]})`,
+                    }}
                   />
+                  
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 group-hover:from-[var(--color-primary)]/90 group-hover:via-[var(--color-primary)]/60 group-hover:to-[var(--color-primary)]/40 transition-all duration-500" />
+                  
+                  {/* Content */}
+                  <div className="relative z-10 p-8 text-center min-h-[320px] flex flex-col justify-center items-center">
+                    <div className="mb-6 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-500">
+                      <IconComponent className="w-16 h-16 text-white drop-shadow-2xl" strokeWidth={2} />
+                    </div>
+                    <h3 className="font-bold text-2xl text-white mb-3 drop-shadow-lg">
+                      {service.title}
+                    </h3>
+                    <div className="w-16 h-1 bg-white/50 group-hover:bg-white group-hover:w-24 transition-all duration-500 mb-4 rounded-full" />
+                    <p className="text-white/90 text-base leading-relaxed drop-shadow-md">
+                      {service.description}
+                    </p>
+                  </div>
                 </div>
               )
             })}
-          </Grid>
+          </div>
         </div>
       </ContentSection>
 
-      {/* Process Section */}
+      {/* Process Section - Professional Timeline Design */}
       <ContentSection
         title={currentContent.process.title}
         subtitle={currentContent.process.subtitle}
         variant="light"
         centered
       >
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {currentContent.process.steps.map((step, index) => (
-              <div 
-                key={index} 
-                className="relative bg-[var(--color-quinary)] p-6 rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl transition-all duration-300 group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] text-[var(--color-quinary)] rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    {step.number}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-lg text-[var(--color-secondary-900)] mb-2 break-words">
-                      {step.title}
-                    </h3>
-                    <p className="text-[var(--color-quaternary)] text-sm leading-relaxed break-words">
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
+        <div className="max-w-6xl mx-auto px-4">
+          {/* Desktop Timeline View */}
+          <div className="hidden lg:block relative">
+            <div className="relative grid grid-cols-6 gap-4">
+              {currentContent.process.steps.map((step, index) => {
+                // صور خلفية لكل خطوة من خطوات التصدير
+                const stepImages = [
+                  'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800', // طلب عرض السعر
+                  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800', // اختيار المنتجات
+                  'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800', // التأكيد والدفع
+                  'https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800', // الإنتاج والتجهيز
+                  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', // التغليف والشحن
+                  'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800'  // التسليم
+                ]
                 
-                {/* Connection line for desktop */}
-                {index < currentContent.process.steps.length - 1 && index % 3 !== 2 && (
-                  <div className="hidden lg:block absolute top-8 -right-4 w-8 h-0.5 bg-gradient-to-r from-[var(--color-primary)] to-transparent z-10"></div>
-                )}
-              </div>
-            ))}
+                return (
+                <div key={index} className="relative">
+                  {/* Number */}
+                  <div className={`text-center mb-4 transition-all duration-500 ${
+                    index % 2 === 0 ? 'mt-0' : 'mt-32'
+                  }`}>
+                    <span className="text-[var(--color-primary)] font-bold text-3xl">
+                      {step.number}
+                    </span>
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className={`font-bold text-base text-[var(--color-secondary-900)] mb-8 text-center min-h-[3rem] flex items-center justify-center px-2 ${
+                    index % 2 === 0 ? '' : ''
+                  }`}>
+                    {step.title}
+                  </h3>
+                  
+                  {/* Content Card with Background Image */}
+                  <div className={`group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 ${
+                    index % 2 === 0 ? 'mt-0' : 'mt-0'
+                  }`}>
+                    {/* Background Image */}
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                      style={{
+                        backgroundImage: `url(${stepImages[index]})`,
+                      }}
+                    />
+                    
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 group-hover:from-[var(--color-primary)]/90 group-hover:via-[var(--color-primary)]/60 group-hover:to-[var(--color-primary)]/40 transition-all duration-500" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10 p-5 min-h-[140px] flex items-center justify-center">
+                      <p className="text-white text-sm leading-relaxed text-center drop-shadow-lg font-medium">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Arrow below the first 3 cards (even indices 0, 2, 4) */}
+                  {index % 2 === 0 && index < 5 && (
+                    <div className="absolute left-1/2 -translate-x-1/2 bottom-8 z-20">
+                      {isRTL ? (
+                        <ArrowLeft className="w-10 h-10 text-[var(--color-primary)]" strokeWidth={2.5} />
+                      ) : (
+                        <ArrowRight className="w-10 h-10 text-[var(--color-primary)]" strokeWidth={2.5} />
+                      )}
+                    </div>
+                  )}
+                </div>
+              )})}
+            </div>
+          </div>
+
+          {/* Tablet Timeline View */}
+          <div className="hidden md:block lg:hidden relative">
+            <div className="grid grid-cols-3 gap-6">
+              {currentContent.process.steps.map((step, index) => {
+                const stepImages = [
+                  'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800',
+                  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800',
+                  'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800',
+                  'https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800',
+                  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800',
+                  'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800'
+                ]
+                
+                return (
+                <div key={index} className="relative">
+                  {/* Number */}
+                  <div className="text-center mb-4">
+                    <span className="text-[var(--color-primary)] font-bold text-2xl">
+                      {step.number}
+                    </span>
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="font-bold text-base text-[var(--color-secondary-900)] mb-6 text-center px-2 min-h-[3rem] flex items-center justify-center">
+                    {step.title}
+                  </h3>
+                  
+                  {/* Content Card */}
+                  <div className="group relative overflow-hidden rounded-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                      style={{
+                        backgroundImage: `url(${stepImages[index]})`,
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 group-hover:from-[var(--color-primary)]/90 group-hover:via-[var(--color-primary)]/60 group-hover:to-[var(--color-primary)]/40 transition-all duration-500" />
+                    <div className="relative z-10 p-6 min-h-[160px] flex items-center justify-center">
+                      <p className="text-white text-sm leading-relaxed text-center drop-shadow-lg font-medium">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Arrow below for first 3 items */}
+                  {index < 3 && (
+                    <div className="flex justify-center mt-6">
+                      <ArrowRight className="w-8 h-8 text-[var(--color-primary)] rotate-90" strokeWidth={2.5} />
+                    </div>
+                  )}
+                </div>
+              )})}
+            </div>
+          </div>
+
+          {/* Mobile Timeline View */}
+          <div className="block md:hidden relative">
+            <div className="space-y-8">
+              {currentContent.process.steps.map((step, index) => {
+                const stepImages = [
+                  'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800',
+                  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800',
+                  'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800',
+                  'https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800',
+                  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800',
+                  'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800'
+                ]
+                
+                return (
+                <div key={index} className="relative">
+                  {/* Number */}
+                  <div className="text-center mb-3">
+                    <span className="text-[var(--color-primary)] font-bold text-2xl">
+                      {step.number}
+                    </span>
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="font-bold text-base text-[var(--color-secondary-900)] mb-4 text-center px-2">
+                    {step.title}
+                  </h3>
+                  
+                  {/* Content Card */}
+                  <div className="relative overflow-hidden rounded-xl shadow-xl active:scale-95 transition-transform duration-300">
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
+                      style={{
+                        backgroundImage: `url(${stepImages[index]})`,
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 transition-all duration-500" />
+                    <div className="relative z-10 p-5 min-h-[140px] flex items-center justify-center">
+                      <p className="text-white text-sm leading-relaxed text-center drop-shadow-lg font-medium">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Arrow below for all items except last */}
+                  {index < currentContent.process.steps.length - 1 && (
+                    <div className="flex justify-center my-6">
+                      <ArrowRight className="w-10 h-10 text-[var(--color-primary)] rotate-90" strokeWidth={2.5} />
+                    </div>
+                  )}
+                </div>
+              )})}
+            </div>
           </div>
         </div>
       </ContentSection>
@@ -388,25 +570,57 @@ export default async function ExportPage({ params }: ExportPageProps) {
         variant="white"
         centered
       >
-        <div className="max-w-6xl mx-auto">
-          <Grid cols={3} gap={6}>
-            {currentContent.countries.regions.map((region, index) => (
-              <div 
-                key={index} 
-                className="bg-[var(--color-quinary)] p-6 text-center rounded-2xl shadow-lg border border-[var(--color-quaternary-100)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
-              >
-                <div className="text-5xl mb-3 transform group-hover:scale-110 transition-transform duration-300">
-                  {region.flag}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {currentContent.countries.regions.map((region, index) => {
+              // صور خلفية للقارات
+              const regionImages = [
+                'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800', // أوروبا
+                'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800', // آسيا
+                'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=800', // أمريكا الشمالية
+                'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800', // أمريكا الجنوبية
+                'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800', // أفريقيا
+                'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800'  // أوقيانوسيا
+              ]
+              
+              return (
+                <div 
+                  key={index} 
+                  className="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                >
+                  {/* Background Image */}
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                    style={{
+                      backgroundImage: `url(${regionImages[index]})`,
+                    }}
+                  />
+                  
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 group-hover:from-[var(--color-primary)]/90 group-hover:via-[var(--color-primary)]/60 group-hover:to-[var(--color-primary)]/40 transition-all duration-500" />
+                  
+                  {/* Content */}
+                  <div className="relative z-10 p-8 text-center min-h-[280px] flex flex-col justify-center items-center">
+                    <div className="text-6xl mb-4 transform group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 filter drop-shadow-lg">
+                      {region.flag}
+                    </div>
+                    <h3 className="font-bold text-2xl text-white mb-2 drop-shadow-lg">
+                      {region.name}
+                    </h3>
+                    <div className="w-16 h-1 bg-white/50 group-hover:bg-white group-hover:w-24 transition-all duration-500 mb-3 rounded-full" />
+                    <p className="text-white font-bold text-xl drop-shadow-lg">
+                      {region.count}
+                    </p>
+                    
+                    {/* Decorative element */}
+                    <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <Globe className="w-8 h-8 text-white/80 mx-auto animate-pulse" />
+                    </div>
+                  </div>
                 </div>
-                <h3 className="font-bold text-lg text-[var(--color-secondary-900)] mb-1 break-words">
-                  {region.name}
-                </h3>
-                <p className="text-[var(--color-primary)] font-bold text-base">
-                  {region.count}
-                </p>
-              </div>
-            ))}
-          </Grid>
+              )
+            })}
+          </div>
         </div>
       </ContentSection>
 
@@ -416,18 +630,48 @@ export default async function ExportPage({ params }: ExportPageProps) {
         variant="light"
         centered
       >
-        <div className="grid md:grid-cols-2 gap-4 max-w-5xl mx-auto">
-          {currentContent.features.items.map((feature, index) => (
-            <div 
-              key={index} 
-              className="flex items-start gap-3 p-5 bg-[var(--color-quinary)] rounded-xl shadow-md border border-[var(--color-quaternary-100)] hover:shadow-lg hover:border-[var(--color-primary-200)] transition-all duration-300"
-            >
-              <div className="w-9 h-9 bg-[var(--color-primary-100)] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <CheckCircle className="w-5 h-5 text-[var(--color-primary)]" strokeWidth={2.5} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          {currentContent.features.items.map((feature, index) => {
+            // صور خلفية للمميزات
+            const featureImages = [
+              'https://images.unsplash.com/photo-1494412519320-aa613dfb7738?w=800', // شحن آمن - صندوق محمي
+              'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800', // أسعار تنافسية
+              'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800', // دعم فني
+              'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800', // مرونة في الدفع - بطاقات
+              'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', // تتبع الشحنة
+              'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800'  // منتجات عالية الجودة - رخام فاخر
+            ]
+            
+            return (
+              <div 
+                key={index} 
+                className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+              >
+                {/* Background Image */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                  style={{
+                    backgroundImage: `url(${featureImages[index]})`,
+                  }}
+                />
+                
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)]/85 via-[var(--color-secondary)]/70 to-[var(--color-secondary)]/50 group-hover:from-[var(--color-primary)]/85 group-hover:via-[var(--color-primary)]/70 group-hover:to-[var(--color-primary)]/50 transition-all duration-500" />
+                
+                {/* Content */}
+                <div className="relative z-10 p-12 min-h-[280px] flex items-center justify-center">
+                  <div className="flex items-center gap-6 w-full">
+                    <div className="flex-shrink-0 group-hover:scale-110 transition-all duration-500">
+                      <CheckCircle className="w-14 h-14 text-white drop-shadow-lg" strokeWidth={2.5} />
+                    </div>
+                    <span className="text-white font-bold text-2xl leading-relaxed drop-shadow-lg flex-1">
+                      {feature}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <span className="text-[var(--color-quaternary)] font-medium text-sm leading-relaxed break-words flex-1">{feature}</span>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </ContentSection>
 

@@ -18,9 +18,10 @@ const TikTokIcon = () => (
 
 interface FooterProps {
   locale: string
+  copyrightText?: string
 }
 
-export default function Footer({ locale }: FooterProps) {
+export default function Footer({ locale, copyrightText }: FooterProps) {
   const isRTL = locale === 'ar'
 
   const footerSections = {
@@ -277,14 +278,15 @@ export default function Footer({ locale }: FooterProps) {
         {/* Copyright */}
         <div className="border-t border-[var(--color-secondary-700)] mt-8 lg:mt-10 pt-6 lg:pt-8 text-center">
           <p className="text-[var(--color-quinary-300)] text-sm lg:text-base font-medium">
-            {locale === 'ar' 
-              ? `© ${new Date().getFullYear()} لوميرا ماربل. جميع الحقوق محفوظة.`
-              : locale === 'en'
-              ? `© ${new Date().getFullYear()} Lumerra Marble. All rights reserved.`
-              : locale === 'es'
-              ? `© ${new Date().getFullYear()} Lumerra Marble. Todos los derechos reservados.`
-              : `© ${new Date().getFullYear()} Lumerra Marble. Tous droits réservés.`
-            }
+            {copyrightText || (
+              locale === 'ar' 
+                ? `© ${new Date().getFullYear()} لوميرا ماربل. جميع الحقوق محفوظة.`
+                : locale === 'en'
+                ? `© ${new Date().getFullYear()} Lumerra Marble. All rights reserved.`
+                : locale === 'es'
+                ? `© ${new Date().getFullYear()} Lumerra Marble. Todos los derechos reservados.`
+                : `© ${new Date().getFullYear()} Lumerra Marble. Tous droits réservés.`
+            )}
           </p>
           <p className="text-[var(--color-quinary-400)] text-xs lg:text-sm mt-2 flex items-center justify-center gap-1">
             {locale === 'ar' 

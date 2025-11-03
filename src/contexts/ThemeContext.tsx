@@ -46,6 +46,8 @@ export interface SiteSettings {
   tertiaryColor: string
   quaternaryColor: string
   quinaryColor: string
+  darkModeEnabled?: boolean
+  animationsEnabled?: boolean
   updatedAt?: string
 }
 

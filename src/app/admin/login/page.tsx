@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
@@ -16,6 +16,8 @@ export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/admin'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,12 +36,15 @@ export default function AdminLogin() {
       const data = await response.json()
 
       if (response.ok) {
-        // Store authentication token
+        // Store authentication token and session info
+        const loginTime = Date.now()
         localStorage.setItem('admin_token', data.token)
         localStorage.setItem('admin_user', JSON.stringify(data.user))
+        localStorage.setItem('admin_login_time', loginTime.toString())
+        localStorage.setItem('admin_last_activity', loginTime.toString())
         
-        // Redirect to admin dashboard
-        router.push('/admin')
+        // Redirect to requested page or admin dashboard
+        router.push(redirectTo)
       } else {
         setError(data.message || 'خطأ في تسجيل الدخول')
       }
@@ -137,16 +142,6 @@ export default function AdminLogin() {
             {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
           </Button>
         </form>
-
-        <div className="mt-6 text-center">
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-            <p className="text-sm text-blue-800 font-medium mb-2">بيانات تجريبية:</p>
-            <p className="text-xs text-blue-600">
-              البريد: admin@alhotmarble.com<br />
-              كلمة المرور: admin123
-            </p>
-          </div>
-        </div>
       </Card>
     </div>
   )
