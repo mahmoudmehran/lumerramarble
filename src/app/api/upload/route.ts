@@ -57,9 +57,14 @@ export async function POST(request: NextRequest) {
     const thumbnailHeight = settings.thumbnailHeight || 300
     
     const formData = await request.formData()
-    const file = formData.get('file') as File
     
-    if (!file) {
+    // دعم كل من 'file' (مفرد) و 'files' (متعدد)
+    const files = formData.getAll('files') as File[]
+    const singleFile = formData.get('file') as File
+    
+    const filesToUpload = files.length > 0 ? files : (singleFile ? [singleFile] : [])
+    
+    if (filesToUpload.length === 0) {
       return NextResponse.json(
         { error: 'No file uploaded' },
         { status: 400 }
@@ -71,101 +76,120 @@ export async function POST(request: NextRequest) {
     // التأكد من وجود مجلد uploads
     await ensureUploadDir(uploadDir)
 
-    // التحقق من نوع الملف
-    const fileTypeAllowed = allowedTypes.some(type => {
-      if (type.startsWith('image/')) {
-        return file.type === type
-      }
-      return file.type === type
-    })
-    
-    if (!fileTypeAllowed) {
-      return NextResponse.json(
-        { error: `Invalid file type: ${file.type}. Allowed types: ${allowedTypes.join(', ')}` },
-        { status: 400 }
-      )
-    }
+    const uploadedFiles: string[] = []
+    const errors: string[] = []
 
-    // التحقق من حجم الملف
-    if (file.size > maxFileSize) {
-      const maxSizeMB = Math.round(maxFileSize / (1024 * 1024))
-      return NextResponse.json(
-        { error: `File too large: ${file.name}. Max size: ${maxSizeMB}MB` },
-        { status: 400 }
-      )
-    }
-
-    // إنشاء اسم فريد للملف
-    const timestamp = Date.now()
-    const randomString = Math.random().toString(36).substring(7)
-    const fileExtension = path.extname(file.name)
-    const fileName = `${timestamp}-${randomString}${fileExtension}`
-    
-    // تحويل الملف إلى buffer
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-
-    const filePath = path.join(uploadDir, fileName)
-    
-    // إذا كان الملف صورة، معالجته بـ sharp
-    if (file.type.startsWith('image/')) {
-      let image = sharp(buffer)
-      
-      // الحصول على metadata للتحقق من الأبعاد
-      const metadata = await image.metadata()
-      
-      // تطبيق التحسين التلقائي إذا كان مفعلاً
-      if (autoOptimize) {
-        // تقليل الحجم إذا تجاوز الحد الأقصى
-        if (metadata.width && metadata.width > maxWidth || metadata.height && metadata.height > maxHeight) {
-          image = image.resize(maxWidth, maxHeight, {
-            fit: 'inside',
-            withoutEnlargement: false,
-          })
+    // معالجة كل ملف
+    for (const file of filesToUpload) {
+      try {
+        // التحقق من نوع الملف
+        const fileTypeAllowed = allowedTypes.some(type => {
+          if (type.startsWith('image/')) {
+            return file.type === type
+          }
+          return file.type === type
+        })
+        
+        if (!fileTypeAllowed) {
+          errors.push(`Invalid file type: ${file.type}. Allowed types: ${allowedTypes.join(', ')}`)
+          continue
         }
-        
-        // حفظ الصورة بجودة محددة من الإعدادات
-        if (file.type === 'image/png') {
-          await image
-            .png({ quality: imageQuality, compressionLevel: 9 })
-            .toFile(filePath)
-        } else if (file.type === 'image/webp') {
-          await image
-            .webp({ quality: imageQuality })
-            .toFile(filePath)
-        } else {
-          // JPEG is default
-          await image
-            .jpeg({ quality: imageQuality, progressive: true })
-            .toFile(filePath)
+
+        // التحقق من حجم الملف
+        if (file.size > maxFileSize) {
+          const maxSizeMB = Math.round(maxFileSize / (1024 * 1024))
+          errors.push(`File too large: ${file.name}. Max size: ${maxSizeMB}MB`)
+          continue
         }
+
+        // إنشاء اسم فريد للملف
+        const timestamp = Date.now()
+        const randomString = Math.random().toString(36).substring(7)
+        const fileExtension = path.extname(file.name)
+        const fileName = `${timestamp}-${randomString}${fileExtension}`
         
-        // إنشاء صورة مصغرة
-        const thumbnailFileName = `${timestamp}-${randomString}-thumbnail${fileExtension}`
-        const thumbnailPath = path.join(uploadDir, thumbnailFileName)
+        // تحويل الملف إلى buffer
+        const bytes = await file.arrayBuffer()
+        const buffer = Buffer.from(bytes)
+
+        const filePath = path.join(uploadDir, fileName)
         
-        await sharp(buffer)
-          .resize(thumbnailWidth, thumbnailHeight, {
-            fit: 'cover',
-            position: 'center',
-          })
-          .jpeg({ quality: Math.max(imageQuality - 10, 70) })
-          .toFile(thumbnailPath)
+        // إذا كان الملف صورة، معالجته بـ sharp
+        if (file.type.startsWith('image/')) {
+          let image = sharp(buffer)
           
-      } else {
-        // حفظ بدون تحسين
-        await writeFile(filePath, buffer)
+          // الحصول على metadata للتحقق من الأبعاد
+          const metadata = await image.metadata()
+          
+          // تطبيق التحسين التلقائي إذا كان مفعلاً
+          if (autoOptimize) {
+            // تقليل الحجم إذا تجاوز الحد الأقصى
+            if (metadata.width && metadata.width > maxWidth || metadata.height && metadata.height > maxHeight) {
+              image = image.resize(maxWidth, maxHeight, {
+                fit: 'inside',
+                withoutEnlargement: false,
+              })
+            }
+            
+            // حفظ الصورة بجودة محددة من الإعدادات
+            if (file.type === 'image/png') {
+              await image
+                .png({ quality: imageQuality, compressionLevel: 9 })
+                .toFile(filePath)
+            } else if (file.type === 'image/webp') {
+              await image
+                .webp({ quality: imageQuality })
+                .toFile(filePath)
+            } else {
+              // JPEG is default
+              await image
+                .jpeg({ quality: imageQuality, progressive: true })
+                .toFile(filePath)
+            }
+            
+            // إنشاء صورة مصغرة
+            const thumbnailFileName = `${timestamp}-${randomString}-thumbnail${fileExtension}`
+            const thumbnailPath = path.join(uploadDir, thumbnailFileName)
+            
+            await sharp(buffer)
+              .resize(thumbnailWidth, thumbnailHeight, {
+                fit: 'cover',
+                position: 'center',
+              })
+              .jpeg({ quality: Math.max(imageQuality - 10, 70) })
+              .toFile(thumbnailPath)
+              
+          } else {
+            // حفظ بدون تحسين
+            await writeFile(filePath, buffer)
+          }
+        } else {
+          // إذا كان الملف PDF أو Word، حفظه مباشرة
+          await writeFile(filePath, buffer)
+        }
+
+        // إضافة الملف المرفوع للقائمة
+        uploadedFiles.push(`/uploads/${fileName}`)
+
+      } catch (fileError: any) {
+        errors.push(`Failed to upload ${file.name}: ${fileError.message}`)
       }
-    } else {
-      // إذا كان الملف PDF أو Word، حفظه مباشرة
-      await writeFile(filePath, buffer)
     }
 
-    // إرجاع مسار الملف المرفوع
+    // إرجاع النتيجة
+    if (uploadedFiles.length === 0) {
+      return NextResponse.json(
+        { error: 'All files failed to upload', errors },
+        { status: 400 }
+      )
+    }
+
     return NextResponse.json({
       success: true,
-      url: `/uploads/${fileName}`,
-      message: 'File uploaded successfully',
+      files: uploadedFiles,
+      url: uploadedFiles[0], // للتوافق مع الكود القديم
+      message: `${uploadedFiles.length} file(s) uploaded successfully`,
+      errors: errors.length > 0 ? errors : undefined,
     })
 
   } catch (error) {

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { Menu, X, Globe, ChevronDown } from 'lucide-react'
@@ -23,6 +24,12 @@ export default function Navbar({ locale }: NavbarProps) {
   const nav = useNavTranslation()
   const { supportedLocales, setLocale } = useLanguage()
   const siteSettings = useSiteSettings()
+  
+  // Debug: Log settings to see what's loaded
+  useEffect(() => {
+    console.log('🔍 Navbar - Site Settings:', siteSettings)
+    console.log('🖼️ Logo URL:', siteSettings?.logoUrl)
+  }, [siteSettings])
   
   const langDropdownRef = useRef<HTMLDivElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
@@ -105,11 +112,44 @@ export default function Navbar({ locale }: NavbarProps) {
           <div className="flex-shrink-0">
             <Link href={`/${locale}`}>
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-[var(--color-quinary)] font-bold text-xl">L</span>
-                </div>
+                {/* Show Logo if available, otherwise show fallback */}
+                {siteSettings?.logoUrl ? (
+                  <img
+                    src={siteSettings.darkModeEnabled && siteSettings.darkModeLogoUrl 
+                      ? siteSettings.darkModeLogoUrl 
+                      : siteSettings.logoUrl
+                    }
+                    alt={locale === 'ar' ? siteSettings.logoAltAr || 'شعار الشركة' :
+                         locale === 'es' ? siteSettings.logoAltEs || 'Logo de la Empresa' :
+                         locale === 'fr' ? siteSettings.logoAltFr || 'Logo de l\'Entreprise' :
+                         siteSettings.logoAlt || 'Company Logo'
+                    }
+                    className="max-h-24 max-w-[220px] h-auto w-auto object-contain"
+                    loading="eager"
+                    onError={(e) => {
+                      console.error('❌ Logo failed to load:', siteSettings.logoUrl)
+                      console.log('Current target:', e.currentTarget.src)
+                    }}
+                    onLoad={() => {
+                      console.log('✅ Logo loaded successfully:', siteSettings.logoUrl)
+                    }}
+                  />
+                ) : (
+                  <>
+                    <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] rounded-lg flex items-center justify-center shadow-md">
+                      <span className="text-[var(--color-quinary)] font-bold text-xl">L</span>
+                    </div>
+                    {/* Debug: Show when logoUrl is missing */}
+                    {typeof window !== 'undefined' && window.location.search.includes('debug') && (
+                      <span className="text-xs text-red-500">No Logo</span>
+                    )}
+                  </>
+                )}
                 <span className="font-bold text-lg sm:text-xl text-[var(--color-tertiary)] whitespace-nowrap">
-                  {locale === 'ar' ? 'لوميرا ماربل' : 'Lumerra Marble'}
+                  {locale === 'ar' ? (siteSettings?.companyNameAr || 'لوميرا ماربل') : 
+                   locale === 'es' ? (siteSettings?.companyNameEs || 'Lumerra Marble') :
+                   locale === 'fr' ? (siteSettings?.companyNameFr || 'Lumerra Marble') :
+                   (siteSettings?.companyName || 'Lumerra Marble')}
                 </span>
               </div>
             </Link>

@@ -144,119 +144,205 @@ export async function PUT(request: NextRequest) {
   try {
     const admin = verifyAdmin(request)
     if (!admin) {
+      console.log('❌ Unauthorized access attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await request.json()
+    
+    console.log('📥 Received settings update:', { 
+      logoUrl: body.logoUrl, 
+      darkModeLogoUrl: body.darkModeLogoUrl,
+      faviconUrl: body.faviconUrl 
+    })
+    
     const {
       companyName,
       companyNameAr,
+      companyNameEs,
+      companyNameFr,
+      logoUrl,
+      logoAlt,
+      logoAltAr,
+      logoAltEs,
+      logoAltFr,
+      darkModeLogoUrl,
+      faviconUrl,
       description,
       descriptionAr,
+      descriptionEs,
+      descriptionFr,
       phone,
       email,
       whatsapp,
       address,
       addressAr,
+      addressEs,
+      addressFr,
       facebook,
       instagram,
       linkedin,
       youtube,
       metaTitle,
       metaTitleAr,
+      metaTitleEs,
+      metaTitleFr,
       metaDescription,
       metaDescriptionAr,
+      metaDescriptionEs,
+      metaDescriptionFr,
       keywords,
       keywordsAr,
+      keywordsEs,
+      keywordsFr,
       businessHours,
       businessHoursAr,
+      businessHoursEs,
+      businessHoursFr,
       primaryColor,
       secondaryColor,
       tertiaryColor,
       quaternaryColor,
-      quinaryColor
+      quinaryColor,
+      ...otherSettings
     } = body
 
     // Get existing settings or create new one
     const existingSettings = await prisma.siteSettings.findFirst()
     
+    console.log('🔍 Existing settings found:', existingSettings ? 'Yes' : 'No')
+    
     let settings
     if (existingSettings) {
       // Update existing settings
+      console.log('🔄 Updating existing settings...')
+      
       settings = await prisma.siteSettings.update({
         where: { id: existingSettings.id },
         data: {
           companyName,
           companyNameAr,
+          companyNameEs,
+          companyNameFr,
+          logoUrl,
+          logoAlt,
+          logoAltAr,
+          logoAltEs,
+          logoAltFr,
+          darkModeLogoUrl,
+          faviconUrl,
           description,
           descriptionAr,
+          descriptionEs,
+          descriptionFr,
           phone,
           email,
           whatsapp,
           address,
           addressAr,
+          addressEs,
+          addressFr,
           facebook,
           instagram,
           linkedin,
           youtube,
           metaTitle,
           metaTitleAr,
+          metaTitleEs,
+          metaTitleFr,
           metaDescription,
           metaDescriptionAr,
+          metaDescriptionEs,
+          metaDescriptionFr,
           keywords,
           keywordsAr,
+          keywordsEs,
+          keywordsFr,
           businessHours,
           businessHoursAr,
+          businessHoursEs,
+          businessHoursFr,
           primaryColor,
           secondaryColor,
           tertiaryColor,
           quaternaryColor,
           quinaryColor,
+          ...otherSettings,
           updatedAt: new Date()
         }
       })
+      
+      console.log('✅ Settings updated successfully')
     } else {
       // Create new settings
+      console.log('➕ Creating new settings...')
+      
       settings = await prisma.siteSettings.create({
         data: {
           companyName,
           companyNameAr,
+          companyNameEs,
+          companyNameFr,
+          logoUrl,
+          logoAlt,
+          logoAltAr,
+          logoAltEs,
+          logoAltFr,
+          darkModeLogoUrl,
+          faviconUrl,
           description,
           descriptionAr,
+          descriptionEs,
+          descriptionFr,
           phone,
           email,
           whatsapp,
           address,
           addressAr,
+          addressEs,
+          addressFr,
           facebook,
           instagram,
           linkedin,
           youtube,
           metaTitle,
           metaTitleAr,
+          metaTitleEs,
+          metaTitleFr,
           metaDescription,
           metaDescriptionAr,
+          metaDescriptionEs,
+          metaDescriptionFr,
           keywords,
           keywordsAr,
+          keywordsEs,
+          keywordsFr,
           businessHours,
           businessHoursAr,
+          businessHoursEs,
+          businessHoursFr,
           primaryColor,
           secondaryColor,
           tertiaryColor,
           quaternaryColor,
           quinaryColor,
+          ...otherSettings,
           createdAt: new Date(),
           updatedAt: new Date()
         }
       })
+      
+      console.log('✅ Settings created successfully')
     }
+
+    console.log('📤 Returning response with settings')
 
     return NextResponse.json({ 
       message: 'Settings updated successfully',
       settings 
     })
   } catch (error) {
-    console.error('Error updating settings:', error)
+    console.error('💥 Error updating settings:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

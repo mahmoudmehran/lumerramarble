@@ -11,37 +11,7 @@ import { prisma } from '../../../lib/db'
 export async function GET(request: NextRequest) {
   try {
     console.log('🔄 Attempting to fetch settings from database...')
-    const settings = await prisma.siteSettings.findFirst({
-      select: {
-        companyName: true,
-        companyNameAr: true,
-        description: true,
-        descriptionAr: true,
-        phone: true,
-        email: true,
-        whatsapp: true,
-        address: true,
-        addressAr: true,
-        facebook: true,
-        instagram: true,
-        linkedin: true,
-        youtube: true,
-        metaTitle: true,
-        metaTitleAr: true,
-        metaDescription: true,
-        metaDescriptionAr: true,
-        keywords: true,
-        keywordsAr: true,
-        businessHours: true,
-        businessHoursAr: true,
-        primaryColor: true,
-        secondaryColor: true,
-        tertiaryColor: true,
-        quaternaryColor: true,
-        quinaryColor: true,
-        updatedAt: true
-      }
-    })
+    const settings = await prisma.siteSettings.findFirst()
 
     if (!settings) {
       console.log('⚠️ No settings found in database, returning defaults')

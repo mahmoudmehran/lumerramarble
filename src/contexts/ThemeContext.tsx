@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import type { SiteSettings } from '../lib/settings'
 
 // Theme types
 export interface ThemeColors {
@@ -19,37 +20,8 @@ export const alertColors = {
   info: '#3b82f6'
 }
 
-export interface SiteSettings {
-  companyName: string
-  companyNameAr: string
-  description?: string
-  descriptionAr?: string
-  phone?: string
-  email?: string
-  whatsapp?: string
-  address?: string
-  addressAr?: string
-  facebook?: string
-  instagram?: string
-  linkedin?: string
-  youtube?: string
-  metaTitle?: string
-  metaTitleAr?: string
-  metaDescription?: string
-  metaDescriptionAr?: string
-  keywords?: string
-  keywordsAr?: string
-  businessHours?: string
-  businessHoursAr?: string
-  primaryColor: string
-  secondaryColor: string
-  tertiaryColor: string
-  quaternaryColor: string
-  quinaryColor: string
-  darkModeEnabled?: boolean
-  animationsEnabled?: boolean
-  updatedAt?: string
-}
+// Export SiteSettings type for components
+export type { SiteSettings }
 
 interface ThemeContextType {
   settings: SiteSettings | null
@@ -71,13 +43,19 @@ const defaultColors: ThemeColors = {
 const defaultSettings: SiteSettings = {
   companyName: 'Lumerra Marble',
   companyNameAr: 'شركة لوميرا للرخام',
+  companyNameEs: 'Lumerra Marble',
+  companyNameFr: 'Lumerra Marble',
   description: 'Leading marble and granite export company from Egypt',
   descriptionAr: 'شركة رائدة في تصدير الرخام والجرانيت من مصر',
+  descriptionEs: 'Empresa líder en exportación de mármol y granito desde Egipto',
+  descriptionFr: 'Entreprise leader dans l\'exportation de marbre et granit depuis l\'Égypte',
   phone: '+20 111 312 1444',
   email: 'info@lumerramarble.com',
   whatsapp: '+20 111 312 1444',
   address: 'Egypt - Cairo - Shaq Al-Thuban Industrial Zone',
   addressAr: 'مصر - القاهرة - المنطقة الصناعية شق الثعبان',
+  addressEs: 'Egipto - El Cairo - Zona Industrial Shaq Al-Thuban',
+  addressFr: 'Égypte - Le Caire - Zone Industrielle Shaq Al-Thuban',
   facebook: 'https://facebook.com/lumerramarble',
   instagram: 'https://instagram.com/lumerramarble',
   linkedin: 'https://linkedin.com/company/lumerramarble',
@@ -252,27 +230,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     refreshSettings()
   }, [])
-
-  // Set up polling for settings updates (optional - for admin changes)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (settings?.updatedAt) {
-        // Check if settings were updated (simple approach)
-        fetch('/api/settings')
-          .then(res => res.json())
-          .then(data => {
-            if (data.settings?.updatedAt && data.settings.updatedAt !== settings.updatedAt) {
-              refreshSettings()
-            }
-          })
-          .catch(() => {
-            // Ignore polling errors
-          })
-      }
-    }, 30000) // Check every 30 seconds
-
-    return () => clearInterval(interval)
-  }, [settings?.updatedAt])
 
   const value: ThemeContextType = {
     settings,

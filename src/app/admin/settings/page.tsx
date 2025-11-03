@@ -32,6 +32,7 @@ import {
 import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
 import { Card } from '../../../components/ui/card'
+import { ImageUpload } from '../../../components/ui/image-upload'
 import { toast, ToastProvider } from '../../../components/ui/toast'
 
 export default function SiteSettings() {
@@ -49,6 +50,16 @@ export default function SiteSettings() {
     companyNameAr: 'شركة لوميرا للرخام',
     companyNameEs: 'Lumerra Marble',
     companyNameFr: 'Lumerra Marble',
+    
+    // Logo & Branding
+    logoUrl: '',
+    logoAlt: 'Company Logo',
+    logoAltAr: 'شعار الشركة',
+    logoAltEs: 'Logo de la Empresa',
+    logoAltFr: 'Logo de l\'Entreprise',
+    darkModeLogoUrl: '',
+    faviconUrl: '',
+    
     description: 'Leading marble and granite export company from Egypt',
     descriptionAr: 'شركة رائدة في تصدير الرخام والجرانيت من مصر',
     descriptionEs: 'Empresa líder en exportación de mármol y granito desde Egipto',
@@ -223,8 +234,13 @@ export default function SiteSettings() {
     }
 
     setIsSaving(true)
+    console.log('🔄 Starting save...', { logoUrl: settings.logoUrl, darkModeLogoUrl: settings.darkModeLogoUrl })
+    
     try {
       const token = localStorage.getItem('admin_token')
+      
+      console.log('📤 Sending settings:', settings)
+      
       const response = await fetch('/api/admin/settings', {
         method: 'PUT',
         headers: {
@@ -234,16 +250,20 @@ export default function SiteSettings() {
         body: JSON.stringify(settings)
       })
 
+      console.log('📥 Response status:', response.status)
+      
       if (response.ok) {
-        await response.json()
+        const data = await response.json()
+        console.log('✅ Save successful:', data)
         setOriginalSettings(settings)
         toast.success('تم حفظ الإعدادات بنجاح!')
       } else {
         const data = await response.json()
+        console.error('❌ Save failed:', data)
         toast.error(data.error || 'حدث خطأ في حفظ الإعدادات')
       }
     } catch (error) {
-      console.error('Error saving settings:', error)
+      console.error('💥 Error saving settings:', error)
       toast.error('حدث خطأ في حفظ الإعدادات')
     } finally {
       setIsSaving(false)
@@ -463,6 +483,166 @@ export default function SiteSettings() {
                   placeholder={activeLanguage === 'ar' ? 'وصف الشركة بالعربية' : 'Company description'}
                 />
               </div>
+            </div>
+          </Card>
+
+          {/* Logo & Branding */}
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Image className="w-5 h-5" />
+              الشعار والعلامة التجارية
+            </h2>
+            
+            <div className="grid grid-cols-1 gap-6">
+              {/* Main Logo */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  شعار الشركة (Company Logo)
+                </label>
+                <ImageUpload
+                  currentImages={settings.logoUrl ? [settings.logoUrl] : []}
+                  onUpload={(urls: string[]) => {
+                    if (urls.length > 0) {
+                      setSettings(prev => ({ ...prev, logoUrl: urls[0] }))
+                    }
+                  }}
+                  onRemove={() => {
+                    setSettings(prev => ({ ...prev, logoUrl: '' }))
+                  }}
+                  multiple={false}
+                  maxFiles={1}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  💡 PNG شفاف مُفضّل - الحجم المثالي: 200x200 بكسل
+                </p>
+              </div>
+
+              {/* Logo Alt Text */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  النص البديل للشعار ({activeLanguage === 'ar' ? 'عربي' : activeLanguage === 'en' ? 'English' : activeLanguage === 'es' ? 'Español' : 'Français'})
+                </label>
+                <Input
+                  name={`logoAlt${activeLanguage === 'en' ? '' : activeLanguage === 'ar' ? 'Ar' : activeLanguage === 'es' ? 'Es' : 'Fr'}`}
+                  value={
+                    activeLanguage === 'en' ? settings.logoAlt :
+                    activeLanguage === 'ar' ? settings.logoAltAr :
+                    activeLanguage === 'es' ? settings.logoAltEs :
+                    settings.logoAltFr
+                  }
+                  onChange={handleInputChange}
+                  placeholder={activeLanguage === 'ar' ? 'شعار شركة لوميرا للرخام' : 'Lumerra Marble Logo'}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  مهم لمحركات البحث وإمكانية الوصول (SEO & Accessibility)
+                </p>
+              </div>
+
+              {/* Dark Mode Logo */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  شعار الوضع الليلي (اختياري)
+                </label>
+                <ImageUpload
+                  currentImages={settings.darkModeLogoUrl ? [settings.darkModeLogoUrl] : []}
+                  onUpload={(urls: string[]) => {
+                    if (urls.length > 0) {
+                      setSettings(prev => ({ ...prev, darkModeLogoUrl: urls[0] }))
+                    }
+                  }}
+                  onRemove={() => {
+                    setSettings(prev => ({ ...prev, darkModeLogoUrl: '' }))
+                  }}
+                  multiple={false}
+                  maxFiles={1}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  💡 نسخة فاتحة من اللوجو إذا كان الأصلي غامق
+                </p>
+              </div>
+
+              {/* Favicon */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Favicon (أيقونة المتصفح)
+                </label>
+                <ImageUpload
+                  currentImages={settings.faviconUrl ? [settings.faviconUrl] : []}
+                  onUpload={(urls: string[]) => {
+                    if (urls.length > 0) {
+                      setSettings(prev => ({ ...prev, faviconUrl: urls[0] }))
+                    }
+                  }}
+                  onRemove={() => {
+                    setSettings(prev => ({ ...prev, faviconUrl: '' }))
+                  }}
+                  multiple={false}
+                  maxFiles={1}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  💡 أيقونة صغيرة تظهر في تبويب المتصفح - الحجم: 32x32 أو 48x48
+                </p>
+              </div>
+
+              {/* Preview Section */}
+              {settings.logoUrl && (
+                <div className="border-t pt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    💡 معاينة الشعارات
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Light Mode Preview */}
+                    <div className="border rounded-lg p-4 bg-white">
+                      <p className="text-xs font-medium text-gray-600 mb-2">الوضع العادي</p>
+                      <div className="flex items-center justify-center h-20 bg-gray-50 rounded">
+                        <img 
+                          src={settings.logoUrl} 
+                          alt={settings.logoAltAr || 'شعار الشركة'}
+                          className="h-12 w-auto object-contain"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Dark Mode Preview */}
+                    {settings.darkModeLogoUrl && (
+                      <div className="border rounded-lg p-4 bg-gray-900">
+                        <p className="text-xs font-medium text-gray-300 mb-2">الوضع الليلي</p>
+                        <div className="flex items-center justify-center h-20 bg-gray-800 rounded">
+                          <img 
+                            src={settings.darkModeLogoUrl} 
+                            alt={settings.logoAltAr || 'شعار الشركة'}
+                            className="h-12 w-auto object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Favicon Preview */}
+                  {settings.faviconUrl && (
+                    <div className="mt-4 border rounded-lg p-4 bg-gray-50">
+                      <p className="text-xs font-medium text-gray-600 mb-2">Favicon</p>
+                      <div className="flex items-center gap-2">
+                        <img 
+                          src={settings.faviconUrl} 
+                          alt="Favicon"
+                          className="w-8 h-8 object-contain"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                        <span className="text-xs text-gray-500">كما سيظهر في تبويب المتصفح</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </Card>
 

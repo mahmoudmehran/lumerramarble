@@ -8,6 +8,16 @@ export interface SiteSettings {
   companyNameAr: string
   companyNameEs: string
   companyNameFr: string
+  
+  // Logo & Branding
+  logoUrl?: string
+  logoAlt?: string
+  logoAltAr?: string
+  logoAltEs?: string
+  logoAltFr?: string
+  darkModeLogoUrl?: string
+  faviconUrl?: string
+  
   description: string
   descriptionAr: string
   descriptionEs: string
@@ -157,6 +167,16 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       companyNameAr: settings.companyNameAr || 'شركة لوميرا للرخام',
       companyNameEs: settings.companyNameEs || 'Lumerra Marble',
       companyNameFr: settings.companyNameFr || 'Lumerra Marble',
+      
+      // Logo & Branding
+      logoUrl: settings.logoUrl || undefined,
+      logoAlt: settings.logoAlt || undefined,
+      logoAltAr: settings.logoAltAr || undefined,
+      logoAltEs: settings.logoAltEs || undefined,
+      logoAltFr: settings.logoAltFr || undefined,
+      darkModeLogoUrl: settings.darkModeLogoUrl || undefined,
+      faviconUrl: settings.faviconUrl || undefined,
+      
       description: settings.description || 'Leading marble and granite export company from Egypt',
       descriptionAr: settings.descriptionAr || 'شركة رائدة في تصدير الرخام والجرانيت من مصر',
       descriptionEs: settings.descriptionEs || 'Empresa líder en exportación de mármol y granito desde Egipto',

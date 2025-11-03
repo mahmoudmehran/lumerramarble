@@ -186,6 +186,16 @@ model SiteSettings {
   companyNameAr     String   @default("شركة لوميرا للرخام")
   companyNameEs     String   @default("Lumerra Marble")
   companyNameFr     String   @default("Lumerra Marble")
+  
+  // Logo & Branding
+  logoUrl           String?
+  logoAlt           String   @default("Company Logo")
+  logoAltAr         String   @default("شعار الشركة")
+  logoAltEs         String   @default("Logo de la Empresa")
+  logoAltFr         String   @default("Logo de l'Entreprise")
+  darkModeLogoUrl   String?  // Optional separate logo for dark mode
+  faviconUrl        String?
+  
   description       String?
   descriptionAr     String?
   descriptionEs     String?
