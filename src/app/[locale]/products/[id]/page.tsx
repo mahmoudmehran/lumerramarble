@@ -61,8 +61,31 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound()
   }
 
+  // Debug: Log product data
+  console.log('Product data:', {
+    id: product.id,
+    nameAr: product.nameAr,
+    nameEn: product.nameEn,
+    category: product.category,
+    thickness: product.thickness,
+    finishes: product.finishes,
+    originCountry: product.originCountry,
+    images: product.images
+  })
+
   // Get related products
   const relatedProducts = await getRelatedProducts(product.category, product.id)
+
+  // Debug: Log related products
+  console.log('Related products count:', relatedProducts.length)
+  if (relatedProducts.length > 0) {
+    console.log('First related product:', {
+      id: relatedProducts[0].id,
+      name: relatedProducts[0].nameAr,
+      images: relatedProducts[0].images,
+      imagesType: typeof relatedProducts[0].images
+    })
+  }
 
   // Helper function to get localized product name
   const getProductName = (product: any) => {
@@ -86,6 +109,60 @@ export default async function ProductPage({ params }: ProductPageProps) {
     }
   }
 
+  // Helper function to get localized category name
+  const getCategoryName = (category: string) => {
+    const categories = {
+      MARBLE: {
+        ar: 'رخام',
+        en: 'Marble',
+        es: 'Mármol',
+        fr: 'Marbre'
+      },
+      GRANITE: {
+        ar: 'جرانيت',
+        en: 'Granite',
+        es: 'Granito',
+        fr: 'Granit'
+      },
+      QUARTZ: {
+        ar: 'كوارتز',
+        en: 'Quartz',
+        es: 'Cuarzo',
+        fr: 'Quartz'
+      },
+      SPECIAL: {
+        ar: 'منتجات خاصة',
+        en: 'Special Products',
+        es: 'Productos Especiales',
+        fr: 'Produits Spéciaux'
+      }
+    }
+    return categories[category as keyof typeof categories]?.[locale as keyof typeof categories.MARBLE] || category
+  }
+
+  // Helper function to get localized finish names
+  const getFinishName = (finish: string) => {
+    const finishes: Record<string, Record<string, string>> = {
+      'Polished': { ar: 'لامع', en: 'Polished', es: 'Pulido', fr: 'Poli' },
+      'Honed': { ar: 'مطفي', en: 'Honed', es: 'Abrillantado', fr: 'Adouci' },
+      'Brushed': { ar: 'فرشاة', en: 'Brushed', es: 'Cepillado', fr: 'Brossé' },
+      'Flamed': { ar: 'نار', en: 'Flamed', es: 'Flameado', fr: 'Flammé' },
+      'Sandblasted': { ar: 'رمل', en: 'Sandblasted', es: 'Arenado', fr: 'Sablé' },
+      'Bush Hammered': { ar: 'مطرقي', en: 'Bush Hammered', es: 'Abujardado', fr: 'Bouchardé' },
+      'Antique': { ar: 'عتيق', en: 'Antique', es: 'Antiguo', fr: 'Antique' }
+    }
+    return finishes[finish]?.[locale] || finish
+  }
+
+  // Function to translate finishes string
+  const getLocalizedFinishes = (finishesStr: string) => {
+    if (!finishesStr || finishesStr.trim() === '') return 'N/A'
+    const finishesArray = finishesStr.split(',').map(f => f.trim()).filter(f => f)
+    if (finishesArray.length === 0) return 'N/A'
+    const translatedFinishes = finishesArray.map(finish => getFinishName(finish))
+    return translatedFinishes.join(', ')
+  }
+
   // Static content for product page
   const labels = {
     ar: {
@@ -95,6 +172,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       thickness: 'السماكة',
       finishes: 'التشطيبات',
       origin: 'بلد المنشأ',
+      category: 'الفئة',
       relatedProducts: 'منتجات ذات صلة',
       home: 'الرئيسية',
       products: 'المنتجات',
@@ -107,10 +185,37 @@ export default async function ProductPage({ params }: ProductPageProps) {
       thickness: 'Thickness',
       finishes: 'Finishes',
       origin: 'Origin Country',
+      category: 'Category',
       relatedProducts: 'Related Products',
       home: 'Home',
       products: 'Products',
       viewDetails: 'View Details'
+    },
+    es: {
+      backToProducts: 'Volver a Productos',
+      requestQuote: 'Solicitar Cotización',
+      specifications: 'Especificaciones',
+      thickness: 'Espesor',
+      finishes: 'Acabados',
+      origin: 'País de Origen',
+      category: 'Categoría',
+      relatedProducts: 'Productos Relacionados',
+      home: 'Inicio',
+      products: 'Productos',
+      viewDetails: 'Ver Detalles'
+    },
+    fr: {
+      backToProducts: 'Retour aux Produits',
+      requestQuote: 'Demander un Devis',
+      specifications: 'Spécifications',
+      thickness: 'Épaisseur',
+      finishes: 'Finitions',
+      origin: 'Pays d\'Origine',
+      category: 'Catégorie',
+      relatedProducts: 'Produits Connexes',
+      home: 'Accueil',
+      products: 'Produits',
+      viewDetails: 'Voir les Détails'
     }
   }
 
@@ -169,7 +274,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             
             <div className="flex items-center gap-2 mb-6">
               <span className="bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm font-medium">
-                {product.category}
+                {getCategoryName(product.category)}
               </span>
               <div className="flex items-center gap-1">
                 <Star className="w-4 h-4 text-yellow-400 fill-current" />
@@ -189,24 +294,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <Card className="p-6 mb-8">
               <h3 className="text-lg font-semibold mb-4">{currentLabels.specifications}</h3>
               <div className="space-y-4">
-                {product.originCountry && (
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-primary" />
-                    <span className="font-medium">{currentLabels.origin}:</span>
-                    <span>{product.originCountry}</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-3">
+                  <Package className="w-5 h-5 text-primary" />
+                  <span className="font-medium">{currentLabels.category}:</span>
+                  <span>{getCategoryName(product.category)}</span>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  <span className="font-medium">{currentLabels.origin}:</span>
+                  <span>{product.originCountry || 'N/A'}</span>
+                </div>
                 
                 <div className="flex items-center gap-3">
                   <Ruler className="w-5 h-5 text-primary" />
                   <span className="font-medium">{currentLabels.thickness}:</span>
-                  <span>{product.thickness}</span>
+                  <span>{product.thickness || 'N/A'}</span>
                 </div>
                 
                 <div className="flex items-center gap-3">
                   <Palette className="w-5 h-5 text-primary" />
                   <span className="font-medium">{currentLabels.finishes}:</span>
-                  <span>{product.finishes}</span>
+                  <span>{getLocalizedFinishes(product.finishes || '')}</span>
                 </div>
               </div>
             </Card>
@@ -232,23 +341,69 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {currentLabels.relatedProducts}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {relatedProducts.map((relatedProduct: any) => (
-                <Card key={relatedProduct.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-square relative bg-gray-200 flex items-center justify-center">
-                    <Package className="w-16 h-16 text-gray-400" />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold mb-2 line-clamp-2">
-                      {locale === 'ar' ? relatedProduct.nameAr : relatedProduct.nameEn}
-                    </h3>
-                    <Link href={`/${locale}/products/${relatedProduct.id}`}>
-                      <Button variant="outline" className="w-full mt-2">
+              {relatedProducts.map((relatedProduct: any) => {
+                // Images are already an array from database
+                const relatedImages = Array.isArray(relatedProduct.images) 
+                  ? relatedProduct.images 
+                  : []
+                
+                return (
+                <Link key={relatedProduct.id} href={`/${locale}/products/${relatedProduct.id}`} className="block">
+                  <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group flex flex-col">
+                    {/* Image Container - Fixed Height */}
+                    <div className="relative w-full h-64 bg-gray-100 overflow-hidden flex-shrink-0">
+                      {relatedImages.length > 0 && relatedImages[0] ? (
+                        <img
+                          src={relatedImages[0]}
+                          alt={getProductName(relatedProduct)}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                          <Package className="w-16 h-16 text-gray-400" />
+                        </div>
+                      )}
+                      {/* Category Badge */}
+                      <div className="absolute top-3 right-3 z-10">
+                        <span className="bg-white/90 backdrop-blur-sm text-primary-700 px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                          {getCategoryName(relatedProduct.category)}
+                        </span>
+                      </div>
+                      
+                      {/* Overlay on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                    
+                    {/* Content Container */}
+                    <div className="p-4 bg-white flex-grow flex flex-col">
+                      <h3 className="text-base font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-primary transition-colors">
+                        {getProductName(relatedProduct)}
+                      </h3>
+                      
+                      {/* Product details */}
+                      <div className="space-y-1.5 text-xs text-gray-600 mb-3 flex-grow">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                          <span className="truncate">{relatedProduct.originCountry || 'N/A'}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Ruler className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                          <span className="truncate line-clamp-1">{relatedProduct.thickness || 'N/A'}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Palette className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                          <span className="line-clamp-1">{getLocalizedFinishes(relatedProduct.finishes || '')}</span>
+                        </div>
+                      </div>
+                      
+                      <Button variant="outline" size="sm" className="w-full group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all mt-auto">
                         {currentLabels.viewDetails}
                       </Button>
-                    </Link>
-                  </div>
-                </Card>
-              ))}
+                    </div>
+                  </Card>
+                </Link>
+                )
+              })}
             </div>
           </div>
         )}

@@ -40,6 +40,70 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
 
+  // Helper function to get localized category name
+  const getCategoryName = (category: string) => {
+    const categories = {
+      MARBLE: {
+        ar: 'رخام',
+        en: 'Marble',
+        es: 'Mármol',
+        fr: 'Marbre'
+      },
+      GRANITE: {
+        ar: 'جرانيت',
+        en: 'Granite',
+        es: 'Granito',
+        fr: 'Granit'
+      },
+      QUARTZ: {
+        ar: 'كوارتز',
+        en: 'Quartz',
+        es: 'Cuarzo',
+        fr: 'Quartz'
+      },
+      SPECIAL: {
+        ar: 'منتجات خاصة',
+        en: 'Special Products',
+        es: 'Productos Especiales',
+        fr: 'Produits Spéciaux'
+      }
+    }
+    return categories[category as keyof typeof categories]?.[locale as keyof typeof categories.MARBLE] || category
+  }
+
+  // Helper function to get localized finish names
+  const getFinishName = (finish: string) => {
+    const finishes: Record<string, Record<string, string>> = {
+      'Polished': { ar: 'لامع', en: 'Polished', es: 'Pulido', fr: 'Poli' },
+      'Honed': { ar: 'مطفي', en: 'Honed', es: 'Abrillantado', fr: 'Adouci' },
+      'Brushed': { ar: 'فرشاة', en: 'Brushed', es: 'Cepillado', fr: 'Brossé' },
+      'Flamed': { ar: 'نار', en: 'Flamed', es: 'Flameado', fr: 'Flammé' },
+      'Sandblasted': { ar: 'رمل', en: 'Sandblasted', es: 'Arenado', fr: 'Sablé' },
+      'Bush Hammered': { ar: 'مطرقي', en: 'Bush Hammered', es: 'Abujardado', fr: 'Bouchardé' },
+      'Antique': { ar: 'عتيق', en: 'Antique', es: 'Antiguo', fr: 'Antique' }
+    }
+    return finishes[finish]?.[locale] || finish
+  }
+
+  // Function to translate finishes string
+  const getLocalizedFinishes = (finishesStr: string) => {
+    if (!finishesStr) return ''
+    const finishesArray = finishesStr.split(',').map(f => f.trim())
+    const translatedFinishes = finishesArray.map(finish => getFinishName(finish))
+    return translatedFinishes.join(', ')
+  }
+
+  // Get product name based on locale
+  const getProductName = () => {
+    switch(locale) {
+      case 'ar': return product.nameAr
+      case 'en': return product.nameEn
+      case 'es': return product.nameEs
+      case 'fr': return product.nameFr
+      default: return product.nameAr
+    }
+  }
+
   // Parse images if it's a JSON string
   const images = typeof product.images === 'string' 
     ? (product.images.startsWith('[') ? JSON.parse(product.images) : [product.images])
@@ -68,7 +132,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
   const handleQuoteClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     console.log('Quote button clicked')
-    router.push(`/${locale}/quote?productId=${product.id}&product=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`)
+    router.push(`/${locale}/quote?productId=${product.id}&product=${encodeURIComponent(getProductName())}`)
   }
 
   const handleViewDetailsClick = (e: React.MouseEvent) => {
@@ -78,7 +142,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
   }
 
   // Default placeholder image
-  const placeholderImage = `https://via.placeholder.com/400x400/e5e7eb/6b7280?text=${encodeURIComponent(locale === 'ar' ? product.nameAr : product.nameEn)}`
+  const placeholderImage = `https://via.placeholder.com/400x400/e5e7eb/6b7280?text=${encodeURIComponent(getProductName())}`
   const currentImage = images[currentImageIndex] || placeholderImage
 
   return (
@@ -96,7 +160,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
       <div className={`relative ${viewMode === 'list' ? 'w-64 flex-shrink-0' : 'aspect-square'} overflow-hidden`}>
         <Image
           src={currentImage}
-          alt={locale === 'ar' ? product.nameAr : product.nameEn}
+          alt={getProductName()}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-110"
           placeholder="blur"
@@ -130,14 +194,23 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
       
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-xl font-bold text-[var(--color-secondary-900)] mb-2 group-hover:text-[var(--color-primary)] transition-colors duration-300">
-            {locale === 'ar' ? product.nameAr : product.nameEn}
-          </h3>
+          <div className="flex items-center gap-2 mb-2">
+            <h3 className="text-xl font-bold text-[var(--color-secondary-900)] group-hover:text-[var(--color-primary)] transition-colors duration-300">
+              {getProductName()}
+            </h3>
+          </div>
+          
+          {/* Category Badge */}
+          <div className="mb-3">
+            <span className="inline-block bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-xs font-medium">
+              {getCategoryName(product.category)}
+            </span>
+          </div>
           
           <div className="space-y-2 text-sm text-[var(--color-quaternary)] mb-4">
             <p><span className="font-medium">{currentContent.origin}:</span> {product.originCountry}</p>
             <p><span className="font-medium">{currentContent.thickness}:</span> {product.thickness}</p>
-            <p><span className="font-medium">{currentContent.finishes}:</span> {product.finishes}</p>
+            <p><span className="font-medium">{currentContent.finishes}:</span> {getLocalizedFinishes(product.finishes)}</p>
           </div>
         </div>
         
@@ -239,6 +312,44 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
       requestQuote: 'Request Quote',
       viewDetails: 'View Details',
       noProducts: 'No products match your search'
+    },
+    es: {
+      title: 'Nuestros Productos',
+      subtitle: 'Descubra nuestra extensa colección de piedras naturales premium',
+      searchPlaceholder: 'Buscar productos...',
+      filter: 'Filtrar',
+      categories: {
+        all: 'Todos los Productos',
+        marble: 'Mármol',
+        granite: 'Granito',
+        quartz: 'Cuarzo',
+        special: 'Productos Especiales'
+      },
+      thickness: 'Espesor',
+      finishes: 'Acabados',
+      origin: 'País de Origen',
+      requestQuote: 'Solicitar Cotización',
+      viewDetails: 'Ver Detalles',
+      noProducts: 'No hay productos que coincidan con su búsqueda'
+    },
+    fr: {
+      title: 'Nos Produits',
+      subtitle: 'Découvrez notre vaste collection de pierres naturelles premium',
+      searchPlaceholder: 'Rechercher des produits...',
+      filter: 'Filtrer',
+      categories: {
+        all: 'Tous les Produits',
+        marble: 'Marbre',
+        granite: 'Granit',
+        quartz: 'Quartz',
+        special: 'Produits Spéciaux'
+      },
+      thickness: 'Épaisseur',
+      finishes: 'Finitions',
+      origin: 'Pays d\'Origine',
+      requestQuote: 'Demander un Devis',
+      viewDetails: 'Voir les Détails',
+      noProducts: 'Aucun produit ne correspond à votre recherche'
     }
   }
 
@@ -270,10 +381,19 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
     const matchesCategory = selectedCategory === 'all' || 
       product.category.toLowerCase() === selectedCategory.toLowerCase()
     
+    // البحث في جميع اللغات حسب اللغة الحالية
+    const productName = (() => {
+      switch(locale) {
+        case 'ar': return product.nameAr
+        case 'en': return product.nameEn
+        case 'es': return product.nameEs
+        case 'fr': return product.nameFr
+        default: return product.nameAr
+      }
+    })()
+    
     const matchesSearch = !searchTerm || 
-      (locale === 'ar' ? product.nameAr : product.nameEn)
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+      productName.toLowerCase().includes(searchTerm.toLowerCase())
     
     return matchesCategory && matchesSearch
   })

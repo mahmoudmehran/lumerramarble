@@ -19,7 +19,9 @@ import {
   // Edit,
   AlertCircle,
   Loader2,
-  Copy
+  Copy,
+  Upload,
+  FileText
 } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
@@ -29,7 +31,7 @@ import { ToastProvider, toast } from '../../../components/ui/toast'
 interface QuoteRequest {
   id: string
   date: string
-  status: 'pending' | 'reviewed' | 'processing' | 'quoted' | 'accepted' | 'rejected' | 'completed' | 'cancelled' | 'closed'
+  status: 'PENDING' | 'REVIEWED' | 'PROCESSING' | 'QUOTED' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED' | 'CANCELLED'
   fullName: string
   email: string
   phone: string
@@ -42,7 +44,7 @@ interface QuoteRequest {
   quantity: string
   budget: string
   message: string
-  priority?: 'low' | 'normal' | 'high' | 'urgent'
+  priority?: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT'
   assignedTo?: string
   assignedUser?: { name: string; email: string }
   internalNotes?: string
@@ -53,7 +55,7 @@ interface QuoteRequest {
   finish?: string
   dimensions?: string
   color?: string
-  attachments?: unknown[]
+  attachments?: any
   createdAt: Date
   updatedAt: Date
 }
@@ -87,18 +89,8 @@ export default function QuoteManagement() {
     try {
       setLoading(true)
       setError(null)
-      
-      const token = localStorage.getItem('admin_token')
-      if (!token) {
-        window.location.href = '/admin/login'
-        return
-      }
 
-      const response = await fetch('/api/admin/quotes', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const response = await fetch('/api/admin/quotes')
 
       if (response.ok) {
         const data = await response.json()
@@ -107,10 +99,6 @@ export default function QuoteManagement() {
         } else {
           setError('فشل في تحميل البيانات')
         }
-      } else if (response.status === 401) {
-        localStorage.removeItem('admin_token')
-        localStorage.removeItem('admin_user')
-        window.location.href = '/admin/login'
       } else {
         setError('خطأ في تحميل البيانات')
       }
@@ -124,65 +112,62 @@ export default function QuoteManagement() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800'
-      case 'reviewed': return 'bg-blue-100 text-blue-800'
-      case 'processing': return 'bg-purple-100 text-purple-800'
-      case 'quoted': return 'bg-green-100 text-green-800'
-      case 'accepted': return 'bg-emerald-100 text-emerald-800'
-      case 'rejected': return 'bg-red-100 text-red-800'
-      case 'completed': return 'bg-teal-100 text-teal-800'
-      case 'cancelled': return 'bg-gray-100 text-gray-800'
-      case 'closed': return 'bg-gray-100 text-gray-800'
+      case 'PENDING': return 'bg-yellow-100 text-yellow-800'
+      case 'REVIEWED': return 'bg-blue-100 text-blue-800'
+      case 'PROCESSING': return 'bg-purple-100 text-purple-800'
+      case 'QUOTED': return 'bg-green-100 text-green-800'
+      case 'ACCEPTED': return 'bg-emerald-100 text-emerald-800'
+      case 'REJECTED': return 'bg-red-100 text-red-800'
+      case 'COMPLETED': return 'bg-teal-100 text-teal-800'
+      case 'CANCELLED': return 'bg-gray-100 text-gray-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending': return <Clock className="w-4 h-4" />
-      case 'reviewed': return <Eye className="w-4 h-4" />
-      case 'processing': return <Loader2 className="w-4 h-4" />
-      case 'quoted': return <CheckCircle className="w-4 h-4" />
-      case 'accepted': return <CheckCircle className="w-4 h-4" />
-      case 'rejected': return <XCircle className="w-4 h-4" />
-      case 'completed': return <CheckCircle className="w-4 h-4" />
-      case 'cancelled': return <XCircle className="w-4 h-4" />
-      case 'closed': return <XCircle className="w-4 h-4" />
+      case 'PENDING': return <Clock className="w-4 h-4" />
+      case 'REVIEWED': return <Eye className="w-4 h-4" />
+      case 'PROCESSING': return <Loader2 className="w-4 h-4" />
+      case 'QUOTED': return <CheckCircle className="w-4 h-4" />
+      case 'ACCEPTED': return <CheckCircle className="w-4 h-4" />
+      case 'REJECTED': return <XCircle className="w-4 h-4" />
+      case 'COMPLETED': return <CheckCircle className="w-4 h-4" />
+      case 'CANCELLED': return <XCircle className="w-4 h-4" />
       default: return <Clock className="w-4 h-4" />
     }
   }
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'pending': return 'في الانتظار'
-      case 'reviewed': return 'تمت المراجعة'
-      case 'processing': return 'قيد المعالجة'
-      case 'quoted': return 'تم إرسال العرض'
-      case 'accepted': return 'تم قبول العرض'
-      case 'rejected': return 'تم رفض العرض'
-      case 'completed': return 'مكتمل'
-      case 'cancelled': return 'ملغي'
-      case 'closed': return 'مغلق'
+      case 'PENDING': return 'في الانتظار'
+      case 'REVIEWED': return 'تمت المراجعة'
+      case 'PROCESSING': return 'قيد المعالجة'
+      case 'QUOTED': return 'تم إرسال العرض'
+      case 'ACCEPTED': return 'تم قبول العرض'
+      case 'REJECTED': return 'تم رفض العرض'
+      case 'COMPLETED': return 'مكتمل'
+      case 'CANCELLED': return 'ملغي'
       default: return status
     }
   }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800'
-      case 'high': return 'bg-orange-100 text-orange-800'
-      case 'normal': return 'bg-blue-100 text-blue-800'
-      case 'low': return 'bg-gray-100 text-gray-800'
+      case 'URGENT': return 'bg-red-100 text-red-800'
+      case 'HIGH': return 'bg-orange-100 text-orange-800'
+      case 'NORMAL': return 'bg-blue-100 text-blue-800'
+      case 'LOW': return 'bg-gray-100 text-gray-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
 
   const getPriorityText = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'عاجل'
-      case 'high': return 'عالي'
-      case 'normal': return 'عادي'
-      case 'low': return 'منخفض'
+      case 'URGENT': return 'عاجل'
+      case 'HIGH': return 'عالي'
+      case 'NORMAL': return 'عادي'
+      case 'LOW': return 'منخفض'
       default: return 'عادي'
     }
   }
@@ -198,17 +183,10 @@ export default function QuoteManagement() {
   const updateQuoteStatus = async (quoteId: string, newStatus: QuoteRequest['status']) => {
     try {
       setUpdating(quoteId)
-      
-      const token = localStorage.getItem('admin_token')
-      if (!token) {
-        window.location.href = '/admin/login'
-        return
-      }
 
       const response = await fetch('/api/admin/quotes', {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -247,16 +225,9 @@ export default function QuoteManagement() {
 
   const sendQuoteEmail = async (quote: QuoteRequest, subject: string, message: string, quotedPrice?: number) => {
     try {
-      const token = localStorage.getItem('admin_token')
-      if (!token) {
-        window.location.href = '/admin/login'
-        return
-      }
-
       const response = await fetch('/api/admin/quotes', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -271,7 +242,7 @@ export default function QuoteManagement() {
         const data = await response.json()
         if (data.success) {
           // تحديث حالة الطلب إلى "تم إرسال العرض"
-          await updateQuoteStatus(quote.id, 'quoted')
+          await updateQuoteStatus(quote.id, 'QUOTED')
           setSendQuoteModal({ show: false, quote: null })
           toast.success('تم إرسال عرض السعر بنجاح')
         } else {
@@ -977,15 +948,14 @@ Phone: +1 (XXX) XXX-XXXX`
                 className="px-3 py-2 border rounded-md"
                 disabled={updating === selectedQuote.id}
               >
-                <option value="pending">في الانتظار</option>
-                <option value="reviewed">تمت المراجعة</option>
-                <option value="processing">قيد المعالجة</option>
-                <option value="quoted">تم إرسال العرض</option>
-                <option value="accepted">تم قبول العرض</option>
-                <option value="rejected">تم رفض العرض</option>
-                <option value="completed">مكتمل</option>
-                <option value="cancelled">ملغي</option>
-                <option value="closed">مغلق</option>
+                <option value="PENDING">في الانتظار</option>
+                <option value="REVIEWED">تمت المراجعة</option>
+                <option value="PROCESSING">قيد المعالجة</option>
+                <option value="QUOTED">تم إرسال العرض</option>
+                <option value="ACCEPTED">تم قبول العرض</option>
+                <option value="REJECTED">تم رفض العرض</option>
+                <option value="COMPLETED">مكتمل</option>
+                <option value="CANCELLED">ملغي</option>
               </select>
               {updating === selectedQuote.id && (
                 <Loader2 className="w-5 h-5 animate-spin text-primary-600" />
@@ -1116,6 +1086,66 @@ Phone: +1 (XXX) XXX-XXXX`
               </div>
             </Card>
 
+            {/* المرفقات */}
+            {selectedQuote.attachments && (() => {
+              try {
+                const attachments = typeof selectedQuote.attachments === 'string' 
+                  ? JSON.parse(selectedQuote.attachments) 
+                  : selectedQuote.attachments
+                
+                if (!Array.isArray(attachments) || attachments.length === 0) return null
+                
+                return (
+                  <Card className="p-6 lg:col-span-2">
+                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                      <Upload className="w-5 h-5" />
+                      المرفقات ({attachments.length})
+                    </h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {attachments.map((attachment: any, index: number) => {
+                        const isImage = typeof attachment === 'string' && 
+                          (attachment.endsWith('.jpg') || attachment.endsWith('.jpeg') || 
+                           attachment.endsWith('.png') || attachment.endsWith('.gif') || 
+                           attachment.endsWith('.webp'))
+                        
+                        return (
+                          <div key={index} className="border rounded-lg p-2 hover:shadow-md transition-shadow">
+                            {isImage ? (
+                              <a href={attachment} target="_blank" rel="noopener noreferrer" className="block">
+                                <img 
+                                  src={attachment} 
+                                  alt={`مرفق ${index + 1}`}
+                                  className="w-full h-32 object-cover rounded mb-2"
+                                />
+                                <p className="text-xs text-gray-600 truncate">
+                                  مرفق {index + 1}
+                                </p>
+                              </a>
+                            ) : (
+                              <a 
+                                href={typeof attachment === 'string' ? attachment : '#'} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="flex flex-col items-center justify-center h-32 bg-gray-100 rounded hover:bg-gray-200"
+                              >
+                                <FileText className="w-8 h-8 text-gray-400 mb-2" />
+                                <p className="text-xs text-gray-600 truncate px-2 text-center">
+                                  {typeof attachment === 'string' ? attachment.split('/').pop() : `ملف ${index + 1}`}
+                                </p>
+                              </a>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </Card>
+                )
+              } catch (e) {
+                console.error('Error parsing attachments:', e)
+                return null
+              }
+            })()}
+
             {/* الملاحظات الداخلية */}
             {selectedQuote.internalNotes && (
               <Card className="p-6 lg:col-span-2">
@@ -1223,15 +1253,14 @@ Phone: +1 (XXX) XXX-XXXX`
                 className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
               >
                 <option value="all">جميع الحالات</option>
-                <option value="pending">في الانتظار</option>
-                <option value="reviewed">تمت المراجعة</option>
-                <option value="processing">قيد المعالجة</option>
-                <option value="quoted">تم إرسال العرض</option>
-                <option value="accepted">تم قبول العرض</option>
-                <option value="rejected">تم رفض العرض</option>
-                <option value="completed">مكتمل</option>
-                <option value="cancelled">ملغي</option>
-                <option value="closed">مغلق</option>
+                <option value="PENDING">في الانتظار</option>
+                <option value="REVIEWED">تمت المراجعة</option>
+                <option value="PROCESSING">قيد المعالجة</option>
+                <option value="QUOTED">تم إرسال العرض</option>
+                <option value="ACCEPTED">تم قبول العرض</option>
+                <option value="REJECTED">تم رفض العرض</option>
+                <option value="COMPLETED">مكتمل</option>
+                <option value="CANCELLED">ملغي</option>
               </select>
             </div>
             <Button 
@@ -1336,7 +1365,7 @@ Phone: +1 (XXX) XXX-XXXX`
                           size="sm"
                           onClick={() => setSendQuoteModal({ show: true, quote })}
                           className="inline-flex items-center gap-1"
-                          disabled={quote.status === 'quoted' || quote.status === 'completed'}
+                          disabled={quote.status === 'QUOTED' || quote.status === 'COMPLETED'}
                         >
                           <Send className="w-4 h-4" />
                           عرض سعر

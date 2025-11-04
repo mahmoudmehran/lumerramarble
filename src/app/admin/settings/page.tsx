@@ -175,7 +175,13 @@ export default function SiteSettings() {
     whatsappButtonText: 'تواصل عبر واتساب',
     whatsappShowOnMobile: true,
     whatsappShowOnDesktop: true,
-    whatsappPosition: 'bottom-right'
+    whatsappPosition: 'bottom-right',
+    
+    // Footer Settings
+    footerDescriptionAr: 'شركة رائدة في تصدير الرخام والجرانيت الفاخر من مصر إلى العالم',
+    footerDescriptionEn: 'Leading company in exporting premium marble and granite from Egypt to the world',
+    footerDescriptionEs: 'Empresa líder en exportación de mármol y granito premium desde Egipto al mundo',
+    footerDescriptionFr: 'Entreprise leader dans l\'exportation de marbre et granit premium d\'Égypte vers le monde'
   })
 
   useEffect(() => {
@@ -2439,6 +2445,68 @@ export default function SiteSettings() {
                   <div className="w-4 h-4 bg-blue-500 rounded"></div>
                   <span>معلومات (#3b82f6)</span>
                 </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Footer Settings */}
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              {activeLanguage === 'ar' && 'إعدادات الفوتر'}
+              {activeLanguage === 'en' && 'Footer Settings'}
+              {activeLanguage === 'es' && 'Configuración del Pie de Página'}
+              {activeLanguage === 'fr' && 'Paramètres du Pied de Page'}
+            </h2>
+            
+            <div className="space-y-6">
+              {/* Footer Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {activeLanguage === 'ar' && 'وصف الشركة في الفوتر'}
+                  {activeLanguage === 'en' && 'Company Description in Footer'}
+                  {activeLanguage === 'es' && 'Descripción de la Empresa en el Pie de Página'}
+                  {activeLanguage === 'fr' && 'Description de l\'Entreprise dans le Pied de Page'}
+                </label>
+                <textarea
+                  name={`footerDescription${activeLanguage === 'ar' ? 'Ar' : activeLanguage === 'en' ? 'En' : activeLanguage === 'es' ? 'Es' : 'Fr'}`}
+                  value={
+                    activeLanguage === 'ar' ? settings.footerDescriptionAr :
+                    activeLanguage === 'en' ? settings.footerDescriptionEn :
+                    activeLanguage === 'es' ? settings.footerDescriptionEs :
+                    settings.footerDescriptionFr
+                  }
+                  onChange={handleInputChange}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder={
+                    activeLanguage === 'ar' ? 'شركة رائدة في تصدير الرخام والجرانيت...' :
+                    activeLanguage === 'en' ? 'Leading company in exporting...' :
+                    activeLanguage === 'es' ? 'Empresa líder en exportación...' :
+                    'Entreprise leader dans l\'exportation...'
+                  }
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {activeLanguage === 'ar' && 'نص وصفي قصير يظهر في الفوتر باللغة الحالية'}
+                  {activeLanguage === 'en' && 'Short description text displayed in footer in current language'}
+                  {activeLanguage === 'es' && 'Texto descriptivo corto que aparece en el pie de página en idioma actual'}
+                  {activeLanguage === 'fr' && 'Texte descriptif court affiché dans le pied de page en langue actuelle'}
+                </p>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm text-blue-800">
+                  <strong>
+                    {activeLanguage === 'ar' && 'ملاحظة:'}
+                    {activeLanguage === 'en' && 'Note:'}
+                    {activeLanguage === 'es' && 'Nota:'}
+                    {activeLanguage === 'fr' && 'Remarque:'}
+                  </strong>{' '}
+                  {activeLanguage === 'ar' && 'روابط الفوتر (الشركة، المنتجات، الدعم) ثابتة حالياً في الكود. نص حقوق النشر موجود في قسم الإعدادات القانونية.'}
+                  {activeLanguage === 'en' && 'Footer links (Company, Products, Support) are currently fixed in code. Copyright text is in Legal Settings section.'}
+                  {activeLanguage === 'es' && 'Los enlaces del pie de página (Empresa, Productos, Soporte) están actualmente fijos en el código. El texto de copyright está en la sección de Configuración Legal.'}
+                  {activeLanguage === 'fr' && 'Les liens du pied de page (Entreprise, Produits, Support) sont fixes dans le code. Le texte de copyright est dans la section Paramètres Légaux.'}
+                </p>
               </div>
             </div>
           </Card>

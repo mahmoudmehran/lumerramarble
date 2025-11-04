@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Cairo, Inter } from "next/font/google";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { getSiteSettings } from "@/lib/settings";
+import { InitialTheme } from "@/components/InitialTheme";
+import { ThemeCache } from "@/components/ThemeCache";
 import "./globals.css";
 
 const cairo = Cairo({
@@ -39,14 +42,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Load settings for initial theme
+  const settings = await getSiteSettings();
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <ThemeCache />
+        <InitialTheme settings={settings} />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

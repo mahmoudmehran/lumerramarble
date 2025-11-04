@@ -52,7 +52,9 @@ export const contactFormSchema = z.object({
     .min(10, 'رقم الهاتف غير صحيح')
     .max(20, 'رقم الهاتف طويل جداً')
     .transform(sanitizeString)
-    .refine(validatePhone, 'رقم الهاتف غير صحيح'),
+    .refine(validatePhone, 'رقم الهاتف غير صحيح')
+    .optional()
+    .or(z.literal('')),
   
   subject: z.string()
     .min(3, 'الموضوع يجب أن يكون على الأقل 3 أحرف')

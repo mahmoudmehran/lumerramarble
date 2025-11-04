@@ -108,21 +108,18 @@ export default async function LocaleLayout({
   const settings = await getSiteSettings()
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <head>
-        <OrganizationSchema locale={typedLocale} />
-      </head>
-      <body suppressHydrationWarning>
-        <AnalyticsScripts
-          googleAnalyticsId={settings.googleAnalyticsId}
-          googleTagManagerId={settings.googleTagManagerId}
-          facebookPixelId={settings.facebookPixelId}
-          linkedinPartnerId={settings.linkedinPartnerId}
-          tiktokPixelId={settings.tiktokPixelId}
-          bingAdsId={settings.bingAdsId}
-        />
-        <ThemeWrapper settings={settings}>
-          <ThemeProvider>
+    <>
+      <OrganizationSchema locale={typedLocale} />
+      <AnalyticsScripts
+        googleAnalyticsId={settings.googleAnalyticsId}
+        googleTagManagerId={settings.googleTagManagerId}
+        facebookPixelId={settings.facebookPixelId}
+        linkedinPartnerId={settings.linkedinPartnerId}
+        tiktokPixelId={settings.tiktokPixelId}
+        bingAdsId={settings.bingAdsId}
+      />
+      <ThemeWrapper settings={settings}>
+        <ThemeProvider>
             <RecaptchaProvider 
               siteKey={settings.recaptchaSiteKey || ''}
               enabled={settings.enableRecaptcha ?? false}
@@ -153,8 +150,7 @@ export default async function LocaleLayout({
             </RecaptchaProvider>
           </ThemeProvider>
         </ThemeWrapper>
-      </body>
-    </html>
+    </>
   )
 }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 
 interface ThemeWrapperProps {
   settings: {
@@ -20,28 +20,31 @@ interface ThemeWrapperProps {
 
 /**
  * Client component that applies theme settings to CSS variables
+ * Uses useLayoutEffect to apply styles before paint
  */
 export function ThemeWrapper({ settings, children }: ThemeWrapperProps) {
-  useEffect(() => {
-    // Apply colors to CSS variables
-    document.documentElement.style.setProperty('--color-primary', settings.primaryColor)
-    document.documentElement.style.setProperty('--color-secondary', settings.secondaryColor)
-    document.documentElement.style.setProperty('--color-tertiary', settings.tertiaryColor)
-    document.documentElement.style.setProperty('--color-quaternary', settings.quaternaryColor)
-    document.documentElement.style.setProperty('--color-quinary', settings.quinaryColor)
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    
+    // Apply colors synchronously before paint
+    root.style.setProperty('--color-primary', settings.primaryColor)
+    root.style.setProperty('--color-secondary', settings.secondaryColor)
+    root.style.setProperty('--color-tertiary', settings.tertiaryColor)
+    root.style.setProperty('--color-quaternary', settings.quaternaryColor)
+    root.style.setProperty('--color-quinary', settings.quinaryColor)
     
     // Apply typography and appearance settings
     if (settings.fontFamily) {
-      document.documentElement.style.setProperty('--font-family-base', settings.fontFamily)
+      root.style.setProperty('--font-family-base', settings.fontFamily)
     }
     if (settings.fontSize) {
-      document.documentElement.style.setProperty('--font-size-base', settings.fontSize)
+      root.style.setProperty('--font-size-base', settings.fontSize)
     }
     if (settings.borderRadius) {
-      document.documentElement.style.setProperty('--border-radius', settings.borderRadius)
+      root.style.setProperty('--border-radius', settings.borderRadius)
     }
     if (settings.boxShadow) {
-      document.documentElement.style.setProperty('--box-shadow', settings.boxShadow)
+      root.style.setProperty('--box-shadow', settings.boxShadow)
     }
     
     // Apply animations setting
@@ -55,6 +58,19 @@ export function ThemeWrapper({ settings, children }: ThemeWrapperProps) {
     const metaThemeColor = document.querySelector('meta[name="theme-color"]')
     if (metaThemeColor) {
       metaThemeColor.setAttribute('content', settings.primaryColor)
+    }
+    
+    // Cache theme colors in localStorage for instant loading on next visit
+    try {
+      localStorage.setItem('theme-colors', JSON.stringify({
+        primary: settings.primaryColor,
+        secondary: settings.secondaryColor,
+        tertiary: settings.tertiaryColor,
+        quaternary: settings.quaternaryColor,
+        quinary: settings.quinaryColor
+      }))
+    } catch (e) {
+      // Ignore localStorage errors (private browsing, etc.)
     }
   }, [settings])
 

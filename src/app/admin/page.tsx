@@ -7,7 +7,7 @@ import { Input } from '../../components/ui/input'
 import { Textarea } from '../../components/ui/textarea'
 import { Select } from '../../components/ui/select'
 import { Card } from '../../components/ui/card'
-import { Save, Edit, Eye, Settings, Calculator, LogOut, Building, Ship } from 'lucide-react'
+import { Save, Edit, Eye, Settings, Calculator, LogOut, Building, Ship, Mail, Package } from 'lucide-react'
 
 // تعريف نوع المحتوى
 interface ContentData {
@@ -258,8 +258,6 @@ export default function AdminPanel() {
     { id: 'homepage', name: 'الصفحة الرئيسية', icon: Eye },
     { id: 'about', name: 'عن الشركة', icon: Building },
     { id: 'export', name: 'خدمات التصدير', icon: Ship },
-    { id: 'quotes', name: 'طلبات الأسعار', icon: Calculator },
-    { id: 'products', name: 'المنتجات', icon: Edit },
     { id: 'blog', name: 'المدونة', icon: Edit },
     { id: 'settings', name: 'الإعدادات', icon: Settings }
   ]
@@ -345,6 +343,34 @@ export default function AdminPanel() {
                   )
                 })}
               </nav>
+
+              {/* External Links Section */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-500 mb-3">إدارة متقدمة</h3>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => router.push('/admin/quotes')}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-right transition-colors text-gray-600 hover:bg-gray-100"
+                  >
+                    <Calculator className="w-4 h-4" />
+                    طلبات الأسعار
+                  </button>
+                  <button
+                    onClick={() => router.push('/admin/messages')}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-right transition-colors text-gray-600 hover:bg-gray-100"
+                  >
+                    <Mail className="w-4 h-4" />
+                    الرسائل الواردة
+                  </button>
+                  <button
+                    onClick={() => router.push('/admin/products')}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-right transition-colors text-gray-600 hover:bg-gray-100"
+                  >
+                    <Package className="w-4 h-4" />
+                    إدارة المنتجات
+                  </button>
+                </div>
+              </div>
             </Card>
           </div>
 
@@ -1768,134 +1794,6 @@ export default function AdminPanel() {
                       </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            )}
-
-            {activeTab === 'products' && (
-              <Card className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold">إدارة المنتجات</h2>
-                  <Button
-                    onClick={() => window.location.href = '/admin/products'}
-                    className="flex items-center gap-2"
-                  >
-                    <Edit className="w-4 h-4" />
-                    إدارة جميع المنتجات
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-blue-600">رخام</p>
-                        <p className="text-2xl font-bold text-blue-800">12</p>
-                      </div>
-                      <div className="w-10 h-10 bg-blue-200 rounded-full flex items-center justify-center">
-                        <Edit className="w-5 h-5 text-blue-600" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-green-600">جرانيت</p>
-                        <p className="text-2xl font-bold text-green-800">8</p>
-                      </div>
-                      <div className="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center">
-                        <Edit className="w-5 h-5 text-green-600" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-purple-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-purple-600">كوارتز</p>
-                        <p className="text-2xl font-bold text-purple-800">5</p>
-                      </div>
-                      <div className="w-10 h-10 bg-purple-200 rounded-full flex items-center justify-center">
-                        <Edit className="w-5 h-5 text-purple-600" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600">إجمالي المنتجات</p>
-                        <p className="text-2xl font-bold text-gray-800">25</p>
-                      </div>
-                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                        <Edit className="w-5 h-5 text-gray-600" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-center py-4 text-gray-500">
-                  <p className="text-sm">انقر على &quot;إدارة جميع المنتجات&quot; لإضافة وتعديل المنتجات</p>
-                </div>
-              </Card>
-            )}
-
-            {activeTab === 'quotes' && (
-              <Card className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold">طلبات الأسعار</h2>
-                  <Button
-                    onClick={() => window.location.href = '/admin/quotes'}
-                    className="flex items-center gap-2"
-                  >
-                    <Calculator className="w-4 h-4" />
-                    عرض جميع الطلبات
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-yellow-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-yellow-600">في الانتظار</p>
-                        <p className="text-2xl font-bold text-yellow-800">5</p>
-                      </div>
-                      <div className="w-10 h-10 bg-yellow-200 rounded-full flex items-center justify-center">
-                        <Calculator className="w-5 h-5 text-yellow-600" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-blue-600">تمت المراجعة</p>
-                        <p className="text-2xl font-bold text-blue-800">3</p>
-                      </div>
-                      <div className="w-10 h-10 bg-blue-200 rounded-full flex items-center justify-center">
-                        <Eye className="w-5 h-5 text-blue-600" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-green-600">تم إرسال العرض</p>
-                        <p className="text-2xl font-bold text-green-800">8</p>
-                      </div>
-                      <div className="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center">
-                        <Settings className="w-5 h-5 text-green-600" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600">إجمالي الطلبات</p>
-                        <p className="text-2xl font-bold text-gray-800">16</p>
-                      </div>
-                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                        <Calculator className="w-5 h-5 text-gray-600" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-center py-4 text-gray-500">
-                  <p className="text-sm">انقر على &quot;عرض جميع الطلبات&quot; لإدارة طلبات الأسعار</p>
                 </div>
               </Card>
             )}

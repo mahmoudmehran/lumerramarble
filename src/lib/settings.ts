@@ -128,6 +128,12 @@ export interface SiteSettings {
   whatsappShowOnDesktop?: boolean
   whatsappPosition?: string
   
+  // Footer Settings
+  footerDescriptionAr?: string
+  footerDescriptionEn?: string
+  footerDescriptionEs?: string
+  footerDescriptionFr?: string
+  
   // Theme Colors
   primaryColor: string
   secondaryColor: string

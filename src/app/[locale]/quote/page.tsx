@@ -577,6 +577,20 @@ export default function QuotePage({ params }: QuotePageProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
+    
+    // If changing productName (which is now product ID), also save the product name
+    if (name === 'productName') {
+      const selectedProduct = products.find(p => p.id === value)
+      if (selectedProduct) {
+        setFormData(prev => ({
+          ...prev,
+          [name]: locale === 'ar' ? selectedProduct.nameAr : selectedProduct.nameEn,
+          productId: value
+        }))
+        return
+      }
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -994,7 +1008,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                           label={currentContent.productSelection.productName}
                           placeholder={currentContent.productSelection.productPlaceholder}
                           options={products.map((product) => ({
-                            value: locale === 'ar' ? product.nameAr : product.nameEn,
+                            value: product.id,
                             label: locale === 'ar' ? product.nameAr : product.nameEn
                           }))}
                         />

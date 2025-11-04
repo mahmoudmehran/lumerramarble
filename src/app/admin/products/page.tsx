@@ -48,6 +48,7 @@ export default function ProductsManagement() {
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [uploading, setUploading] = useState(false)
   const router = useRouter()
 
   const [formData, setFormData] = useState({
@@ -60,13 +61,32 @@ export default function ProductsManagement() {
     descriptionEs: '',
     descriptionFr: '',
     category: 'MARBLE',
-    thickness: '',
-    finishes: '',
+    thickness: '18mm, 20mm, 30mm, 40mm, Special Request', // ثابت
+    finishes: 'Polished,Honed,Brushed,Flamed,Sandblasted,Bush Hammered,Antique', // ثابت
     originCountry: 'مصر',
     slug: '',
     featured: false,
     images: [] as string[]
   })
+
+  // الفئات بجميع اللغات
+  const categories = {
+    MARBLE: { ar: 'رخام', en: 'Marble', es: 'Mármol', fr: 'Marbre' },
+    GRANITE: { ar: 'جرانيت', en: 'Granite', es: 'Granito', fr: 'Granit' },
+    QUARTZ: { ar: 'كوارتز', en: 'Quartz', es: 'Cuarzo', fr: 'Quartz' },
+    SPECIAL: { ar: 'منتجات خاصة', en: 'Special Products', es: 'Productos Especiales', fr: 'Produits Spéciaux' }
+  }
+
+  // التشطيبات بجميع اللغات
+  const finishTranslations: Record<string, { ar: string, en: string, es: string, fr: string }> = {
+    'Polished': { ar: 'تشطيب لامع', en: 'Polished Finish', es: 'Acabado pulido', fr: 'Finition polie' },
+    'Honed': { ar: 'تشطيب مطفي', en: 'Honed Finish', es: 'Acabado mate (lijado)', fr: 'Finition adoucie' },
+    'Brushed': { ar: 'تشطيب بفرشاة', en: 'Brushed Finish', es: 'Acabado cepillado', fr: 'Finition brossée' },
+    'Flamed': { ar: 'تشطيب بالنار', en: 'Flamed Finish', es: 'Acabado flameado', fr: 'Finition flammée' },
+    'Sandblasted': { ar: 'تشطيب بالرمل', en: 'Sandblasted Finish', es: 'Acabado arenado', fr: 'Finition sablée' },
+    'Bush Hammered': { ar: 'تشطيب مطرقي', en: 'Bush Hammered Finish', es: 'Acabado abujardado', fr: 'Finition bouchardée' },
+    'Antique': { ar: 'تشطيب عتيق', en: 'Antique Finish', es: 'Acabado antiguo', fr: 'Finition antique' }
+  }
 
   useEffect(() => {
     loadProducts()
@@ -75,25 +95,18 @@ export default function ProductsManagement() {
 
   const loadProducts = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
-      if (!token) {
-        router.push('/admin/login')
-        return
-      }
-
-      const response = await fetch('/api/admin/products', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const response = await fetch('/api/admin/products')
 
       if (response.ok) {
         const data = await response.json()
-        setProducts(data.products || [])
-      } else if (response.status === 401) {
-        localStorage.removeItem('admin_token')
-        localStorage.removeItem('admin_user')
-        router.push('/admin/login')
+        // تحويل images من JSON string إلى array
+        const products = (data.products || []).map((product: any) => ({
+          ...product,
+          images: typeof product.images === 'string' ? JSON.parse(product.images) : product.images
+        }))
+        setProducts(products)
+      } else {
+        console.error('Failed to load products')
       }
     } catch (error) {
       console.error('Error loading products:', error)
@@ -106,8 +119,7 @@ export default function ProductsManagement() {
     e.preventDefault()
     
     try {
-      const token = localStorage.getItem('admin_token')
-      const url = editingProduct ? '/api/admin/products' : '/api/admin/products'
+      const url = '/api/admin/products'
       const method = editingProduct ? 'PUT' : 'POST'
       
       const payload = editingProduct 
@@ -117,8 +129,7 @@ export default function ProductsManagement() {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       })
@@ -130,7 +141,18 @@ export default function ProductsManagement() {
         resetForm()
         loadProducts()
       } else {
-        alert('حدث خطأ في حفظ المنتج')
+        const errorData = await response.json()
+        console.error('Error response:', errorData)
+        
+        // التحقق من خطأ الرابط المكرر
+        if (errorData.details && errorData.details.includes('Unique constraint')) {
+          alert('هذا الرابط (Slug) مستخدم بالفعل! الرجاء تعديل الرابط.')
+          // تركيز على حقل الرابط
+          const slugInput = document.querySelector('input[name="slug"]') as HTMLInputElement
+          if (slugInput) slugInput.focus()
+        } else {
+          alert(`حدث خطأ في حفظ المنتج: ${errorData.details || errorData.error}`)
+        }
       }
     } catch (error) {
       console.error('Error saving product:', error)
@@ -142,12 +164,8 @@ export default function ProductsManagement() {
     if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return
 
     try {
-      const token = localStorage.getItem('admin_token')
       const response = await fetch(`/api/admin/products?id=${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        method: 'DELETE'
       })
 
       if (response.ok) {
@@ -164,6 +182,13 @@ export default function ProductsManagement() {
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product)
+    // تحويل images من JSON إلى array إذا لزم الأمر
+    const images = typeof product.images === 'string' 
+      ? JSON.parse(product.images) 
+      : Array.isArray(product.images) 
+        ? product.images 
+        : []
+    
     setFormData({
       nameAr: product.nameAr,
       nameEn: product.nameEn,
@@ -179,7 +204,7 @@ export default function ProductsManagement() {
       originCountry: product.originCountry,
       slug: product.slug,
       featured: product.featured,
-      images: product.images
+      images: images
     })
     setShowAddForm(true)
   }
@@ -195,13 +220,58 @@ export default function ProductsManagement() {
       descriptionEs: '',
       descriptionFr: '',
       category: 'MARBLE',
-      thickness: '',
-      finishes: '',
+      thickness: '18mm, 20mm, 30mm, 40mm, Special Request',
+      finishes: 'Polished,Honed,Brushed,Flamed,Sandblasted,Bush Hammered,Antique',
       originCountry: 'مصر',
       slug: '',
       featured: false,
       images: []
     })
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploading(true)
+    const uploadedUrls: string[] = []
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        const formDataUpload = new FormData()
+        formDataUpload.append('file', file)
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formDataUpload
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.url) {
+            uploadedUrls.push(data.url)
+          }
+        }
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, ...uploadedUrls]
+      }))
+    } catch (error) {
+      console.error('Error uploading images:', error)
+      alert('حدث خطأ في رفع الصور')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const removeImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }))
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -333,7 +403,7 @@ export default function ProductsManagement() {
               </div>
 
               {/* Category and Details */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     الفئة *
@@ -345,32 +415,27 @@ export default function ProductsManagement() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
                     required
                   >
-                    <option value="MARBLE">رخام</option>
-                    <option value="GRANITE">جرانيت</option>
-                    <option value="QUARTZ">كوارتز</option>
-                    <option value="SPECIAL">منتجات خاصة</option>
+                    <option value="MARBLE">رخام - Marble - Mármol - Marbre</option>
+                    <option value="GRANITE">جرانيت - Granite - Granito - Granit</option>
+                    <option value="QUARTZ">كوارتز - Quartz - Cuarzo - Quartz</option>
+                    <option value="SPECIAL">منتجات خاصة - Special Products - Productos Especiales - Produits Spéciaux</option>
                   </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    السماكة الافتراضية: 18mm, 20mm, 30mm, 40mm, Special Request
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    التشطيبات المتاحة: لامع، مطفي، فرشاة، نار، رمل، مطرقي، عتيق
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    السماكة
+                    بلد المنشأ
                   </label>
                   <Input
-                    name="thickness"
-                    value={formData.thickness}
+                    name="originCountry"
+                    value={formData.originCountry}
                     onChange={handleInputChange}
-                    placeholder="18mm, 20mm, 30mm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    التشطيبات
-                  </label>
-                  <Input
-                    name="finishes"
-                    value={formData.finishes}
-                    onChange={handleInputChange}
-                    placeholder="مصقول، مطفي، مضغوط"
+                    placeholder="مصر"
                   />
                 </div>
               </div>
@@ -405,21 +470,93 @@ export default function ProductsManagement() {
                     required
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    الوصف بالإسبانية *
+                  </label>
+                  <textarea
+                    name="descriptionEs"
+                    value={formData.descriptionEs}
+                    onChange={handleInputChange}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                    placeholder="Descripción detallada del producto"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    الوصف بالفرنسية *
+                  </label>
+                  <textarea
+                    name="descriptionFr"
+                    value={formData.descriptionFr}
+                    onChange={handleInputChange}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                    placeholder="Description détaillée du produit"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* صور المنتج */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  صور المنتج *
+                </label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    id="product-images"
+                  />
+                  <label
+                    htmlFor="product-images"
+                    className="flex flex-col items-center justify-center cursor-pointer"
+                  >
+                    <ImageIcon className="w-12 h-12 text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-600">اضغط لرفع الصور</span>
+                    <span className="text-xs text-gray-500 mt-1">يمكنك اختيار عدة صور</span>
+                  </label>
+                </div>
+
+                {/* عرض الصور المرفوعة */}
+                {formData.images.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    {formData.images.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <Image
+                          src={image}
+                          alt={`صورة ${index + 1}`}
+                          width={200}
+                          height={200}
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {uploading && (
+                  <div className="text-center mt-4">
+                    <p className="text-sm text-gray-600">جاري رفع الصور...</p>
+                  </div>
+                )}
               </div>
 
               {/* Additional Info */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    بلد المنشأ
-                  </label>
-                  <Input
-                    name="originCountry"
-                    value={formData.originCountry}
-                    onChange={handleInputChange}
-                    placeholder="مصر"
-                  />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     الرابط المخصص (Slug)
@@ -495,12 +632,20 @@ export default function ProductsManagement() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
+            {filteredProducts.map((product) => {
+              // التأكد من أن images هي array
+              const images = typeof product.images === 'string' 
+                ? JSON.parse(product.images) 
+                : Array.isArray(product.images) 
+                  ? product.images 
+                  : []
+              
+              return (
               <Card key={product.id} className="overflow-hidden">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                  {product.images.length > 0 ? (
+                  {images.length > 0 ? (
                     <Image
-                      src={product.images[0]}
+                      src={images[0]}
                       alt={product.nameAr}
                       width={300}
                       height={200}
@@ -554,7 +699,8 @@ export default function ProductsManagement() {
                   </div>
                 </div>
               </Card>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

@@ -183,12 +183,12 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
           
           <p className="text-[var(--color-quaternary)] text-lg lg:text-xl leading-relaxed mb-4">
             {locale === 'ar' 
-              ? 'شركة رائدة في تصدير أفخم أنواع الرخام والجرانيت من مصر إلى جميع أنحاء العالم بأعلى معايير الجودة'
+              ? (siteSettings?.footerDescriptionAr || 'شركة رائدة في تصدير أفخم أنواع الرخام والجرانيت من مصر إلى جميع أنحاء العالم بأعلى معايير الجودة')
               : locale === 'en'
-              ? 'A leading company in exporting premium marble and granite from Egypt to worldwide with highest quality standards'
+              ? (siteSettings?.footerDescriptionEn || 'A leading company in exporting premium marble and granite from Egypt to worldwide with highest quality standards')
               : locale === 'es'
-              ? 'Una empresa líder en la exportación de mármol y granito premium desde Egipto a todo el mundo con los más altos estándares de calidad'
-              : 'Une entreprise leader dans l\'exportation de marbre et de granit haut de gamme d\'Égypte vers le monde entier avec les normes de qualité les plus élevées'
+              ? (siteSettings?.footerDescriptionEs || 'Una empresa líder en la exportación de mármol y granito premium desde Egipto a todo el mundo con los más altos estándares de calidad')
+              : (siteSettings?.footerDescriptionFr || 'Une entreprise leader dans l\'exportation de marbre et de granit haut de gamme d\'Égypte vers le monde entier avec les normes de qualité les plus élevées')
             }
           </p>
           
@@ -300,7 +300,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         {/* Copyright */}
         <div className="border-t border-[var(--color-secondary-700)] mt-6 lg:mt-7 pt-5 lg:pt-6 text-center">
           <p className="text-[var(--color-quaternary)] text-lg lg:text-xl font-medium">
-            {copyrightText || (
+            {siteSettings?.copyrightText || copyrightText || (
               locale === 'ar' 
                 ? `© ${new Date().getFullYear()} لوميرا ماربل. جميع الحقوق محفوظة.`
                 : locale === 'en'

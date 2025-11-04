@@ -313,6 +313,12 @@ model SiteSettings {
   quaternaryColor   String   @default("#2c3e50")    // General text
   quinaryColor      String   @default("#ffffff")    // Opposite of quaternary (background text)
   
+  // Footer Settings (4 languages)
+  footerDescriptionAr String?  @default("شركة رائدة في تصدير الرخام والجرانيت الفاخر من مصر إلى العالم")
+  footerDescriptionEn String?  @default("Leading company in exporting premium marble and granite from Egypt to the world")
+  footerDescriptionEs String?  @default("Empresa líder en exportación de mármol y granito premium desde Egipto al mundo")
+  footerDescriptionFr String?  @default("Entreprise leader dans l'exportation de marbre et granit premium d'Égypte vers le monde")
+  
   // System fields
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
