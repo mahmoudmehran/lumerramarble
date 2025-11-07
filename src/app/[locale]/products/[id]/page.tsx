@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -13,7 +14,42 @@ import { Card } from '../../../../components/ui/card'
 import { getContent } from '../../../../lib/content'
 import { prisma } from '../../../../lib/db'
 import { notFound } from 'next/navigation'
-import ProductGallery from './ProductGallery'
+import { getCachedProductById, getCachedProducts } from '../../../../lib/cache'
+
+// ✅ Dynamic import for ProductGallery (code splitting)
+const ProductGallery = dynamic(() => import('./ProductGallery'), {
+  loading: () => (
+    <div className="w-full h-[500px] bg-[var(--color-quaternary-100)] animate-pulse rounded-lg flex items-center justify-center">
+      <p className="text-[var(--color-quaternary-400)]">Loading gallery...</p>
+    </div>
+  )
+})
+
+// ✅ Enable Static Site Generation with Revalidation (ISR)
+export const revalidate = 3600 // Revalidate every hour
+
+// ✅ Generate static params for all products
+export async function generateStaticParams() {
+  const products = await prisma.product.findMany({
+    where: { active: true },
+    select: { id: true }
+  })
+  
+  // Generate params for all locales
+  const locales = ['ar', 'en', 'es', 'fr']
+  const params: { locale: string; id: string }[] = []
+  
+  locales.forEach(locale => {
+    products.forEach(product => {
+      params.push({
+        locale,
+        id: product.id
+      })
+    })
+  })
+  
+  return params
+}
 
 interface ProductPageProps {
   params: Promise<{ locale: string; id: string }>
@@ -22,9 +58,8 @@ interface ProductPageProps {
 // Function to get product from database
 async function getProductById(id: string) {
   try {
-    const product = await prisma.product.findUnique({
-      where: { id }
-    })
+    // ✅ Use cached version
+    const product = await getCachedProductById(id)
     return product
   } catch (error) {
     console.error('Error fetching product:', error)

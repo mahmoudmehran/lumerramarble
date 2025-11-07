@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import { Menu, X, Globe, ChevronDown } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -25,11 +25,22 @@ export default function Navbar({ locale }: NavbarProps) {
   const { supportedLocales, setLocale } = useLanguage()
   const siteSettings = useSiteSettings()
   
-  // Debug: Log settings to see what's loaded
-  useEffect(() => {
-    console.log('🔍 Navbar - Site Settings:', siteSettings)
-    console.log('🖼️ Logo URL:', siteSettings?.logoUrl)
-  }, [siteSettings])
+  // Memoize logo URL to prevent unnecessary recalculations
+  const logoUrl = useMemo(() => {
+    if (!siteSettings?.logoUrl) return null
+    return siteSettings.darkModeEnabled && siteSettings.darkModeLogoUrl 
+      ? siteSettings.darkModeLogoUrl 
+      : siteSettings.logoUrl
+  }, [siteSettings?.logoUrl, siteSettings?.darkModeLogoUrl, siteSettings?.darkModeEnabled])
+  
+  // Memoize alt text
+  const logoAlt = useMemo(() => {
+    if (!siteSettings) return 'Company Logo'
+    return locale === 'ar' ? siteSettings.logoAltAr || 'شعار الشركة' :
+           locale === 'es' ? siteSettings.logoAltEs || 'Logo de la Empresa' :
+           locale === 'fr' ? siteSettings.logoAltFr || 'Logo de l\'Entreprise' :
+           siteSettings.logoAlt || 'Company Logo'
+  }, [siteSettings, locale])
   
   const langDropdownRef = useRef<HTMLDivElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
@@ -110,28 +121,20 @@ export default function Navbar({ locale }: NavbarProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo - Always on the left/right side based on RTL */}
           <div className="flex-shrink-0">
-            <Link href={`/${locale}`}>
+            <Link href={`/${locale}`} prefetch={true}>
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 {/* Show Logo if available, otherwise show fallback */}
-                {siteSettings?.logoUrl ? (
+                {logoUrl ? (
                   <img
-                    src={siteSettings.darkModeEnabled && siteSettings.darkModeLogoUrl 
-                      ? siteSettings.darkModeLogoUrl 
-                      : siteSettings.logoUrl
-                    }
-                    alt={locale === 'ar' ? siteSettings.logoAltAr || 'شعار الشركة' :
-                         locale === 'es' ? siteSettings.logoAltEs || 'Logo de la Empresa' :
-                         locale === 'fr' ? siteSettings.logoAltFr || 'Logo de l\'Entreprise' :
-                         siteSettings.logoAlt || 'Company Logo'
-                    }
+                    src={logoUrl}
+                    alt={logoAlt}
                     className="max-h-24 max-w-[220px] h-auto w-auto object-contain"
                     loading="eager"
-                    onError={(e) => {
-                      console.error('❌ Logo failed to load:', siteSettings.logoUrl)
-                      console.log('Current target:', e.currentTarget.src)
-                    }}
-                    onLoad={() => {
-                      console.log('✅ Logo loaded successfully:', siteSettings.logoUrl)
+                    fetchPriority="high"
+                    decoding="async"
+                    style={{ 
+                      willChange: 'auto',
+                      imageRendering: 'crisp-edges'
                     }}
                   />
                 ) : (
@@ -139,13 +142,9 @@ export default function Navbar({ locale }: NavbarProps) {
                     <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] rounded-lg flex items-center justify-center shadow-md">
                       <span className="text-[var(--color-quinary)] font-bold text-xl">L</span>
                     </div>
-                    {/* Debug: Show when logoUrl is missing */}
-                    {typeof window !== 'undefined' && window.location.search.includes('debug') && (
-                      <span className="text-xs text-red-500">No Logo</span>
-                    )}
                   </>
                 )}
-                <span className="font-bold text-lg sm:text-xl text-[var(--color-tertiary)] whitespace-nowrap">
+                <span className="font-bold text-lg sm:text-xl text-[var(--color-quaternary)] whitespace-nowrap">
                   {locale === 'ar' ? (siteSettings?.companyNameAr || 'لوميرا ماربل') : 
                    locale === 'es' ? (siteSettings?.companyNameEs || 'Lumerra Marble') :
                    locale === 'fr' ? (siteSettings?.companyNameFr || 'Lumerra Marble') :
@@ -162,6 +161,7 @@ export default function Navbar({ locale }: NavbarProps) {
                 <Link
                   key={item.href}
                   href={item.href}
+                  prefetch={true}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                     isActive(item.href)
                       ? 'text-[var(--color-primary)] bg-[var(--color-primary-50)] border-b-2 border-[var(--color-primary)]'
@@ -262,6 +262,7 @@ export default function Navbar({ locale }: NavbarProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={true}
                 className={`block px-3 py-2 rounded-md text-base font-medium transition-all duration-200 hover:translate-x-1 rtl:hover:-translate-x-1 ${
                   isActive(item.href)
                     ? 'text-[var(--color-primary)] bg-[var(--color-primary-50)] border-r-4 border-[var(--color-primary)] rtl:border-r-0 rtl:border-l-4'
@@ -287,6 +288,7 @@ export default function Navbar({ locale }: NavbarProps) {
                   <Link
                     key={lang.code}
                     href={`/${lang.code}`}
+                    prefetch={true}
                     className={`flex items-center justify-center px-3 py-3 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 ${
                       lang.code === locale
                         ? 'bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-700)] text-[var(--color-quinary)] shadow-lg shadow-[var(--color-primary)]/30 scale-105'

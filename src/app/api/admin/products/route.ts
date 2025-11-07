@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/db'
+import { revalidateProductCache } from '../../../../lib/revalidate'
 
 /**
  * GET - Get all products
@@ -56,6 +57,9 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    // Revalidate product cache
+    await revalidateProductCache()
+
     return NextResponse.json({
       success: true,
       product
@@ -108,6 +112,9 @@ export async function PUT(request: NextRequest) {
       }
     })
 
+    // Revalidate product cache
+    await revalidateProductCache()
+
     return NextResponse.json({
       success: true,
       product
@@ -139,6 +146,9 @@ export async function DELETE(request: NextRequest) {
     await prisma.product.delete({
       where: { id }
     })
+
+    // Revalidate product cache
+    await revalidateProductCache()
 
     return NextResponse.json({
       success: true,

@@ -62,6 +62,13 @@ export default function ContentManagementPage() {
       setSaving(true)
       const values = content[section][key]
       
+      console.log('Saving content:', {
+        pageKey: selectedPage,
+        sectionKey: section,
+        contentKey: key,
+        values
+      })
+      
       const response = await fetch('/api/admin/content', {
         method: 'PUT',
         headers: {
@@ -71,13 +78,18 @@ export default function ContentManagementPage() {
           pageKey: selectedPage,
           sectionKey: section,
           contentKey: key,
-          values
+          ar: values?.ar || '',
+          en: values?.en || '',
+          es: values?.es || '',
+          fr: values?.fr || ''
         })
       })
 
       if (response.ok) {
         alert('تم حفظ المحتوى بنجاح!')
       } else {
+        const errorData = await response.json()
+        console.error('Error response:', errorData)
         alert('حدث خطأ في حفظ المحتوى')
       }
     } catch (error) {

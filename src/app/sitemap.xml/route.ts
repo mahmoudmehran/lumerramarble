@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/db'
 
-const prisma = new PrismaClient()
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://lumerramarble.com'
 const LANGUAGES = ['ar', 'en', 'es', 'fr']
 

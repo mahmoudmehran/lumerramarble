@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,26 +8,25 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String?  // Optional for customers who don't create accounts
-  name      String
-  role      Role     @default(CUSTOMER)
-  country   String?
-  phone     String?
-  company   String?
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  assignedQuotes QuoteRequest[] @relation("AssignedQuotes")
+  id             String         @id @default(cuid())
+  email          String         @unique
+  password       String
+  name           String
+  role           Role           @default(CUSTOMER)
+  country        String?
+  phone          String?
+  company        String?
+  active         Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   blogPosts      BlogPost[]     @relation("BlogAuthor")
+  assignedQuotes QuoteRequest[] @relation("AssignedQuotes")
 
   @@map("users")
 }
 
 model Product {
-  id            String   @id @default(cuid())
+  id            String          @id @default(cuid())
   nameAr        String
   nameEn        String
   nameEs        String
@@ -44,17 +40,17 @@ model Product {
   finishes      String
   originCountry String
   images        Json
-  slug          String   @unique
-  featured      Boolean  @default(false)
-  active        Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  slug          String          @unique
+  featured      Boolean         @default(false)
+  active        Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 
   @@map("products")
 }
 
 model BlogPost {
-  id              String   @id @default(cuid())
+  id              String    @id @default(cuid())
   titleAr         String
   titleEn         String
   titleEs         String
@@ -70,449 +66,332 @@ model BlogPost {
   excerptFr       String?
   metaTitle       String?
   metaDescription String?
-  slug            String   @unique
-  featured        Boolean  @default(false)
-  published       Boolean  @default(false)
-  
-  // New fields
+  slug            String    @unique
+  featured        Boolean   @default(false)
+  published       Boolean   @default(false)
   featuredImage   String?
-  views           Int      @default(0)
-  tags            String?  // Comma-separated tags
-  
-  // Author relation
+  views           Int       @default(0)
+  tags            String?
   authorId        String?
-  author          User?    @relation("BlogAuthor", fields: [authorId], references: [id])
-  
-  // Category relation
   categoryId      String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
   category        Category? @relation("BlogCategory", fields: [categoryId], references: [id])
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  author          User?     @relation("BlogAuthor", fields: [authorId], references: [id])
 
   @@map("blog_posts")
 }
 
 model QuoteRequest {
-  id            String              @id @default(cuid())
-  // Personal Information
+  id            String             @id @default(cuid())
   fullName      String
   email         String
   phone         String
   company       String?
   country       String
   city          String?
-  
-  // Project Information
   projectType   String
   projectName   String?
   expectedDate  DateTime?
   budget        String?
-  
-  // Product Requirements
   productType   String
   quantity      String
   thickness     String?
   finish        String?
   dimensions    String?
   color         String?
-  
-  // Additional Information
   message       String?
-  attachments   Json?               // Array of file paths
-  
-  // System fields
-  status        QuoteRequestStatus  @default(PENDING)
-  priority      Priority            @default(NORMAL)
-  assignedTo    String?             // Admin user ID
+  attachments   Json?
+  status        QuoteRequestStatus @default(PENDING)
+  priority      Priority           @default(NORMAL)
+  assignedTo    String?
   internalNotes String?
   quotedPrice   Float?
   quotedAt      DateTime?
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-
-  // Relations
-  assignedUser  User?               @relation("AssignedQuotes", fields: [assignedTo], references: [id])
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  assignedUser  User?              @relation("AssignedQuotes", fields: [assignedTo], references: [id])
   responses     QuoteResponse[]
 
   @@map("quote_requests")
 }
 
 model QuoteResponse {
-  id            String       @id @default(cuid())
-  quoteId       String
-  message       String
-  attachments   Json?        // Array of file paths
-  isInternal    Boolean      @default(false) // Internal notes vs customer communication
-  createdBy     String       // User ID
-  createdAt     DateTime     @default(now())
-
-  quote         QuoteRequest @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  id          String       @id @default(cuid())
+  quoteId     String
+  message     String
+  attachments Json?
+  isInternal  Boolean      @default(false)
+  createdBy   String
+  createdAt   DateTime     @default(now())
+  quote       QuoteRequest @relation(fields: [quoteId], references: [id], onDelete: Cascade)
 
   @@map("quote_responses")
 }
 
 model ContactMessage {
-  id        String              @id @default(cuid())
+  id        String        @id @default(cuid())
   name      String
   email     String
   phone     String?
   company   String?
   subject   String?
   message   String
-  status    ContactStatus       @default(NEW)
+  status    ContactStatus @default(NEW)
   readAt    DateTime?
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
   @@map("contact_messages")
 }
 
 model Newsletter {
-  id          String            @id @default(cuid())
-  email       String            @unique
-  name        String?
-  status      NewsletterStatus  @default(ACTIVE)
-  subscribedAt DateTime         @default(now())
+  id             String           @id @default(cuid())
+  email          String           @unique
+  name           String?
+  status         NewsletterStatus @default(ACTIVE)
+  subscribedAt   DateTime         @default(now())
   unsubscribedAt DateTime?
 
   @@map("newsletter_subscribers")
 }
 
 model SiteSettings {
-  id                String   @id @default(cuid())
-  // Company Information (4 languages)
-  companyName       String   @default("Lumerra Marble")
-  companyNameAr     String   @default("شركة لوميرا للرخام")
-  companyNameEs     String   @default("Lumerra Marble")
-  companyNameFr     String   @default("Lumerra Marble")
-  
-  // Logo & Branding
-  logoUrl           String?
-  logoAlt           String   @default("Company Logo")
-  logoAltAr         String   @default("شعار الشركة")
-  logoAltEs         String   @default("Logo de la Empresa")
-  logoAltFr         String   @default("Logo de l'Entreprise")
-  darkModeLogoUrl   String?  // Optional separate logo for dark mode
-  faviconUrl        String?
-  
-  description       String?
-  descriptionAr     String?
-  descriptionEs     String?
-  descriptionFr     String?
-  
-  // Contact Information
-  phone             String?
-  email             String?
-  whatsapp          String?
-  address           String?
-  addressAr         String?
-  addressEs         String?
-  addressFr         String?
-  
-  // Social Media
-  facebook          String?
-  instagram         String?
-  linkedin          String?
-  youtube           String?
-  
-  // SEO Settings (4 languages)
-  metaTitle         String?
-  metaTitleAr       String?
-  metaTitleEs       String?
-  metaTitleFr       String?
-  metaDescription   String?
-  metaDescriptionAr String?
-  metaDescriptionEs String?
-  metaDescriptionFr String?
-  keywords          String?
-  keywordsAr        String?
-  keywordsEs        String?
-  keywordsFr        String?
-  
-  // Business Information (4 languages)
-  businessHours     String?
-  businessHoursAr   String?
-  businessHoursEs   String?
-  businessHoursFr   String?
-  
-  // Email/SMTP Settings
-  smtpHost          String?  @default("smtp.gmail.com")
-  smtpPort          Int?     @default(587)
-  smtpUser          String?
-  smtpPassword      String?  // Should be encrypted in production
-  smtpSecure        Boolean? @default(false)  // true for 465, false for other ports
-  emailFrom         String?  // Default sender email
-  emailFromName     String?  // Default sender name
-  notificationEmail String?  // Email to receive notifications
-  
-  // Image Settings
-  maxImageSize      Int?     @default(5242880)    // Max size in bytes (default: 5MB)
-  allowedImageTypes String?  @default("image/jpeg,image/png,image/webp,image/gif")  // Allowed MIME types
-  imageQuality      Int?     @default(80)         // Compression quality (1-100)
-  autoOptimize      Boolean? @default(true)       // Auto-optimize uploaded images
-  thumbnailWidth    Int?     @default(300)        // Thumbnail width in pixels
-  thumbnailHeight   Int?     @default(300)        // Thumbnail height in pixels
-  maxWidth          Int?     @default(1920)       // Max image width
-  maxHeight         Int?     @default(1080)       // Max image height
-  
-  // SEO & Analytics Settings
-  googleAnalyticsId String?  // Google Analytics GA4 ID (G-XXXXXXXXXX)
-  googleTagManagerId String? // Google Tag Manager ID (GTM-XXXXXXX)
-  facebookPixelId   String?  // Facebook Pixel ID
-  linkedinPartnerId String?  // LinkedIn Insight Tag Partner ID
-  tiktokPixelId     String?  // TikTok Pixel ID
-  bingAdsId         String?  // Microsoft Bing Ads UET Tag ID
-  seoIndexing       Boolean? @default(true)       // Allow search engines to index
-  seoFollowLinks    Boolean? @default(true)       // Allow search engines to follow links
-  canonicalUrl      String?  // Canonical domain URL
-  robotsTxt         String?  // Custom robots.txt content
-  
-  // Legal Settings (4 languages)
-  privacyPolicyAr   String?  // Privacy Policy in Arabic
-  privacyPolicyEn   String?  // Privacy Policy in English
-  privacyPolicyEs   String?  // Privacy Policy in Spanish
-  privacyPolicyFr   String?  // Privacy Policy in French
-  termsConditionsAr String?  // Terms & Conditions in Arabic
-  termsConditionsEn String?  // Terms & Conditions in English
-  termsConditionsEs String?  // Terms & Conditions in Spanish
-  termsConditionsFr String?  // Terms & Conditions in French
-  copyrightText     String?  @default("© 2024 Lumerra Marble. All rights reserved.")
-  
-  // Advanced Appearance Settings
-  fontFamily        String?  @default("Inter")    // Primary font family
-  fontSize          String?  @default("16px")     // Base font size
-  borderRadius      String?  @default("8px")      // Default border radius
-  boxShadow         String?  @default("0 1px 3px rgba(0,0,0,0.1)")  // Default shadow
-  buttonStyle       String?  @default("rounded")  // Button style: rounded, square, pill
-  animationsEnabled Boolean? @default(true)       // Enable page animations
-  darkModeEnabled   Boolean? @default(false)      // Enable dark mode
-  
-  // Security Settings
-  enableRecaptcha   Boolean? @default(true)       // Enable reCAPTCHA
-  recaptchaSiteKey  String?  // reCAPTCHA Site Key
-  recaptchaSecretKey String? // reCAPTCHA Secret Key
-  maxLoginAttempts  Int?     @default(5)          // Max login attempts before lockout
-  sessionTimeout    Int?     @default(480)        // Session timeout in minutes (8 hours)
-  enableTwoFactor   Boolean? @default(false)      // Enable 2FA for admin
-  allowedIPs        String?  // Comma-separated allowed IP addresses (optional)
-  blockedIPs        String?  // Comma-separated blocked IP addresses
-  
-  // Advanced Contact Settings
-  whatsappAutoReply String?  // Auto-reply message for WhatsApp
-  whatsappGreeting  String?  @default("مرحباً! كيف يمكنني مساعدتك؟")  // WhatsApp greeting message
-  whatsappButtonText String? @default("تواصل عبر واتساب") // WhatsApp button text
-  whatsappShowOnMobile Boolean? @default(true)   // Show WhatsApp button on mobile
-  whatsappShowOnDesktop Boolean? @default(true)  // Show WhatsApp button on desktop
-  whatsappPosition  String?  @default("bottom-right") // Position: bottom-right, bottom-left
-  
-  // Theme Colors (5-color system)
-  primaryColor      String   @default("#f59000")    // Header/Footer/Main sections
-  secondaryColor    String   @default("#2c3e50")    // Buttons and interactive elements
-  tertiaryColor     String   @default("#34495e")    // Important text (headings, company info)
-  quaternaryColor   String   @default("#2c3e50")    // General text
-  quinaryColor      String   @default("#ffffff")    // Opposite of quaternary (background text)
-  
-  // Footer Settings (4 languages)
-  footerDescriptionAr String?  @default("شركة رائدة في تصدير الرخام والجرانيت الفاخر من مصر إلى العالم")
-  footerDescriptionEn String?  @default("Leading company in exporting premium marble and granite from Egypt to the world")
-  footerDescriptionEs String?  @default("Empresa líder en exportación de mármol y granito premium desde Egipto al mundo")
-  footerDescriptionFr String?  @default("Entreprise leader dans l'exportation de marbre et granit premium d'Égypte vers le monde")
-  
-  // System fields
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                    String   @id @default(cuid())
+  companyName           String   @default("Lumerra Marble")
+  companyNameAr         String   @default("شركة لوميرا للرخام")
+  companyNameEs         String   @default("Lumerra Marble")
+  companyNameFr         String   @default("Lumerra Marble")
+  logoUrl               String?
+  logoAlt               String   @default("Company Logo")
+  logoAltAr             String   @default("شعار الشركة")
+  logoAltEs             String   @default("Logo de la Empresa")
+  logoAltFr             String   @default("Logo de l'Entreprise")
+  darkModeLogoUrl       String?
+  faviconUrl            String?
+  description           String?
+  descriptionAr         String?
+  descriptionEs         String?
+  descriptionFr         String?
+  phone                 String?
+  email                 String?
+  whatsapp              String?
+  address               String?
+  addressAr             String?
+  addressEs             String?
+  addressFr             String?
+  facebook              String?
+  instagram             String?
+  linkedin              String?
+  youtube               String?
+  metaTitle             String?
+  metaTitleAr           String?
+  metaTitleEs           String?
+  metaTitleFr           String?
+  metaDescription       String?
+  metaDescriptionAr     String?
+  metaDescriptionEs     String?
+  metaDescriptionFr     String?
+  keywords              String?
+  keywordsAr            String?
+  keywordsEs            String?
+  keywordsFr            String?
+  businessHours         String?
+  businessHoursAr       String?
+  businessHoursEs       String?
+  businessHoursFr       String?
+  smtpHost              String?  @default("smtp.gmail.com")
+  smtpPort              Int?     @default(587)
+  smtpUser              String?
+  smtpPassword          String?
+  smtpSecure            Boolean? @default(false)
+  emailFrom             String?
+  emailFromName         String?
+  notificationEmail     String?
+  maxImageSize          Int?     @default(5242880)
+  allowedImageTypes     String?  @default("image/jpeg,image/png,image/webp,image/gif")
+  imageQuality          Int?     @default(80)
+  autoOptimize          Boolean? @default(true)
+  thumbnailWidth        Int?     @default(300)
+  thumbnailHeight       Int?     @default(300)
+  maxWidth              Int?     @default(1920)
+  maxHeight             Int?     @default(1080)
+  googleAnalyticsId     String?
+  googleTagManagerId    String?
+  facebookPixelId       String?
+  linkedinPartnerId     String?
+  tiktokPixelId         String?
+  bingAdsId             String?
+  seoIndexing           Boolean? @default(true)
+  seoFollowLinks        Boolean? @default(true)
+  canonicalUrl          String?
+  robotsTxt             String?
+  privacyPolicyAr       String?
+  privacyPolicyEn       String?
+  privacyPolicyEs       String?
+  privacyPolicyFr       String?
+  termsConditionsAr     String?
+  termsConditionsEn     String?
+  termsConditionsEs     String?
+  termsConditionsFr     String?
+  copyrightText         String?  @default("© 2024 Lumerra Marble. All rights reserved.")
+  fontFamily            String?  @default("Inter")
+  fontSize              String?  @default("16px")
+  borderRadius          String?  @default("8px")
+  boxShadow             String?  @default("0 1px 3px rgba(0,0,0,0.1)")
+  buttonStyle           String?  @default("rounded")
+  animationsEnabled     Boolean? @default(true)
+  darkModeEnabled       Boolean? @default(false)
+  enableRecaptcha       Boolean? @default(true)
+  recaptchaSiteKey      String?
+  recaptchaSecretKey    String?
+  maxLoginAttempts      Int?     @default(5)
+  sessionTimeout        Int?     @default(480)
+  enableTwoFactor       Boolean? @default(false)
+  allowedIPs            String?
+  blockedIPs            String?
+  whatsappAutoReply     String?
+  whatsappGreeting      String?  @default("مرحباً! كيف يمكنني مساعدتك؟")
+  whatsappButtonText    String?  @default("تواصل عبر واتساب")
+  whatsappShowOnMobile  Boolean? @default(true)
+  whatsappShowOnDesktop Boolean? @default(true)
+  whatsappPosition      String?  @default("bottom-right")
+  footerDescriptionAr   String?
+  footerDescriptionEn   String?
+  footerDescriptionEs   String?
+  footerDescriptionFr   String?
+  primaryColor          String   @default("#f59000")
+  secondaryColor        String   @default("#2c3e50")
+  tertiaryColor         String   @default("#34495e")
+  quaternaryColor       String   @default("#2c3e50")
+  quinaryColor          String   @default("#ffffff")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   @@map("site_settings_new")
 }
 
 model FileUpload {
-  id          String    @id @default(cuid())
-  filename    String
+  id           String   @id @default(cuid())
+  filename     String
   originalName String
-  mimetype    String
-  size        Int
-  path        String
-  url         String
-  uploadedBy  String?   // User ID
-  createdAt   DateTime  @default(now())
+  mimetype     String
+  size         Int
+  path         String
+  url          String
+  uploadedBy   String?
+  createdAt    DateTime @default(now())
 
   @@map("file_uploads")
 }
 
-// نظام إدارة المحتوى الديناميكي
 model PageContent {
-  id            String   @id @default(cuid())
-  pageKey       String   // homepage, about, export, contact, etc.
-  sectionKey    String   // hero, stats, features, etc.  
-  contentKey    String   // title, subtitle, description, etc.
-  
-  // محتوى متعدد اللغات
-  valueAr       String?
-  valueEn       String?
-  valueEs       String?
-  valueFr       String?
-  
-  // نوع المحتوى
-  contentType   ContentType @default(TEXT)
-  
-  // ترتيب العرض
-  sortOrder     Int      @default(0)
-  
-  // حالة النشر
-  isActive      Boolean  @default(true)
-  
-  // تواريخ النظام
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  // فهرس فريد للمحتوى
+  id          String      @id @default(cuid())
+  pageKey     String
+  sectionKey  String
+  contentKey  String
+  valueAr     String?
+  valueEn     String?
+  valueEs     String?
+  valueFr     String?
+  contentType ContentType @default(TEXT)
+  sortOrder   Int         @default(0)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
   @@unique([pageKey, sectionKey, contentKey])
   @@map("page_contents")
 }
 
-// إعدادات SEO لكل صفحة
 model PageSEO {
-  id                String   @id @default(cuid())
-  pageKey           String   @unique // homepage, about, export, etc.
-  
-  // Meta Tags متعددة اللغات
-  titleAr           String?
-  titleEn           String?
-  titleEs           String?
-  titleFr           String?
-  
-  descriptionAr     String?
-  descriptionEn     String?
-  descriptionEs     String?
-  descriptionFr     String?
-  
-  keywordsAr        String?
-  keywordsEn        String?
-  keywordsEs        String?
-  keywordsFr        String?
-  
-  // Open Graph
-  ogImageAr         String?
-  ogImageEn         String?
-  ogImageEs         String?
-  ogImageFr         String?
-  
-  // Schema Markup
-  schemaMarkup      Json?
-  
-  // canonical URLs
-  canonicalUrl      String?
-  
-  // حالة النشر
-  isActive          Boolean  @default(true)
-  
-  // تواريخ النظام
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
-  @@map("page_seo")
-}
-
-// إدارة القوائم والتصنيفات
-model Category {
   id            String   @id @default(cuid())
-  type          CategoryType // product, blog, service
-  
-  // أسماء متعددة اللغات
-  nameAr        String
-  nameEn        String
-  nameEs        String?
-  nameFr        String?
-  
-  // وصف متعدد اللغات
+  pageKey       String   @unique
+  titleAr       String?
+  titleEn       String?
+  titleEs       String?
+  titleFr       String?
   descriptionAr String?
   descriptionEn String?
   descriptionEs String?
   descriptionFr String?
-  
-  // معلومات إضافية
-  slug          String   @unique
-  icon          String?  // اسم الأيقونة
-  color         String?  // لون التصنيف
-  image         String?  // صورة التصنيف
-  
-  // ترتيب العرض
-  sortOrder     Int      @default(0)
-  
-  // حالة النشر
+  keywordsAr    String?
+  keywordsEn    String?
+  keywordsEs    String?
+  keywordsFr    String?
+  ogImageAr     String?
+  ogImageEn     String?
+  ogImageEs     String?
+  ogImageFr     String?
+  schemaMarkup  Json?
+  canonicalUrl  String?
   isActive      Boolean  @default(true)
-  
-  // Parent Category (للتصنيفات الفرعية)
-  parentId      String?
-  parent        Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children      Category[] @relation("CategoryHierarchy")
-  
-  // Relations
-  blogPosts     BlogPost[] @relation("BlogCategory")
-  
-  // تواريخ النظام
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  
+
+  @@map("page_seo")
+}
+
+model Category {
+  id            String       @id @default(cuid())
+  type          CategoryType
+  nameAr        String
+  nameEn        String
+  nameEs        String?
+  nameFr        String?
+  descriptionAr String?
+  descriptionEn String?
+  descriptionEs String?
+  descriptionFr String?
+  slug          String       @unique
+  icon          String?
+  color         String?
+  image         String?
+  sortOrder     Int          @default(0)
+  isActive      Boolean      @default(true)
+  parentId      String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  blogPosts     BlogPost[]   @relation("BlogCategory")
+  parent        Category?    @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children      Category[]   @relation("CategoryHierarchy")
+
   @@map("categories")
 }
 
-// إدارة الصور والوسائط
 model MediaFile {
-  id            String   @id @default(cuid())
-  filename      String
-  originalName  String
-  title         String?  // عنوان الصورة
-  altText       String?  // النص البديل
-  description   String?  // وصف الصورة
-  
-  // معلومات الملف
-  mimetype      String
-  size          Int
-  width         Int?
-  height        Int?
-  
-  // مسارات الملف
-  path          String
-  url           String
-  thumbnailUrl  String?
-  
-  // تصنيف الوسائط
-  category      MediaCategory @default(OTHER)
-  
-  // معلومات الرفع
-  uploadedBy    String?   // User ID
-  
-  // حالة النشر
-  isActive      Boolean  @default(true)
-  
-  // تواريخ النظام
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
+  id           String        @id @default(cuid())
+  filename     String
+  originalName String
+  title        String?
+  altText      String?
+  description  String?
+  mimetype     String
+  size         Int
+  width        Int?
+  height       Int?
+  path         String
+  url          String
+  thumbnailUrl String?
+  category     MediaCategory @default(OTHER)
+  uploadedBy   String?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
   @@map("media_files")
 }
 
-// إحصائيات الموقع
 model SiteStats {
   id              String   @id @default(cuid())
   date            DateTime @unique @default(now())
-  
-  // إحصائيات الزوار
   visitors        Int      @default(0)
   pageViews       Int      @default(0)
   uniqueVisitors  Int      @default(0)
-  
-  // إحصائيات طلبات الأسعار
   quoteRequests   Int      @default(0)
-  
-  // إحصائيات الاتصال
   contactMessages Int      @default(0)
-  
-  // إحصائيات النشرة البريدية
   newSubscribers  Int      @default(0)
-  
+
   @@map("site_stats")
 }
 
@@ -530,14 +409,14 @@ enum ProductCategory {
 }
 
 enum QuoteRequestStatus {
-  PENDING     // في الانتظار
-  REVIEWED    // تمت المراجعة
-  PROCESSING  // قيد المعالجة
-  QUOTED      // تم إرسال العرض
-  ACCEPTED    // تم قبول العرض
-  REJECTED    // تم رفض العرض
-  COMPLETED   // مكتمل
-  CANCELLED   // ملغي
+  PENDING
+  REVIEWED
+  PROCESSING
+  QUOTED
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELLED
 }
 
 enum Priority {
@@ -561,35 +440,35 @@ enum NewsletterStatus {
 }
 
 enum ContentType {
-  TEXT          // نص عادي
-  RICH_TEXT     // نص منسق HTML
-  IMAGE         // صورة
-  VIDEO         // فيديو
-  AUDIO         // صوت
-  FILE          // ملف
-  JSON          // بيانات JSON
-  NUMBER        // رقم
-  BOOLEAN       // true/false
-  DATE          // تاريخ
-  URL           // رابط
+  TEXT
+  RICH_TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
+  JSON
+  NUMBER
+  BOOLEAN
+  DATE
+  URL
 }
 
 enum CategoryType {
-  PRODUCT       // تصنيفات المنتجات
-  BLOG          // تصنيفات المدونة
-  SERVICE       // تصنيفات الخدمات
-  GALLERY       // تصنيفات المعرض
-  FAQ           // تصنيفات الأسئلة الشائعة
+  PRODUCT
+  BLOG
+  SERVICE
+  GALLERY
+  FAQ
 }
 
 enum MediaCategory {
-  HERO          // صور رئيسية
-  PRODUCT       // صور المنتجات
-  GALLERY       // معرض الصور
-  BLOG          // صور المدونة
-  AVATAR        // صور شخصية
-  LOGO          // شعارات
-  ICON          // أيقونات
-  DOCUMENT      // مستندات
-  OTHER         // أخرى
+  HERO
+  PRODUCT
+  GALLERY
+  BLOG
+  AVATAR
+  LOGO
+  ICON
+  DOCUMENT
+  OTHER
 }

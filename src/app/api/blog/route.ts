@@ -1,31 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../lib/db'
+import { getCachedBlogPosts } from '../../../lib/cache'
+
+// ✅ Enable caching for API route (30 minutes)
+export const revalidate = 1800
 
 export async function GET() {
   try {
-    const posts = await prisma.blogPost.findMany({
-      where: { published: true },
-      include: {
-        author: {
-          select: {
-            name: true
-          }
-        },
-        category: {
-          select: {
-            nameAr: true,
-            nameEn: true,
-            nameEs: true,
-            nameFr: true,
-            slug: true
-          }
-        }
-      },
-      orderBy: [
-        { featured: 'desc' },
-        { createdAt: 'desc' }
-      ]
-    })
+    // ✅ Use cached blog posts
+    const posts = await getCachedBlogPosts(true)
 
     return NextResponse.json({ posts })
   } catch (error) {

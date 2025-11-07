@@ -16,7 +16,7 @@ import {
   Users
 } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
-import { fetchContentFromAPI, getContent } from '../../../lib/content'
+import { getContent } from '../../../lib/content'
 import {
   PageHeader,
   ContentSection,
@@ -26,9 +26,8 @@ import {
   CTASection
 } from '../../../components/ui/page-sections'
 
-// إجبار dynamic rendering
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Enable ISR with hourly revalidation
+export const revalidate = 3600
 
 interface ExportPageProps {
   params: Promise<{ locale: string }>
@@ -38,13 +37,12 @@ export default async function ExportPage({ params }: ExportPageProps) {
   const { locale } = await params
   const isRTL = locale === 'ar'
 
-  // جلب المحتوى من API مع fallback للمحتوى الثابت
-  let contentData
-  try {
-    contentData = await fetchContentFromAPI()
-  } catch (error) {
-    console.error('فشل في جلب المحتوى من API، استخدام المحتوى الافتراضي:', error)
-    contentData = getContent()
+  // جلب المحتوى من قاعدة البيانات
+  const contentData = await getContent('export')
+
+  // دالة للحصول على النص بلغة محددة
+  const getText = (sectionKey: string, contentKey: string) => {
+    return contentData[sectionKey]?.[contentKey]?.[locale as keyof typeof contentData[string][string]] || ''
   }
 
   // استخدام المحتوى المحدث أو الافتراضي
@@ -271,39 +269,16 @@ export default async function ExportPage({ params }: ExportPageProps) {
     }
   }
 
-  // دمج المحتوى المحدث مع المحتوى الافتراضي
-  const currentContent = exportContent ? {
-    hero: {
-      title: exportContent.hero?.title || content[locale as keyof typeof content]?.hero?.title || content.en.hero.title,
-      subtitle: exportContent.hero?.subtitle || content[locale as keyof typeof content]?.hero?.subtitle || content.en.hero.subtitle,
-      cta: exportContent.hero?.cta || content[locale as keyof typeof content]?.hero?.cta || content.en.hero.cta
-    },
-    services: {
-      title: exportContent.services?.title || content[locale as keyof typeof content]?.services?.title || content.en.services.title,
-      subtitle: exportContent.services?.subtitle || content[locale as keyof typeof content]?.services?.subtitle || content.en.services.subtitle,
-      items: content[locale as keyof typeof content]?.services?.items || content.en.services.items
-    },
-    process: content[locale as keyof typeof content]?.process || content.en.process,
-    countries: {
-      title: exportContent.countries?.title || content[locale as keyof typeof content]?.countries?.title || content.en.countries.title,
-      subtitle: exportContent.countries?.subtitle || content[locale as keyof typeof content]?.countries?.subtitle || content.en.countries.subtitle,
-      regions: content[locale as keyof typeof content]?.countries?.regions || content.en.countries.regions
-    },
-    features: content[locale as keyof typeof content]?.features || content.en.features,
-    cta: {
-      title: exportContent.cta?.title || content[locale as keyof typeof content]?.cta?.title || content.en.cta.title,
-      subtitle: exportContent.cta?.subtitle || content[locale as keyof typeof content]?.cta?.subtitle || content.en.cta.subtitle,
-      button: exportContent.cta?.button || content[locale as keyof typeof content]?.cta?.button || content.en.cta.button
-    }
-  } : (content[locale as keyof typeof content] || content.en)
+  // استخدام المحتوى حسب اللغة مع fallback للإنجليزية
+  const currentContent = content[locale as keyof typeof content] || content.en
 
   return (
     <div className="min-h-screen bg-[var(--color-quinary-50)]">
       {/* Hero Section */}
       <PageHeader
-        title={currentContent.hero.title}
-        subtitle={currentContent.hero.subtitle}
-        image={exportContent?.hero?.backgroundImage || "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1200"}
+        title={getText('hero', 'title') || currentContent.hero.title}
+        subtitle={getText('hero', 'subtitle') || currentContent.hero.subtitle}
+        image={getText('hero', 'backgroundImage') || "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1200"}
       />
 
       {/* CTA Button Section */}

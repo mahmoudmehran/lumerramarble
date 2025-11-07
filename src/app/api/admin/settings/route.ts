@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/db'
+import { revalidateSettingsCache } from '../../../../lib/revalidate'
 import jwt from 'jsonwebtoken'
 
 /**
@@ -93,49 +94,45 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    console.log('🔍 Fetching settings from database...')
+
     // Try to get existing settings
     let settings = await prisma.siteSettings.findFirst()
     
+    console.log('📊 Settings found:', settings ? 'Yes' : 'No')
+    
     // If no settings exist, create default ones
     if (!settings) {
+      console.log('🆕 Creating default settings...')
       settings = await prisma.siteSettings.create({
         data: {
           companyName: 'Lumerra Marble',
           companyNameAr: 'شركة لوميرا للرخام',
-          description: 'Leading marble and granite export company from Egypt',
-          descriptionAr: 'شركة رائدة في تصدير الرخام والجرانيت من مصر',
           phone: '+20 111 312 1444',
           email: 'info@lumerramarble.com',
           whatsapp: '+20 111 312 1444',
           address: 'Egypt - Cairo - Shaq Al-Thuban Industrial Zone',
           addressAr: 'مصر - القاهرة - المنطقة الصناعية شق الثعبان',
-          facebook: 'https://facebook.com/lumerramarble',
-          instagram: 'https://instagram.com/lumerramarble',
-          linkedin: 'https://linkedin.com/company/lumerramarble',
-          youtube: 'https://youtube.com/@lumerramarble',
-          metaTitle: 'Lumerra Marble - Premium Egyptian Marble & Granite Export',
-          metaTitleAr: 'لوميرا للرخام - تصدير الرخام والجرانيت المصري الفاخر',
-          metaDescription: 'Leading Egyptian company exporting premium marble, granite and quartz worldwide. High quality natural stones for construction and decoration.',
-          metaDescriptionAr: 'شركة مصرية رائدة في تصدير الرخام والجرانيت والكوارتز الفاخر عالمياً. أحجار طبيعية عالية الجودة للبناء والديكور.',
-          keywords: 'marble, granite, quartz, export, Egypt, natural stone',
-          keywordsAr: 'رخام, جرانيت, كوارتز, تصدير, مصر, أحجار طبيعية',
-          businessHours: 'Sunday - Thursday: 9:00 AM - 6:00 PM',
-          businessHoursAr: 'الأحد - الخميس: 9:00 ص - 6:00 م',
           primaryColor: '#f59000',
           secondaryColor: '#2c3e50',
           tertiaryColor: '#34495e',
           quaternaryColor: '#2c3e50',
           quinaryColor: '#ffffff',
-          createdAt: new Date(),
-          updatedAt: new Date()
         }
       })
+      console.log('✅ Default settings created')
     }
 
+    console.log('✅ Returning settings')
     return NextResponse.json({ settings })
   } catch (error) {
-    console.error('Error fetching settings:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('❌ Error fetching settings:', error)
+    console.error('Error details:', error instanceof Error ? error.message : 'Unknown error')
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+    return NextResponse.json({ 
+      error: 'Internal server error', 
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }
 
@@ -199,6 +196,10 @@ export async function PUT(request: NextRequest) {
       businessHoursAr,
       businessHoursEs,
       businessHoursFr,
+      footerDescriptionAr,
+      footerDescriptionEn,
+      footerDescriptionEs,
+      footerDescriptionFr,
       primaryColor,
       secondaryColor,
       tertiaryColor,
@@ -262,6 +263,10 @@ export async function PUT(request: NextRequest) {
           businessHoursAr,
           businessHoursEs,
           businessHoursFr,
+          footerDescriptionAr,
+          footerDescriptionEn,
+          footerDescriptionEs,
+          footerDescriptionFr,
           primaryColor,
           secondaryColor,
           tertiaryColor,
@@ -321,6 +326,10 @@ export async function PUT(request: NextRequest) {
           businessHoursAr,
           businessHoursEs,
           businessHoursFr,
+          footerDescriptionAr,
+          footerDescriptionEn,
+          footerDescriptionEs,
+          footerDescriptionFr,
           primaryColor,
           secondaryColor,
           tertiaryColor,
@@ -334,6 +343,9 @@ export async function PUT(request: NextRequest) {
       
       console.log('✅ Settings created successfully')
     }
+
+    // Revalidate cache to reflect changes immediately
+    await revalidateSettingsCache()
 
     console.log('📤 Returning response with settings')
 

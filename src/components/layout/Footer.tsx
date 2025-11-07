@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { useMemo } from 'react'
 import { Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react'
 import { useSiteSettings } from '../../contexts/ThemeContext'
 
@@ -26,6 +27,23 @@ interface FooterProps {
 export default function Footer({ locale, copyrightText }: FooterProps) {
   const isRTL = locale === 'ar'
   const siteSettings = useSiteSettings()
+
+  // Memoize logo URL to prevent unnecessary recalculations
+  const logoUrl = useMemo(() => {
+    if (!siteSettings?.logoUrl) return null
+    return siteSettings.darkModeEnabled && siteSettings.darkModeLogoUrl 
+      ? siteSettings.darkModeLogoUrl 
+      : siteSettings.logoUrl
+  }, [siteSettings?.logoUrl, siteSettings?.darkModeLogoUrl, siteSettings?.darkModeEnabled])
+  
+  // Memoize alt text
+  const logoAlt = useMemo(() => {
+    if (!siteSettings) return 'Company Logo'
+    return locale === 'ar' ? siteSettings.logoAltAr || 'شعار الشركة' :
+           locale === 'es' ? siteSettings.logoAltEs || 'Logo de la Empresa' :
+           locale === 'fr' ? siteSettings.logoAltFr || 'Logo de l\'Entreprise' :
+           siteSettings.logoAlt || 'Company Logo'
+  }, [siteSettings, locale])
 
   const footerSections = {
     ar: {
@@ -149,31 +167,31 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
   const currentSections = footerSections[locale as keyof typeof footerSections] || footerSections.en
 
   return (
-    <footer className="bg-[var(--color-secondary)] text-[var(--color-quaternary)] border-t-4 border-[var(--color-primary)]">
+    <footer className="bg-[var(--color-secondary)] text-[var(--color-quinary)] border-t-4 border-[var(--color-primary)]" suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
         {/* Company Info Section */}
         <div className="mb-6 lg:mb-8 border-b border-[var(--color-secondary-700)] pb-6 lg:pb-8">
           <div className="inline-flex items-center gap-3 mb-4">
             {/* Show Logo if available, otherwise show fallback */}
-            {siteSettings?.logoUrl ? (
+            {logoUrl ? (
               <img
-                src={siteSettings.darkModeEnabled && siteSettings.darkModeLogoUrl 
-                  ? siteSettings.darkModeLogoUrl 
-                  : siteSettings.logoUrl
-                }
-                alt={locale === 'ar' ? siteSettings.logoAltAr || 'شعار الشركة' :
-                     locale === 'es' ? siteSettings.logoAltEs || 'Logo de la Empresa' :
-                     locale === 'fr' ? siteSettings.logoAltFr || 'Logo de l\'Entreprise' :
-                     siteSettings.logoAlt || 'Company Logo'
-                }
+                src={logoUrl}
+                alt={logoAlt}
                 className="max-h-24 max-w-[250px] h-auto w-auto object-contain"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                style={{ 
+                  willChange: 'auto',
+                  imageRendering: 'crisp-edges'
+                }}
               />
             ) : (
               <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] rounded-lg flex items-center justify-center shadow-lg flex-shrink-0">
                 <span className="text-[var(--color-quinary)] font-bold text-2xl">L</span>
               </div>
             )}
-            <span className="font-bold text-2xl lg:text-3xl text-[var(--color-quaternary)] leading-tight whitespace-nowrap">
+            <span className="font-bold text-2xl lg:text-3xl text-[var(--color-quinary)] leading-tight whitespace-nowrap" suppressHydrationWarning>
               {locale === 'ar' ? (siteSettings?.companyNameAr || 'لوميرا ماربل') : 
                locale === 'es' ? (siteSettings?.companyNameEs || 'Lumerra Marble') :
                locale === 'fr' ? (siteSettings?.companyNameFr || 'Lumerra Marble') :
@@ -181,7 +199,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
             </span>
           </div>
           
-          <p className="text-[var(--color-quaternary)] text-lg lg:text-xl leading-relaxed mb-4">
+          <p className="text-[var(--color-quinary)] text-lg lg:text-xl leading-relaxed mb-4" suppressHydrationWarning>
             {locale === 'ar' 
               ? (siteSettings?.footerDescriptionAr || 'شركة رائدة في تصدير أفخم أنواع الرخام والجرانيت من مصر إلى جميع أنحاء العالم بأعلى معايير الجودة')
               : locale === 'en'
@@ -199,7 +217,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
               target="_blank" 
               rel="noopener noreferrer"
               aria-label="YouTube"
-              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quaternary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
             >
               <Youtube className="w-7 h-7" />
             </a>
@@ -208,7 +226,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
               target="_blank" 
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quaternary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
             >
               <Instagram className="w-7 h-7" />
             </a>
@@ -217,7 +235,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
               target="_blank" 
               rel="noopener noreferrer"
               aria-label="WhatsApp"
-              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quaternary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
             >
               <WhatsAppIcon />
             </a>
@@ -226,7 +244,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
               target="_blank" 
               rel="noopener noreferrer"
               aria-label="TikTok"
-              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quaternary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
             >
               <TikTokIcon />
             </a>
@@ -237,7 +255,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-6 lg:mb-8">
           {Object.entries(currentSections).map(([key, section]) => (
             <div key={key} className="flex flex-col items-center">
-              <h3 className="font-bold text-[var(--color-quaternary)] mb-3 lg:mb-4 text-xl lg:text-2xl border-b-2 border-[var(--color-primary)] pb-2 inline-block">
+              <h3 className="font-bold text-[var(--color-quinary)] mb-3 lg:mb-4 text-xl lg:text-2xl border-b-2 border-[var(--color-primary)] pb-2 inline-block">
                 {section.title}
               </h3>
               <ul className="space-y-2 lg:space-y-2.5 mt-3 lg:mt-4 flex flex-col items-center">
@@ -245,8 +263,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-[var(--color-quaternary)] hover:text-[var(--color-primary)] transition-all duration-200 text-lg lg:text-xl inline-flex items-center group"
-                    >
+                      prefetch={true}
+                      className="text-[var(--color-quinary)] hover:text-[var(--color-primary)] transition-all duration-200 text-lg lg:text-xl inline-flex items-center group">
                       <span className="w-0 h-0.5 bg-[var(--color-primary)] group-hover:w-3 transition-all duration-200 mr-0 group-hover:mr-2 rtl:mr-0 rtl:group-hover:mr-0 rtl:ml-0 rtl:group-hover:ml-2"></span>
                       {link.name}
                     </Link>
@@ -267,8 +285,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
               className="inline-flex items-center gap-2 bg-[var(--color-secondary-700)] px-5 py-3 rounded hover:bg-[var(--color-primary)] transition-all duration-200 group"
               dir="ltr"
             >
-              <MapPin className="w-6 h-6 text-[var(--color-quaternary)] flex-shrink-0" />
-              <span className="text-[var(--color-quaternary)] group-hover:text-[var(--color-quinary)] text-lg lg:text-xl whitespace-nowrap">
+              <MapPin className="w-6 h-6 text-[var(--color-quinary)] flex-shrink-0" />
+              <span className="text-[var(--color-quinary)] group-hover:text-[var(--color-quinary)] text-lg lg:text-xl whitespace-nowrap">
                 {locale === 'ar' ? 'القاهرة' : locale === 'en' ? 'Cairo' : locale === 'es' ? 'El Cairo' : 'Le Caire'}
               </span>
             </a>
@@ -278,8 +296,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
               className="inline-flex items-center gap-2 bg-[var(--color-secondary-700)] px-6 py-3.5 rounded hover:bg-[var(--color-primary)] transition-all duration-200 group overflow-visible"
               dir="ltr"
             >
-              <Phone className="w-6 h-6 text-[var(--color-quaternary)] flex-shrink-0" />
-              <span className="text-[var(--color-quaternary)] group-hover:text-[var(--color-quinary)] text-lg lg:text-xl">
+              <Phone className="w-6 h-6 text-[var(--color-quinary)] flex-shrink-0" />
+              <span className="text-[var(--color-quinary)] group-hover:text-[var(--color-quinary)] text-lg lg:text-xl">
                 +20 111 312 1444
               </span>
             </a>
@@ -289,8 +307,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
               className="inline-flex items-center gap-2 bg-[var(--color-secondary-700)] px-5 py-3 rounded hover:bg-[var(--color-primary)] transition-all duration-200 group"
               dir="ltr"
             >
-              <Mail className="w-6 h-6 text-[var(--color-quaternary)] flex-shrink-0" />
-              <span className="text-[var(--color-quaternary)] group-hover:text-[var(--color-quinary)] text-lg lg:text-xl whitespace-nowrap">
+              <Mail className="w-6 h-6 text-[var(--color-quinary)] flex-shrink-0" />
+              <span className="text-[var(--color-quinary)] group-hover:text-[var(--color-quinary)] text-lg lg:text-xl whitespace-nowrap">
                 info@lumerramarble.com
               </span>
             </a>
@@ -299,7 +317,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
 
         {/* Copyright */}
         <div className="border-t border-[var(--color-secondary-700)] mt-6 lg:mt-7 pt-5 lg:pt-6 text-center">
-          <p className="text-[var(--color-quaternary)] text-lg lg:text-xl font-medium">
+          <p className="text-[var(--color-quinary)] text-lg lg:text-xl font-medium" suppressHydrationWarning>
             {siteSettings?.copyrightText || copyrightText || (
               locale === 'ar' 
                 ? `© ${new Date().getFullYear()} لوميرا ماربل. جميع الحقوق محفوظة.`

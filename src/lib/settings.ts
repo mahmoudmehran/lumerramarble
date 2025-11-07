@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from './db'
+import { getCachedSettings } from './cache'
 
 export interface SiteSettings {
   // Company Information
@@ -142,25 +141,13 @@ export interface SiteSettings {
   quinaryColor: string
 }
 
-let settingsCache: SiteSettings | null = null
-let lastCacheUpdate = 0
-const CACHE_DURATION = 60000 // 1 minute cache
-
 /**
- * Get site settings from database with caching
+ * Get site settings from database with Next.js caching
+ * Uses unstable_cache for optimal performance (1 hour cache)
  */
 export async function getSiteSettings(): Promise<SiteSettings> {
-  const now = Date.now()
-  
-  // Return cached settings if still valid
-  if (settingsCache && (now - lastCacheUpdate) < CACHE_DURATION) {
-    return settingsCache
-  }
-
   try {
-    const settings = await prisma.siteSettings.findFirst({
-      orderBy: { updatedAt: 'desc' }
-    }) as any
+    const settings = await getCachedSettings() as any
 
     if (!settings) {
       // Return default settings if none found
@@ -289,10 +276,6 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       quinaryColor: settings.quinaryColor || '#ffffff',
     }
 
-    // Update cache
-    settingsCache = siteSettings
-    lastCacheUpdate = now
-
     return siteSettings
   } catch (error) {
     console.error('Error fetching site settings:', error)
@@ -351,8 +334,10 @@ function getDefaultSettings(): SiteSettings {
 
 /**
  * Clear settings cache (useful after updating settings)
+ * Now handled by Next.js cache revalidation
  */
 export function clearSettingsCache() {
-  settingsCache = null
-  lastCacheUpdate = 0
+  // Cache is now handled by Next.js unstable_cache
+  // Use revalidateTag('settings') instead
+  console.log('Settings cache cleared - use revalidateTag("settings") for manual clearing')
 }

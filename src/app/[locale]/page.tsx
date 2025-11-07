@@ -4,6 +4,7 @@ import { Metadata } from 'next'
 import { ArrowRight, ArrowLeft, Star, Users, Globe, Award } from 'lucide-react'
 import { Button } from '../../components/ui/button'
 import { getContent } from '../../lib/content'
+import { getShimmerPlaceholder } from '../../lib/image-utils'
 import {
   HeroSection,
   ContentSection,
@@ -72,34 +73,31 @@ export default async function HomePage({ params }: HomePageProps) {
     return content[sectionKey]?.[contentKey]?.[locale as keyof typeof content[string][string]] || ''
   }
   
-  // بيانات الفئات
-  const categoriesData = {
-    marble: { ar: 'رخام', en: 'Marble', es: 'Mármol', fr: 'Marbre' },
-    granite: { ar: 'جرانيت', en: 'Granite', es: 'Granito', fr: 'Granit' },
-    quartz: { ar: 'كوارتز', en: 'Quartz', es: 'Cuarzo', fr: 'Quartz' },
-    special: { ar: 'أحجار خاصة', en: 'Special Stones', es: 'Piedras Especiales', fr: 'Pierres Spéciales' }
-  }
-  
+  // بيانات الفئات من قاعدة البيانات
   const categories = [
     { 
       key: 'marble',
-      href: '/products?category=marble',
-      image: '/images/marble-category.jpg'
+      name: getText('categories', 'marble_name') || 'Marble',
+      image: getText('categories', 'marble_image') || '/images/marble-category.jpg',
+      href: '/products?category=marble'
     },
     {
-      key: 'granite', 
-      href: '/products?category=granite',
-      image: '/images/granite-category.jpg'
+      key: 'granite',
+      name: getText('categories', 'granite_name') || 'Granite',
+      image: getText('categories', 'granite_image') || '/images/granite-category.jpg',
+      href: '/products?category=granite'
     },
     {
       key: 'quartz',
-      href: '/products?category=quartz', 
-      image: '/images/quartz-category.jpg'
+      name: getText('categories', 'quartz_name') || 'Quartz',
+      image: getText('categories', 'quartz_image') || '/images/quartz-category.jpg',
+      href: '/products?category=quartz'
     },
     {
       key: 'special',
-      href: '/products?category=special',
-      image: '/images/special-category.jpg'
+      name: getText('categories', 'special_name') || 'Special Stones',
+      image: getText('categories', 'special_image') || '/images/special-category.jpg',
+      href: '/products?category=special'
     }
   ]
   
@@ -117,7 +115,7 @@ export default async function HomePage({ params }: HomePageProps) {
       <HeroSection
         title={getText('hero', 'title')}
         subtitle={getText('hero', 'subtitle')}
-        image="/images/hero-marble.jpg"
+        image={getText('hero', 'backgroundImage') || '/images/hero-marble.jpg'}
         gradient="primary"
       >
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -173,14 +171,17 @@ export default async function HomePage({ params }: HomePageProps) {
                 <div className="aspect-square relative">
                   <Image
                     src={category.image}
-                    alt={`${categoriesData[category.key as keyof typeof categoriesData][locale as keyof typeof categoriesData.marble]} category`}
+                    alt={`${category.name} category`}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
+                    placeholder="blur"
+                    blurDataURL={getShimmerPlaceholder(400, 400)}
+                    priority={index === 0} // First image gets priority loading
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
                     <h3 className="text-[var(--color-quinary)] font-bold text-xl mb-2">
-                      {categoriesData[category.key as keyof typeof categoriesData][locale as keyof typeof categoriesData.marble]}
+                      {category.name}
                     </h3>
                   </div>
                 </div>

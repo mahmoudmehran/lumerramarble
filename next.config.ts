@@ -33,9 +33,34 @@ const nextConfig: NextConfig = {
     // ✅ مدة التخزين المؤقت (سنة واحدة)
     minimumCacheTTL: 60 * 60 * 24 * 365,
   },
+  // ✅ Headers للتخزين المؤقت
+  async headers() {
+    return [
+      {
+        source: '/uploads/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ]
+  },
   // ✅ تحسين imports
   experimental: {
     optimizePackageImports: ['lucide-react', 'react-icons'],
+    // ✅ Partial Prerendering - uncomment when using Next.js canary
+    // ppr: 'incremental',
   },
   // ✅ Compression
   compress: true,

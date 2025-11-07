@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from './db'
+import { getCachedContent } from './cache'
 
 interface ContentData {
   [sectionKey: string]: {
@@ -17,46 +16,14 @@ interface ContentCache {
   [pageKey: string]: ContentData
 }
 
-let contentCache: ContentCache = {}
-const CACHE_DURATION = 0 // Disabled cache for testing
-let lastCacheUpdate = 0
-
+/**
+ * Get page content with Next.js caching (1 hour)
+ * Uses unstable_cache for optimal performance
+ */
 export async function getContent(pageKey: string = 'homepage'): Promise<ContentData> {
-  // التحقق من الكاش
-  const now = Date.now()
-  if (contentCache[pageKey] && (now - lastCacheUpdate) < CACHE_DURATION) {
-    return contentCache[pageKey]
-  }
-
   try {
-    const content = await prisma.pageContent.findMany({
-      where: { pageKey },
-      orderBy: [
-        { sectionKey: 'asc' },
-        { sortOrder: 'asc' },
-        { contentKey: 'asc' }
-      ]
-    })
-
-    // تنظيم البيانات
-    const organizedContent = content.reduce((acc: ContentData, item: any) => {
-      if (!acc[item.sectionKey]) {
-        acc[item.sectionKey] = {}
-      }
-      acc[item.sectionKey][item.contentKey] = {
-        ar: item.valueAr,
-        en: item.valueEn,
-        es: item.valueEs,
-        fr: item.valueFr
-      }
-      return acc
-    }, {})
-
-    // تحديث الكاش
-    contentCache[pageKey] = organizedContent
-    lastCacheUpdate = now
-
-    return organizedContent
+    const content = await getCachedContent(pageKey)
+    return content || getDefaultContent(pageKey)
   } catch (error) {
     console.error('Error fetching content from database:', error)
     return getDefaultContent(pageKey)
@@ -255,10 +222,14 @@ export async function getContentValue(
   return content[sectionKey]?.[contentKey]?.[language as keyof typeof content[string][string]] || ''
 }
 
-// دالة لمسح الكاش
+/**
+ * Clear content cache (useful after updating content)
+ * Now handled by Next.js cache revalidation
+ */
 export function clearContentCache() {
-  contentCache = {}
-  lastCacheUpdate = 0
+  // Cache is now handled by Next.js unstable_cache
+  // Use revalidateTag('content') instead
+  console.log('Content cache cleared - use revalidateTag("content") for manual clearing')
 }
 
 // دالة لحفظ المحتوى (للإدارة)

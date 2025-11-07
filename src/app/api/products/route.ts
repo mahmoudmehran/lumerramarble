@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '../../../lib/db'
+import { getCachedProducts } from '../../../lib/cache'
+
+// ✅ Enable caching for API route (1 hour)
+export const revalidate = 3600
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,31 +10,24 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category')
     const search = searchParams.get('search')
 
-    // Build query
-    const where: any = {
-      active: true
-    }
+    // ✅ Use cached products
+    let products = await getCachedProducts()
 
+    // Filter by category if needed
     if (category && category !== 'all') {
-      where.category = category.toUpperCase()
+      products = products.filter(p => p.category === category.toUpperCase())
     }
 
+    // Filter by search if needed
     if (search) {
-      where.OR = [
-        { nameAr: { contains: search, mode: 'insensitive' } },
-        { nameEn: { contains: search, mode: 'insensitive' } },
-        { nameEs: { contains: search, mode: 'insensitive' } },
-        { nameFr: { contains: search, mode: 'insensitive' } }
-      ]
+      const searchLower = search.toLowerCase()
+      products = products.filter(p => 
+        p.nameAr.toLowerCase().includes(searchLower) ||
+        p.nameEn.toLowerCase().includes(searchLower) ||
+        p.nameEs.toLowerCase().includes(searchLower) ||
+        p.nameFr.toLowerCase().includes(searchLower)
+      )
     }
-
-    const products = await prisma.product.findMany({
-      where,
-      orderBy: [
-        { featured: 'desc' },
-        { createdAt: 'desc' }
-      ]
-    })
 
     return NextResponse.json({ 
       success: true,
