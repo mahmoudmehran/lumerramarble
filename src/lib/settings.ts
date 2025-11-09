@@ -8,13 +8,30 @@ export interface SiteSettings {
   companyNameEs: string
   companyNameFr: string
   
-  // Logo & Branding
+  // Logo & Branding (Old - for backward compatibility)
   logoUrl?: string
   logoAlt?: string
   logoAltAr?: string
   logoAltEs?: string
   logoAltFr?: string
   darkModeLogoUrl?: string
+  
+  // Header Logo
+  headerLogoUrl?: string
+  headerLogoAlt?: string
+  headerLogoAltAr?: string
+  headerLogoAltEs?: string
+  headerLogoAltFr?: string
+  headerDarkModeLogoUrl?: string
+  
+  // Footer Logo
+  footerLogoUrl?: string
+  footerLogoAlt?: string
+  footerLogoAltAr?: string
+  footerLogoAltEs?: string
+  footerLogoAltFr?: string
+  footerDarkModeLogoUrl?: string
+  
   faviconUrl?: string
   
   description: string
@@ -161,13 +178,30 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       companyNameEs: settings.companyNameEs || 'Lumerra Marble',
       companyNameFr: settings.companyNameFr || 'Lumerra Marble',
       
-      // Logo & Branding
+      // Logo & Branding (Old)
       logoUrl: settings.logoUrl || undefined,
       logoAlt: settings.logoAlt || undefined,
       logoAltAr: settings.logoAltAr || undefined,
       logoAltEs: settings.logoAltEs || undefined,
       logoAltFr: settings.logoAltFr || undefined,
       darkModeLogoUrl: settings.darkModeLogoUrl || undefined,
+      
+      // Header Logo
+      headerLogoUrl: settings.headerLogoUrl || undefined,
+      headerLogoAlt: settings.headerLogoAlt || undefined,
+      headerLogoAltAr: settings.headerLogoAltAr || undefined,
+      headerLogoAltEs: settings.headerLogoAltEs || undefined,
+      headerLogoAltFr: settings.headerLogoAltFr || undefined,
+      headerDarkModeLogoUrl: settings.headerDarkModeLogoUrl || undefined,
+      
+      // Footer Logo
+      footerLogoUrl: settings.footerLogoUrl || undefined,
+      footerLogoAlt: settings.footerLogoAlt || undefined,
+      footerLogoAltAr: settings.footerLogoAltAr || undefined,
+      footerLogoAltEs: settings.footerLogoAltEs || undefined,
+      footerLogoAltFr: settings.footerLogoAltFr || undefined,
+      footerDarkModeLogoUrl: settings.footerDarkModeLogoUrl || undefined,
+      
       faviconUrl: settings.faviconUrl || undefined,
       
       description: settings.description || 'Leading marble and granite export company from Egypt',

@@ -22,7 +22,7 @@ interface BlogPost {
   contentEn: string
   contentEs: string
   contentFr: string
-  image?: string | null
+  featuredImage?: string | null
   featured: boolean
   published: boolean
   createdAt: string
@@ -36,11 +36,36 @@ interface BlogPost {
   } | null
 }
 
+interface PageContent {
+  [key: string]: {
+    [key: string]: {
+      [key: string]: string
+    }
+  }
+}
+
 export default function BlogPage({ params }: BlogPageProps) {
   const { locale } = use(params)
   const isRTL = locale === 'ar'
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
+  const [pageContent, setPageContent] = useState<PageContent>({})
+
+  // Fetch page content from API
+  useEffect(() => {
+    async function fetchPageContent() {
+      try {
+        const response = await fetch('/api/content?page=blog')
+        if (response.ok) {
+          const data = await response.json()
+          setPageContent(data)
+        }
+      } catch (error) {
+        console.error('Error fetching page content:', error)
+      }
+    }
+    fetchPageContent()
+  }, [])
 
   // Fetch blog posts from API
   useEffect(() => {
@@ -61,32 +86,33 @@ export default function BlogPage({ params }: BlogPageProps) {
     fetchBlogPosts()
   }, [])
 
-  const content = {
-    ar: {
-      title: 'المدونة',
-      subtitle: 'آخر الأخبار والمقالات حول صناعة الرخام والجرانيت',
-      readMore: 'اقرأ المزيد',
-      author: 'كتب بواسطة',
-      date: 'التاريخ',
-      featured: 'مقال مميز',
-      recent: 'المقالات الحديثة',
-      noPosts: 'لا توجد مقالات متاحة حالياً',
-      loading: 'جاري التحميل...'
-    },
-    en: {
-      title: 'Blog',
-      subtitle: 'Latest news and articles about marble and granite industry',
-      readMore: 'Read More',
-      author: 'Written by',
-      date: 'Date',
-      featured: 'Featured Article',
-      recent: 'Recent Articles',
-      noPosts: 'No articles available at the moment',
-      loading: 'Loading...'
+  // Helper function to get content from database
+  const getText = (section: string, key: string) => {
+    const langMap: { [key: string]: string } = {
+      ar: 'valueAr',
+      en: 'valueEn',
+      es: 'valueEs',
+      fr: 'valueFr'
     }
+    const langKey = langMap[locale] || 'valueEn'
+    return pageContent[section]?.[key]?.[langKey] || ''
   }
 
-  const currentContent = content[locale as keyof typeof content] || content.en
+  const currentContent = {
+    title: getText('hero', 'title') || 'Blog',
+    subtitle: getText('hero', 'subtitle') || 'Latest news and articles',
+    backgroundImage: getText('hero', 'backgroundImage') || '',
+    readMore: getText('ui', 'readMore') || (locale === 'ar' ? 'اقرأ المزيد' : 'Read More'),
+    author: getText('ui', 'author') || (locale === 'ar' ? 'كتب بواسطة' : 'Written by'),
+    date: getText('ui', 'date') || (locale === 'ar' ? 'التاريخ' : 'Date'),
+    featured: getText('featured', 'title') || (locale === 'ar' ? 'مقال مميز' : 'Featured Article'),
+    recent: getText('recent', 'title') || (locale === 'ar' ? 'المقالات الحديثة' : 'Recent Articles'),
+    recentSubtitle: getText('recent', 'subtitle') || (locale === 'ar' ? 'آخر المقالات والأخبار' : 'Latest articles and news'),
+    noPosts: getText('ui', 'noPosts') || (locale === 'ar' ? 'لا توجد مقالات متاحة حالياً' : 'No articles available'),
+    loading: getText('ui', 'loading') || (locale === 'ar' ? 'جاري التحميل...' : 'Loading...'),
+    loadMore: getText('ui', 'loadMore') || (locale === 'ar' ? 'تحميل المزيد' : 'Load More'),
+    minutesRead: getText('ui', 'minutesRead') || (locale === 'ar' ? 'دقائق' : 'min')
+  }
 
   // Helper function to get localized title
   const getTitle = (post: BlogPost) => {
@@ -99,7 +125,6 @@ export default function BlogPage({ params }: BlogPageProps) {
     }
   }
 
-  // Helper function to get excerpt from content
   const getExcerpt = (post: BlogPost) => {
     let content = ''
     switch(locale) {
@@ -115,7 +140,7 @@ export default function BlogPage({ params }: BlogPageProps) {
   }
 
   const featuredPost = blogPosts.find(post => post.featured && post.published)
-  const recentPosts = blogPosts.filter(post => !post.featured && post.published)
+  const recentPosts = blogPosts.filter(post => post.id !== featuredPost?.id && post.published)
 
   // Default placeholder image
   const placeholderImage = 'https://via.placeholder.com/800x600/e5e7eb/6b7280?text=Blog+Post'
@@ -126,6 +151,7 @@ export default function BlogPage({ params }: BlogPageProps) {
         <PageHeader
           title={currentContent.title}
           subtitle={currentContent.subtitle}
+          image={currentContent.backgroundImage}
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
@@ -142,6 +168,7 @@ export default function BlogPage({ params }: BlogPageProps) {
         <PageHeader
           title={currentContent.title}
           subtitle={currentContent.subtitle}
+          image={currentContent.backgroundImage}
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
@@ -158,6 +185,7 @@ export default function BlogPage({ params }: BlogPageProps) {
       <PageHeader
         title={currentContent.title}
         subtitle={currentContent.subtitle}
+        image={currentContent.backgroundImage}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -171,60 +199,62 @@ export default function BlogPage({ params }: BlogPageProps) {
               </h2>
             </div>
             
-            <div className="bg-[var(--color-quinary)] rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
-              <div className="grid md:grid-cols-2 gap-0">
-                <div className="relative h-80 md:h-auto group overflow-hidden">
-                  <Image
-                    src={featuredPost.image || placeholderImage}
-                    alt={getTitle(featuredPost)}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute top-4 right-4 bg-[var(--color-primary)] text-[var(--color-quinary)] px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                    {currentContent.featured}
-                  </div>
-                </div>
-                <div className="p-8 md:p-10 flex flex-col justify-center">
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--color-quaternary)] mb-4">
-                    <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] px-3 py-1 rounded-full">
-                      <Calendar className="w-4 h-4 text-[var(--color-primary)]" />
-                      {new Date(featuredPost.createdAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US')}
+            <Link href={`/${locale}/blog/${featuredPost.slug}`} className="block">
+              <div className="bg-[var(--color-quinary)] rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 cursor-pointer">
+                <div className="grid md:grid-cols-2 gap-0">
+                  <div className="relative h-80 md:h-auto group overflow-hidden">
+                    <Image
+                      src={featuredPost.featuredImage || placeholderImage}
+                      alt={getTitle(featuredPost)}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute top-4 right-4 bg-[var(--color-primary)] text-[var(--color-quinary)] px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                      {currentContent.featured}
                     </div>
-                    {featuredPost.author && (
-                      <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] px-3 py-1 rounded-full">
-                        <User className="w-4 h-4 text-[var(--color-primary)]" />
-                        {featuredPost.author.name}
-                      </div>
-                    )}
-                    {featuredPost.category && (
-                      <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] px-3 py-1 rounded-full">
-                        <Tag className="w-4 h-4 text-[var(--color-primary)]" />
-                        {locale === 'ar' ? featuredPost.category.nameAr : featuredPost.category.nameEn}
-                      </div>
-                    )}
                   </div>
-                  
-                  <h3 className="text-3xl font-bold text-[var(--color-secondary-900)] mb-4 leading-tight hover:text-[var(--color-primary)] transition-colors duration-300">
-                    {getTitle(featuredPost)}
-                  </h3>
-                  
-                  <p className="text-[var(--color-quaternary)] mb-6 leading-relaxed text-lg">
-                    {getExcerpt(featuredPost)}
-                  </p>
-                  
-                  <Link href={`/${locale}/blog/${featuredPost.slug}`}>
-                    <Button className="group transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                      {currentContent.readMore}
-                      {isRTL ? 
-                        <ArrowLeft className="ml-2 rtl:mr-2 w-4 h-4 group-hover:-translate-x-1 rtl:group-hover:translate-x-1 transition-transform" /> : 
-                        <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      }
-                    </Button>
-                  </Link>
+                  <div className="p-8 md:p-10 flex flex-col justify-center">
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--color-quaternary)] mb-4">
+                      <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] px-3 py-1 rounded-full">
+                        <Calendar className="w-4 h-4 text-[var(--color-primary)]" />
+                        {new Date(featuredPost.createdAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US')}
+                      </div>
+                      {featuredPost.author && (
+                        <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] px-3 py-1 rounded-full">
+                          <User className="w-4 h-4 text-[var(--color-primary)]" />
+                          {featuredPost.author.name}
+                        </div>
+                      )}
+                      {featuredPost.category && (
+                        <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] px-3 py-1 rounded-full">
+                          <Tag className="w-4 h-4 text-[var(--color-primary)]" />
+                          {locale === 'ar' ? featuredPost.category.nameAr : featuredPost.category.nameEn}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <h3 className="text-3xl font-bold text-[var(--color-secondary-900)] mb-4 leading-tight hover:text-[var(--color-primary)] transition-colors duration-300">
+                      {getTitle(featuredPost)}
+                    </h3>
+                    
+                    <p className="text-[var(--color-quaternary)] mb-6 leading-relaxed text-lg">
+                      {getExcerpt(featuredPost)}
+                    </p>
+                    
+                    <div className="inline-flex">
+                      <div className="group/btn bg-[var(--color-primary)] text-[var(--color-quinary)] px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2">
+                        {currentContent.readMore}
+                        {isRTL ? 
+                          <ArrowLeft className="w-4 h-4 group-hover/btn:-translate-x-1 rtl:group-hover/btn:translate-x-1 transition-transform" /> : 
+                          <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                        }
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </section>
         )}
 
@@ -232,7 +262,7 @@ export default function BlogPage({ params }: BlogPageProps) {
         {recentPosts.length > 0 && (
           <ContentSection
             title={currentContent.recent}
-            subtitle={locale === 'ar' ? 'آخر المقالات والأخبار من عالم الأحجار الطبيعية' : 'Latest articles and news from the world of natural stones'}
+            subtitle={currentContent.recentSubtitle}
           >
             <Grid cols={3}>
               {recentPosts.map((post) => (
@@ -240,7 +270,7 @@ export default function BlogPage({ params }: BlogPageProps) {
                   <div className="bg-[var(--color-quinary)] rounded-xl shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2">
                     <div className="relative h-56 overflow-hidden">
                       <Image
-                        src={post.image || placeholderImage}
+                        src={post.featuredImage || placeholderImage}
                         alt={getTitle(post)}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -264,7 +294,7 @@ export default function BlogPage({ params }: BlogPageProps) {
                         <div className="w-1 h-1 bg-[var(--color-quaternary-300)] rounded-full" />
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
-                          5 {locale === 'ar' ? 'دقائق' : 'min'}
+                          5 {currentContent.minutesRead}
                         </div>
                       </div>
                       
@@ -308,7 +338,7 @@ export default function BlogPage({ params }: BlogPageProps) {
               size="lg" 
               className="group transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)]"
             >
-              {locale === 'ar' ? 'تحميل المزيد من المقالات' : 'Load More Articles'}
+              {currentContent.loadMore}
             </Button>
           </div>
         )}

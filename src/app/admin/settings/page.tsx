@@ -51,13 +51,30 @@ export default function SiteSettings() {
     companyNameEs: 'Lumerra Marble',
     companyNameFr: 'Lumerra Marble',
     
-    // Logo & Branding
+    // Logo & Branding (Old - for backward compatibility)
     logoUrl: '',
     logoAlt: 'Company Logo',
     logoAltAr: 'شعار الشركة',
     logoAltEs: 'Logo de la Empresa',
     logoAltFr: 'Logo de l\'Entreprise',
     darkModeLogoUrl: '',
+    
+    // Header Logo
+    headerLogoUrl: '',
+    headerLogoAlt: 'Header Logo',
+    headerLogoAltAr: 'شعار الهيدر',
+    headerLogoAltEs: 'Logo del Encabezado',
+    headerLogoAltFr: 'Logo de l\'En-tête',
+    headerDarkModeLogoUrl: '',
+    
+    // Footer Logo
+    footerLogoUrl: '',
+    footerLogoAlt: 'Footer Logo',
+    footerLogoAltAr: 'شعار الفوتر',
+    footerLogoAltEs: 'Logo del Pie de Página',
+    footerLogoAltFr: 'Logo du Pied de Page',
+    footerDarkModeLogoUrl: '',
+    
     faviconUrl: '',
     
     description: 'Leading marble and granite export company from Egypt',
@@ -363,10 +380,20 @@ export default function SiteSettings() {
   if (isLoading) {
     return (
       <ToastProvider>
-        <div className="min-h-screen bg-quinary-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-            <p className="text-quaternary">جاري تحميل الإعدادات...</p>
+            <div className="relative inline-block">
+              {/* Outer spinning ring */}
+              <div className="animate-spin rounded-full h-24 w-24 border-4 border-gray-200 border-t-primary-600 shadow-lg"></div>
+              {/* Inner pulsing circle */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-full h-12 w-12 animate-pulse shadow-md"></div>
+              </div>
+            </div>
+            <div className="mt-6 space-y-2">
+              <p className="text-lg font-semibold text-gray-800 animate-pulse">جاري تحميل الإعدادات...</p>
+              <p className="text-sm text-gray-500">الرجاء الانتظار قليلاً</p>
+            </div>
           </div>
         </div>
       </ToastProvider>
@@ -375,84 +402,103 @@ export default function SiteSettings() {
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-gray-50">
-        {/* Navigation Header */}
-        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              <div className="flex items-center gap-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50">
+        {/* Modern Fixed Header */}
+        <div className="bg-white shadow-lg border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+          <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-2 sm:py-4 gap-2">
+              {/* Right Side - Title & Navigation */}
+              <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   onClick={() => router.push('/admin')}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-1 bg-indigo-500 hover:bg-indigo-600 text-white transition-all duration-200 rounded-md sm:rounded-lg px-2 sm:px-3 py-1 sm:py-2 border-0 shadow-sm text-xs sm:text-sm"
                 >
-                  <ArrowLeft className="w-4 h-4" />
-                  العودة للوحة التحكم
+                  <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden xs:inline">عودة</span>
                 </Button>
-                <div className="border-r pr-4">
-                  <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <Settings className="w-5 h-5 text-primary-600" />
-                    إعدادات الموقع
-                  </h1>
+                
+                <div className="flex items-center gap-1.5 sm:gap-3">
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl shadow-md">
+                    <Settings className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-sm sm:text-xl font-bold text-gray-900">
+                      إعدادات الموقع
+                    </h1>
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-3">
+
+              {/* Left Side - Action Buttons */}
+              <div className="flex gap-1 sm:gap-3">
                 <Button 
                   onClick={handleReset}
                   disabled={isSaving || !originalSettings}
-                  variant="outline"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 rounded-md sm:rounded-lg px-2 sm:px-4 py-1 sm:py-2 disabled:bg-gray-300 disabled:cursor-not-allowed text-xs sm:text-sm"
                 >
-                  <RotateCcw className="w-4 h-4" />
-                  إلغاء التغييرات
+                  <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden xs:inline">إلغاء</span>
                 </Button>
                 <Button 
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 rounded-md sm:rounded-lg px-2 sm:px-6 py-1 sm:py-2 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-xs sm:text-sm"
                 >
-                  <Save className="w-4 h-4" />
-                  {isSaving ? 'جاري الحفظ...' : 'حفظ الإعدادات'}
+                  <Save className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span>{isSaving ? 'حفظ...' : 'حفظ'}</span>
                 </Button>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto p-6">
-          {/* Language Tabs */}
-          <div className="mb-6 bg-white rounded-lg shadow-sm border p-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">اختر اللغة للتحرير</h3>
-            <div className="flex gap-2">
-              {[
-                { code: 'ar' as const, name: 'العربية', flag: '🇪🇬' },
-                { code: 'en' as const, name: 'English', flag: '🇬🇧' },
-                { code: 'es' as const, name: 'Español', flag: '🇪🇸' },
-                { code: 'fr' as const, name: 'Français', flag: '🇫🇷' }
-              ].map(lang => (
-                <button
-                  key={lang.code}
-                  onClick={() => setActiveLanguage(lang.code)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all ${
-                    activeLanguage === lang.code
-                      ? 'bg-primary-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  <span className="text-lg">{lang.flag}</span>
-                  <span>{lang.name}</span>
-                </button>
-              ))}
+        {/* Language Selection Bar - Fixed Below Header */}
+        <div className="bg-white/95 backdrop-blur-sm shadow-md border-b border-gray-200 fixed top-[50px] sm:top-[73px] left-0 right-0 z-40">
+          <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Globe className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-blue-600" />
+                <span className="text-xs sm:text-sm font-semibold text-gray-700">لغة:</span>
+              </div>
+              <div className="flex gap-1 sm:gap-2 flex-nowrap">
+                {[
+                  { code: 'ar' as const, name: 'العربية', flag: '🇪🇬', bgActive: 'bg-gradient-to-r from-green-600 to-red-600', bgInactive: 'bg-green-100 hover:bg-green-200', textInactive: 'text-green-800' },
+                  { code: 'en' as const, name: 'English', flag: '🇬🇧', bgActive: 'bg-gradient-to-r from-blue-600 to-red-600', bgInactive: 'bg-blue-100 hover:bg-blue-200', textInactive: 'text-blue-800' },
+                  { code: 'es' as const, name: 'Español', flag: '🇪🇸', bgActive: 'bg-gradient-to-r from-yellow-500 to-red-600', bgInactive: 'bg-yellow-100 hover:bg-yellow-200', textInactive: 'text-yellow-900' },
+                  { code: 'fr' as const, name: 'Français', flag: '🇫🇷', bgActive: 'bg-gradient-to-r from-blue-700 to-red-600', bgInactive: 'bg-indigo-100 hover:bg-indigo-200', textInactive: 'text-indigo-800' }
+                ].map(lang => (
+                  <button
+                    key={lang.code}
+                    onClick={() => setActiveLanguage(lang.code)}
+                    className={`flex items-center gap-0.5 sm:gap-1.5 px-1.5 sm:px-3 py-1 sm:py-2 rounded-md sm:rounded-lg font-semibold transition-all duration-200 whitespace-nowrap shadow-sm hover:shadow-md text-xs sm:text-sm ${
+                      activeLanguage === lang.code
+                        ? `${lang.bgActive} text-white ring-1 sm:ring-2 ring-offset-1 ring-white`
+                        : `${lang.bgInactive} ${lang.textInactive}`
+                    }`}
+                  >
+                    <span className="text-sm sm:text-lg">{lang.flag}</span>
+                    <span className="hidden sm:inline">{lang.name}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
+        </div>
 
-        <div className="space-y-6">
+        {/* Main Content Area - Add padding-top for fixed headers */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8" style={{ paddingTop: '110px' }}>
+          <div className="space-y-6">
           {/* Company Information */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Globe className="w-5 h-5" />
-              معلومات الشركة
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-2.5 rounded-xl shadow-md">
+                <Globe className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                معلومات الشركة
+              </h2>
+            </div>
             
             <div className="grid grid-cols-1 gap-4">
               <div>
@@ -493,81 +539,232 @@ export default function SiteSettings() {
           </Card>
 
           {/* Logo & Branding */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Image className="w-5 h-5" />
-              الشعار والعلامة التجارية
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-2.5 rounded-xl shadow-md">
+                <Image className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                الشعار والعلامة التجارية
+              </h2>
+            </div>
             
+            {/* Header Logo Section */}
+            <div className="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <h3 className="text-md font-bold text-blue-900 mb-4 flex items-center gap-2">
+                <span className="bg-blue-500 text-white px-2 py-1 rounded text-sm">Header</span>
+                لوجو الهيدر (رأس الصفحة)
+              </h3>
+              
+              <div className="grid grid-cols-1 gap-6">
+                {/* Header Logo */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    شعار الهيدر (Header Logo)
+                  </label>
+                  <ImageUpload
+                    currentImages={settings.headerLogoUrl ? [settings.headerLogoUrl] : []}
+                    onUpload={(urls: string[]) => {
+                      if (urls.length > 0) {
+                        setSettings(prev => ({ ...prev, headerLogoUrl: urls[0] }))
+                      }
+                    }}
+                    onRemove={() => {
+                      setSettings(prev => ({ ...prev, headerLogoUrl: '' }))
+                    }}
+                    multiple={false}
+                    maxFiles={1}
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    💡 PNG شفاف مُفضّل - الحجم المثالي: 200x200 بكسل
+                  </p>
+                </div>
+
+                {/* Header Logo Alt Text */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    النص البديل لشعار الهيدر ({activeLanguage === 'ar' ? 'عربي' : activeLanguage === 'en' ? 'English' : activeLanguage === 'es' ? 'Español' : 'Français'})
+                  </label>
+                  <Input
+                    name={`headerLogoAlt${activeLanguage === 'en' ? '' : activeLanguage === 'ar' ? 'Ar' : activeLanguage === 'es' ? 'Es' : 'Fr'}`}
+                    value={
+                      activeLanguage === 'en' ? settings.headerLogoAlt :
+                      activeLanguage === 'ar' ? settings.headerLogoAltAr :
+                      activeLanguage === 'es' ? settings.headerLogoAltEs :
+                      settings.headerLogoAltFr
+                    }
+                    onChange={handleInputChange}
+                    placeholder={activeLanguage === 'ar' ? 'شعار الهيدر' : 'Header Logo'}
+                  />
+                </div>
+
+                {/* Header Dark Mode Logo */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    شعار الهيدر للوضع الليلي (اختياري)
+                  </label>
+                  <ImageUpload
+                    currentImages={settings.headerDarkModeLogoUrl ? [settings.headerDarkModeLogoUrl] : []}
+                    onUpload={(urls: string[]) => {
+                      if (urls.length > 0) {
+                        setSettings(prev => ({ ...prev, headerDarkModeLogoUrl: urls[0] }))
+                      }
+                    }}
+                    onRemove={() => {
+                      setSettings(prev => ({ ...prev, headerDarkModeLogoUrl: '' }))
+                    }}
+                    multiple={false}
+                    maxFiles={1}
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    💡 نسخة فاتحة من لوجو الهيدر إذا كان الأصلي غامق
+                  </p>
+                </div>
+
+                {/* Header Logo Preview */}
+                {settings.headerLogoUrl && (
+                  <div className="border-t pt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      💡 معاينة لوجو الهيدر
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="border rounded-lg p-4 bg-white">
+                        <p className="text-xs font-medium text-gray-600 mb-2">الوضع العادي</p>
+                        <div className="flex items-center justify-center h-20 bg-gray-50 rounded">
+                          <img 
+                            src={settings.headerLogoUrl} 
+                            alt={settings.headerLogoAltAr || 'شعار الهيدر'}
+                            className="h-12 w-auto object-contain"
+                          />
+                        </div>
+                      </div>
+                      {settings.headerDarkModeLogoUrl && (
+                        <div className="border rounded-lg p-4 bg-gray-900">
+                          <p className="text-xs font-medium text-gray-300 mb-2">الوضع الليلي</p>
+                          <div className="flex items-center justify-center h-20 bg-gray-800 rounded">
+                            <img 
+                              src={settings.headerDarkModeLogoUrl} 
+                              alt={settings.headerLogoAltAr || 'شعار الهيدر'}
+                              className="h-12 w-auto object-contain"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer Logo Section */}
+            <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+              <h3 className="text-md font-bold text-green-900 mb-4 flex items-center gap-2">
+                <span className="bg-green-500 text-white px-2 py-1 rounded text-sm">Footer</span>
+                لوجو الفوتر (ذيل الصفحة)
+              </h3>
+              
+              <div className="grid grid-cols-1 gap-6">
+                {/* Footer Logo */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    شعار الفوتر (Footer Logo)
+                  </label>
+                  <ImageUpload
+                    currentImages={settings.footerLogoUrl ? [settings.footerLogoUrl] : []}
+                    onUpload={(urls: string[]) => {
+                      if (urls.length > 0) {
+                        setSettings(prev => ({ ...prev, footerLogoUrl: urls[0] }))
+                      }
+                    }}
+                    onRemove={() => {
+                      setSettings(prev => ({ ...prev, footerLogoUrl: '' }))
+                    }}
+                    multiple={false}
+                    maxFiles={1}
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    💡 PNG شفاف مُفضّل - الحجم المثالي: 200x200 بكسل
+                  </p>
+                </div>
+
+                {/* Footer Logo Alt Text */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    النص البديل لشعار الفوتر ({activeLanguage === 'ar' ? 'عربي' : activeLanguage === 'en' ? 'English' : activeLanguage === 'es' ? 'Español' : 'Français'})
+                  </label>
+                  <Input
+                    name={`footerLogoAlt${activeLanguage === 'en' ? '' : activeLanguage === 'ar' ? 'Ar' : activeLanguage === 'es' ? 'Es' : 'Fr'}`}
+                    value={
+                      activeLanguage === 'en' ? settings.footerLogoAlt :
+                      activeLanguage === 'ar' ? settings.footerLogoAltAr :
+                      activeLanguage === 'es' ? settings.footerLogoAltEs :
+                      settings.footerLogoAltFr
+                    }
+                    onChange={handleInputChange}
+                    placeholder={activeLanguage === 'ar' ? 'شعار الفوتر' : 'Footer Logo'}
+                  />
+                </div>
+
+                {/* Footer Dark Mode Logo */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    شعار الفوتر للوضع الليلي (اختياري)
+                  </label>
+                  <ImageUpload
+                    currentImages={settings.footerDarkModeLogoUrl ? [settings.footerDarkModeLogoUrl] : []}
+                    onUpload={(urls: string[]) => {
+                      if (urls.length > 0) {
+                        setSettings(prev => ({ ...prev, footerDarkModeLogoUrl: urls[0] }))
+                      }
+                    }}
+                    onRemove={() => {
+                      setSettings(prev => ({ ...prev, footerDarkModeLogoUrl: '' }))
+                    }}
+                    multiple={false}
+                    maxFiles={1}
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    💡 نسخة فاتحة من لوجو الفوتر إذا كان الأصلي غامق
+                  </p>
+                </div>
+
+                {/* Footer Logo Preview */}
+                {settings.footerLogoUrl && (
+                  <div className="border-t pt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      💡 معاينة لوجو الفوتر
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="border rounded-lg p-4 bg-white">
+                        <p className="text-xs font-medium text-gray-600 mb-2">الوضع العادي</p>
+                        <div className="flex items-center justify-center h-20 bg-gray-50 rounded">
+                          <img 
+                            src={settings.footerLogoUrl} 
+                            alt={settings.footerLogoAltAr || 'شعار الفوتر'}
+                            className="h-12 w-auto object-contain"
+                          />
+                        </div>
+                      </div>
+                      {settings.footerDarkModeLogoUrl && (
+                        <div className="border rounded-lg p-4 bg-gray-900">
+                          <p className="text-xs font-medium text-gray-300 mb-2">الوضع الليلي</p>
+                          <div className="flex items-center justify-center h-20 bg-gray-800 rounded">
+                            <img 
+                              src={settings.footerDarkModeLogoUrl} 
+                              alt={settings.footerLogoAltAr || 'شعار الفوتر'}
+                              className="h-12 w-auto object-contain"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Favicon Section */}
             <div className="grid grid-cols-1 gap-6">
-              {/* Main Logo */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  شعار الشركة (Company Logo)
-                </label>
-                <ImageUpload
-                  currentImages={settings.logoUrl ? [settings.logoUrl] : []}
-                  onUpload={(urls: string[]) => {
-                    if (urls.length > 0) {
-                      setSettings(prev => ({ ...prev, logoUrl: urls[0] }))
-                    }
-                  }}
-                  onRemove={() => {
-                    setSettings(prev => ({ ...prev, logoUrl: '' }))
-                  }}
-                  multiple={false}
-                  maxFiles={1}
-                />
-                <p className="text-xs text-gray-500 mt-2">
-                  💡 PNG شفاف مُفضّل - الحجم المثالي: 200x200 بكسل
-                </p>
-              </div>
-
-              {/* Logo Alt Text */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  النص البديل للشعار ({activeLanguage === 'ar' ? 'عربي' : activeLanguage === 'en' ? 'English' : activeLanguage === 'es' ? 'Español' : 'Français'})
-                </label>
-                <Input
-                  name={`logoAlt${activeLanguage === 'en' ? '' : activeLanguage === 'ar' ? 'Ar' : activeLanguage === 'es' ? 'Es' : 'Fr'}`}
-                  value={
-                    activeLanguage === 'en' ? settings.logoAlt :
-                    activeLanguage === 'ar' ? settings.logoAltAr :
-                    activeLanguage === 'es' ? settings.logoAltEs :
-                    settings.logoAltFr
-                  }
-                  onChange={handleInputChange}
-                  placeholder={activeLanguage === 'ar' ? 'شعار شركة لوميرا للرخام' : 'Lumerra Marble Logo'}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  مهم لمحركات البحث وإمكانية الوصول (SEO & Accessibility)
-                </p>
-              </div>
-
-              {/* Dark Mode Logo */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  شعار الوضع الليلي (اختياري)
-                </label>
-                <ImageUpload
-                  currentImages={settings.darkModeLogoUrl ? [settings.darkModeLogoUrl] : []}
-                  onUpload={(urls: string[]) => {
-                    if (urls.length > 0) {
-                      setSettings(prev => ({ ...prev, darkModeLogoUrl: urls[0] }))
-                    }
-                  }}
-                  onRemove={() => {
-                    setSettings(prev => ({ ...prev, darkModeLogoUrl: '' }))
-                  }}
-                  multiple={false}
-                  maxFiles={1}
-                />
-                <p className="text-xs text-gray-500 mt-2">
-                  💡 نسخة فاتحة من اللوجو إذا كان الأصلي غامق
-                </p>
-              </div>
-
-              {/* Favicon */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Favicon (أيقونة المتصفح)
@@ -589,75 +786,19 @@ export default function SiteSettings() {
                   💡 أيقونة صغيرة تظهر في تبويب المتصفح - الحجم: 32x32 أو 48x48
                 </p>
               </div>
-
-              {/* Preview Section */}
-              {settings.logoUrl && (
-                <div className="border-t pt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    💡 معاينة الشعارات
-                  </label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Light Mode Preview */}
-                    <div className="border rounded-lg p-4 bg-white">
-                      <p className="text-xs font-medium text-gray-600 mb-2">الوضع العادي</p>
-                      <div className="flex items-center justify-center h-20 bg-gray-50 rounded">
-                        <img 
-                          src={settings.logoUrl} 
-                          alt={settings.logoAltAr || 'شعار الشركة'}
-                          className="h-12 w-auto object-contain"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                      </div>
-                    </div>
-                    
-                    {/* Dark Mode Preview */}
-                    {settings.darkModeLogoUrl && (
-                      <div className="border rounded-lg p-4 bg-gray-900">
-                        <p className="text-xs font-medium text-gray-300 mb-2">الوضع الليلي</p>
-                        <div className="flex items-center justify-center h-20 bg-gray-800 rounded">
-                          <img 
-                            src={settings.darkModeLogoUrl} 
-                            alt={settings.logoAltAr || 'شعار الشركة'}
-                            className="h-12 w-auto object-contain"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Favicon Preview */}
-                  {settings.faviconUrl && (
-                    <div className="mt-4 border rounded-lg p-4 bg-gray-50">
-                      <p className="text-xs font-medium text-gray-600 mb-2">Favicon</p>
-                      <div className="flex items-center gap-2">
-                        <img 
-                          src={settings.faviconUrl} 
-                          alt="Favicon"
-                          className="w-8 h-8 object-contain"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                        <span className="text-xs text-gray-500">كما سيظهر في تبويب المتصفح</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </Card>
 
           {/* Contact Information */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Phone className="w-5 h-5" />
-              معلومات التواصل
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-green-500 to-green-600 p-2.5 rounded-xl shadow-md">
+                <Phone className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                معلومات التواصل
+              </h2>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -762,11 +903,15 @@ export default function SiteSettings() {
           </Card>
 
           {/* Social Media */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Globe className="w-5 h-5" />
-              وسائل التواصل الاجتماعي
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-pink-500 to-pink-600 p-2.5 rounded-xl shadow-md">
+                <Globe className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                وسائل التواصل الاجتماعي
+              </h2>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -845,11 +990,15 @@ export default function SiteSettings() {
           </Card>
 
           {/* SEO Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Settings className="w-5 h-5" />
-              إعدادات SEO
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-2.5 rounded-xl shadow-md">
+                <Settings className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                إعدادات SEO
+              </h2>
+            </div>
             
             <div className="space-y-4">
               <div>
@@ -908,11 +1057,15 @@ export default function SiteSettings() {
           </Card>
 
           {/* Email/SMTP Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Mail className="w-5 h-5" />
-              إعدادات البريد الإلكتروني (SMTP)
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-red-500 to-red-600 p-2.5 rounded-xl shadow-md">
+                <Mail className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                إعدادات البريد الإلكتروني (SMTP)
+              </h2>
+            </div>
             
             <div className="space-y-4">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
@@ -1060,14 +1213,18 @@ export default function SiteSettings() {
           </Card>
 
           {/* Image Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Image className="w-5 h-5" />
-              {activeLanguage === 'ar' && 'إعدادات الصور'}
-              {activeLanguage === 'en' && 'Image Settings'}
-              {activeLanguage === 'es' && 'Configuración de Imágenes'}
-              {activeLanguage === 'fr' && 'Paramètres des Images'}
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-2.5 rounded-xl shadow-md">
+                <Image className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                {activeLanguage === 'ar' && 'إعدادات الصور'}
+                {activeLanguage === 'en' && 'Image Settings'}
+                {activeLanguage === 'es' && 'Configuración de Imágenes'}
+                {activeLanguage === 'fr' && 'Paramètres des Images'}
+              </h2>
+            </div>
             
             <div className="space-y-6">
               {/* File Size & Type Settings */}
@@ -1307,14 +1464,18 @@ export default function SiteSettings() {
           </Card>
 
           {/* SEO & Analytics Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <BarChart className="w-5 h-5" />
-              {activeLanguage === 'ar' && 'إعدادات SEO والتحليلات'}
-              {activeLanguage === 'en' && 'SEO & Analytics Settings'}
-              {activeLanguage === 'es' && 'Configuración de SEO y Análisis'}
-              {activeLanguage === 'fr' && 'Paramètres SEO et Analytiques'}
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 p-2.5 rounded-xl shadow-md">
+                <BarChart className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                {activeLanguage === 'ar' && 'إعدادات SEO والتحليلات'}
+                {activeLanguage === 'en' && 'SEO & Analytics Settings'}
+                {activeLanguage === 'es' && 'Configuración de SEO y Análisis'}
+                {activeLanguage === 'fr' && 'Paramètres SEO et Analytiques'}
+              </h2>
+            </div>
             
             <div className="space-y-6">
               {/* Analytics Tracking Codes */}
@@ -1580,14 +1741,18 @@ export default function SiteSettings() {
           </Card>
 
           {/* Legal Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Scale className="w-5 h-5" />
-              {activeLanguage === 'ar' && 'الإعدادات القانونية'}
-              {activeLanguage === 'en' && 'Legal Settings'}
-              {activeLanguage === 'es' && 'Configuración Legal'}
-              {activeLanguage === 'fr' && 'Paramètres Légaux'}
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 p-2.5 rounded-xl shadow-md">
+                <Scale className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                {activeLanguage === 'ar' && 'الإعدادات القانونية'}
+                {activeLanguage === 'en' && 'Legal Settings'}
+                {activeLanguage === 'es' && 'Configuración Legal'}
+                {activeLanguage === 'fr' && 'Paramètres Légaux'}
+              </h2>
+            </div>
             
             <div className="space-y-6">
               {/* Privacy Policy */}
@@ -1700,14 +1865,18 @@ export default function SiteSettings() {
           </Card>
 
           {/* Advanced Appearance Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Wand2 className="w-5 h-5" />
-              {activeLanguage === 'ar' && 'إعدادات المظهر المتقدمة'}
-              {activeLanguage === 'en' && 'Advanced Appearance Settings'}
-              {activeLanguage === 'es' && 'Configuración Avanzada de Apariencia'}
-              {activeLanguage === 'fr' && 'Paramètres d\'Apparence Avancés'}
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-fuchsia-500 to-fuchsia-600 p-2.5 rounded-xl shadow-md">
+                <Wand2 className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                {activeLanguage === 'ar' && 'إعدادات المظهر المتقدمة'}
+                {activeLanguage === 'en' && 'Advanced Appearance Settings'}
+                {activeLanguage === 'es' && 'Configuración Avanzada de Apariencia'}
+                {activeLanguage === 'fr' && 'Paramètres d\'Apparence Avancés'}
+              </h2>
+            </div>
             
             <div className="space-y-6">
               {/* Typography */}
@@ -1863,14 +2032,18 @@ export default function SiteSettings() {
           </Card>
 
           {/* Security Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Shield className="w-5 h-5" />
-              {activeLanguage === 'ar' && 'إعدادات الأمان'}
-              {activeLanguage === 'en' && 'Security Settings'}
-              {activeLanguage === 'es' && 'Configuración de Seguridad'}
-              {activeLanguage === 'fr' && 'Paramètres de Sécurité'}
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-2.5 rounded-xl shadow-md">
+                <Shield className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                {activeLanguage === 'ar' && 'إعدادات الأمان'}
+                {activeLanguage === 'en' && 'Security Settings'}
+                {activeLanguage === 'es' && 'Configuración de Seguridad'}
+                {activeLanguage === 'fr' && 'Paramètres de Sécurité'}
+              </h2>
+            </div>
             
             <div className="space-y-6">
               {/* reCAPTCHA Settings */}
@@ -2081,14 +2254,18 @@ export default function SiteSettings() {
           </Card>
 
           {/* Advanced WhatsApp Settings */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <MessageCircle className="w-5 h-5" />
-              {activeLanguage === 'ar' && 'إعدادات واتساب المتقدمة'}
-              {activeLanguage === 'en' && 'Advanced WhatsApp Settings'}
-              {activeLanguage === 'es' && 'Configuración Avanzada de WhatsApp'}
-              {activeLanguage === 'fr' && 'Paramètres Avancés WhatsApp'}
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-teal-500 to-teal-600 p-2.5 rounded-xl shadow-md">
+                <MessageCircle className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                {activeLanguage === 'ar' && 'إعدادات واتساب المتقدمة'}
+                {activeLanguage === 'en' && 'Advanced WhatsApp Settings'}
+                {activeLanguage === 'es' && 'Configuración Avanzada de WhatsApp'}
+                {activeLanguage === 'fr' && 'Paramètres Avancés WhatsApp'}
+              </h2>
+            </div>
             
             <div className="space-y-6">
               {/* WhatsApp Messages */}
@@ -2252,11 +2429,15 @@ export default function SiteSettings() {
           </Card>
 
           {/* Theme Settings - 5 Color System */}
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Palette className="w-5 h-5" />
-              إعدادات الألوان (نظام الخمس ألوان)
-            </h2>
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
+              <div className="bg-gradient-to-br from-violet-500 to-violet-600 p-2.5 rounded-xl shadow-md">
+                <Palette className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+                إعدادات الألوان (نظام الخمس ألوان)
+              </h2>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
@@ -2510,6 +2691,21 @@ export default function SiteSettings() {
               </div>
             </div>
           </Card>
+        </div>
+
+        {/* Footer Message */}
+        <div className="mt-8 mb-6 text-center">
+          <div className="bg-gradient-to-r from-primary-50 via-blue-50 to-primary-50 rounded-2xl shadow-md border border-primary-100 p-6">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Settings className="w-5 h-5 text-primary-600 animate-spin" style={{ animationDuration: '3s' }} />
+              <p className="text-base font-semibold text-gray-800">
+                تم تصميم هذه الصفحة لإدارة جميع إعدادات موقعك بسهولة
+              </p>
+            </div>
+            <p className="text-sm text-gray-600">
+              لا تنس حفظ التغييرات عند الانتهاء من التعديل
+            </p>
+          </div>
         </div>
       </div>
     </div>

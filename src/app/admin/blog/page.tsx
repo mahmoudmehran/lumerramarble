@@ -28,9 +28,14 @@ interface BlogPost {
   contentEs: string
   contentFr: string
   excerpt: string
+  excerptAr?: string
+  excerptEn?: string
+  excerptEs?: string
+  excerptFr?: string
   metaTitle: string
   metaDescription: string
   slug: string
+  featuredImage?: string
   featured: boolean
   published: boolean
   createdAt: string
@@ -55,10 +60,15 @@ export default function BlogManagement() {
     contentEn: '',
     contentEs: '',
     contentFr: '',
+    excerptAr: '',
+    excerptEn: '',
+    excerptEs: '',
+    excerptFr: '',
     excerpt: '',
     metaTitle: '',
     metaDescription: '',
     slug: '',
+    featuredImage: '',
     featured: false,
     published: false
   })
@@ -76,11 +86,7 @@ export default function BlogManagement() {
         return
       }
 
-      const response = await fetch('/api/admin/blog', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      const response = await fetch('/api/admin/blog')
 
       if (response.ok) {
         const data = await response.json()
@@ -101,7 +107,6 @@ export default function BlogManagement() {
     e.preventDefault()
     
     try {
-      const token = localStorage.getItem('admin_token')
       const url = '/api/admin/blog'
       const method = editingPost ? 'PUT' : 'POST'
       
@@ -112,13 +117,19 @@ export default function BlogManagement() {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       })
 
       if (response.ok) {
+        // Clear blog cache to show new/updated post immediately
+        try {
+          await fetch('/api/revalidate?tag=blog')
+        } catch (cacheError) {
+          console.error('Failed to clear cache:', cacheError)
+        }
+        
         alert(editingPost ? 'تم تحديث المقال بنجاح!' : 'تم إضافة المقال بنجاح!')
         setShowAddForm(false)
         setEditingPost(null)
@@ -138,15 +149,18 @@ export default function BlogManagement() {
     if (!confirm('هل أنت متأكد من حذف هذا المقال؟')) return
 
     try {
-      const token = localStorage.getItem('admin_token')
       const response = await fetch(`/api/admin/blog?id=${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        method: 'DELETE'
       })
 
       if (response.ok) {
+        // Clear blog cache to update the list immediately
+        try {
+          await fetch('/api/revalidate?tag=blog')
+        } catch (cacheError) {
+          console.error('Failed to clear cache:', cacheError)
+        }
+        
         alert('تم حذف المقال بنجاح!')
         loadPosts()
       } else {
@@ -169,10 +183,15 @@ export default function BlogManagement() {
       contentEn: post.contentEn,
       contentEs: post.contentEs,
       contentFr: post.contentFr,
+      excerptAr: post.excerptAr || '',
+      excerptEn: post.excerptEn || '',
+      excerptEs: post.excerptEs || '',
+      excerptFr: post.excerptFr || '',
       excerpt: post.excerpt,
       metaTitle: post.metaTitle,
       metaDescription: post.metaDescription,
       slug: post.slug,
+      featuredImage: post.featuredImage || '',
       featured: post.featured,
       published: post.published
     })
@@ -189,10 +208,15 @@ export default function BlogManagement() {
       contentEn: '',
       contentEs: '',
       contentFr: '',
+      excerptAr: '',
+      excerptEn: '',
+      excerptEs: '',
+      excerptFr: '',
       excerpt: '',
       metaTitle: '',
       metaDescription: '',
       slug: '',
+      featuredImage: '',
       featured: false,
       published: false
     })
@@ -268,7 +292,7 @@ export default function BlogManagement() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Titles */}
+              {/* Titles - All Languages */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -294,9 +318,33 @@ export default function BlogManagement() {
                     required
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    العنوان بالإسبانية *
+                  </label>
+                  <Input
+                    name="titleEs"
+                    value={formData.titleEs}
+                    onChange={handleInputChange}
+                    placeholder="Guía para Elegir el Mármol Adecuado"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    العنوان بالفرنسية *
+                  </label>
+                  <Input
+                    name="titleFr"
+                    value={formData.titleFr}
+                    onChange={handleInputChange}
+                    placeholder="Guide pour Choisir le Bon Marbre"
+                    required
+                  />
+                </div>
               </div>
 
-              {/* Content */}
+              {/* Content - All Languages */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -326,21 +374,103 @@ export default function BlogManagement() {
                     required
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    المحتوى بالإسبانية *
+                  </label>
+                  <textarea
+                    name="contentEs"
+                    value={formData.contentEs}
+                    onChange={handleInputChange}
+                    rows={8}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                    placeholder="Contenido del artículo en español..."
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    المحتوى بالفرنسية *
+                  </label>
+                  <textarea
+                    name="contentFr"
+                    value={formData.contentFr}
+                    onChange={handleInputChange}
+                    rows={8}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                    placeholder="Contenu de l'article en français..."
+                    required
+                  />
+                </div>
               </div>
 
-              {/* SEO Fields */}
+              {/* Excerpts - All Languages */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    الملخص
+                    الملخص بالعربية
                   </label>
                   <textarea
-                    name="excerpt"
-                    value={formData.excerpt}
+                    name="excerptAr"
+                    value={formData.excerptAr}
                     onChange={handleInputChange}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-                    placeholder="ملخص قصير للمقال..."
+                    placeholder="ملخص قصير للمقال بالعربية..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    الملخص بالإنجليزية
+                  </label>
+                  <textarea
+                    name="excerptEn"
+                    value={formData.excerptEn}
+                    onChange={handleInputChange}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                    placeholder="Short excerpt in English..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    الملخص بالإسبانية
+                  </label>
+                  <textarea
+                    name="excerptEs"
+                    value={formData.excerptEs}
+                    onChange={handleInputChange}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                    placeholder="Resumen corto en español..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    الملخص بالفرنسية
+                  </label>
+                  <textarea
+                    name="excerptFr"
+                    value={formData.excerptFr}
+                    onChange={handleInputChange}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                    placeholder="Résumé court en français..."
+                  />
+                </div>
+              </div>
+
+              {/* SEO & Slug Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    عنوان SEO
+                  </label>
+                  <Input
+                    name="metaTitle"
+                    value={formData.metaTitle}
+                    onChange={handleInputChange}
+                    placeholder="عنوان للصفحة في محركات البحث"
                   />
                 </div>
                 <div>
@@ -353,6 +483,85 @@ export default function BlogManagement() {
                     onChange={handleInputChange}
                     placeholder="guide-to-choosing-marble"
                   />
+                </div>
+              </div>
+
+              {/* Featured Image */}
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  صورة المقال المميزة
+                </label>
+                
+                {formData.featuredImage && (
+                  <div className="relative w-full h-48 rounded-lg overflow-hidden border-2 border-gray-200">
+                    <img
+                      src={formData.featuredImage}
+                      alt="Featured"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, featuredImage: '' })}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-2">
+                      رفع صورة جديدة
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          const formDataUpload = new FormData()
+                          formDataUpload.append('file', file)
+                          
+                          try {
+                            const response = await fetch('/api/upload', {
+                              method: 'POST',
+                              body: formDataUpload
+                            })
+                            
+                            if (response.ok) {
+                              const data = await response.json()
+                              setFormData({ ...formData, featuredImage: data.url })
+                            } else {
+                              alert('فشل رفع الصورة')
+                            }
+                          } catch (error) {
+                            console.error('Error uploading image:', error)
+                            alert('حدث خطأ أثناء رفع الصورة')
+                          }
+                        }
+                      }}
+                      className="block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-md file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-primary-50 file:text-primary-700
+                        hover:file:bg-primary-100
+                        cursor-pointer"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-gray-600 mb-2">
+                      أو إدخال رابط مباشر
+                    </label>
+                    <Input
+                      name="featuredImage"
+                      value={formData.featuredImage}
+                      onChange={handleInputChange}
+                      placeholder="https://example.com/image.jpg أو /images/blog/image.jpg"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -433,8 +642,23 @@ export default function BlogManagement() {
         ) : (
           <div className="space-y-4">
             {filteredPosts.map((post) => (
-              <Card key={post.id} className="p-6">
-                <div className="flex justify-between items-start">
+              <Card 
+                key={post.id} 
+                className="p-6 cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => handleEdit(post)}
+              >
+                <div className="flex justify-between items-start gap-4">
+                  {/* Image Preview */}
+                  {post.featuredImage && (
+                    <div className="w-32 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                      <img
+                        src={post.featuredImage}
+                        alt={post.titleAr}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="font-semibold text-lg">{post.titleAr}</h3>
@@ -463,7 +687,7 @@ export default function BlogManagement() {
                     </div>
                   </div>
                   
-                  <div className="flex gap-2 ml-4 rtl:ml-0 rtl:mr-4">
+                  <div className="flex gap-2 ml-4 rtl:ml-0 rtl:mr-4" onClick={(e) => e.stopPropagation()}>
                     <Button
                       size="sm"
                       variant="outline"

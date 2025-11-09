@@ -3587,63 +3587,284 @@ export default function AdminPanel() {
             {activeTab === 'blog' && (
               <Card className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold">إدارة المدونة</h2>
-                  <Button
-                    onClick={() => window.location.href = '/admin/blog'}
-                    className="flex items-center gap-2"
-                  >
-                    <Edit className="w-4 h-4" />
-                    إدارة جميع المقالات
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-green-600">منشور</p>
-                        <p className="text-2xl font-bold text-green-800">12</p>
-                      </div>
-                      <div className="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center">
-                        <Eye className="w-5 h-5 text-green-600" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-yellow-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-yellow-600">مسودات</p>
-                        <p className="text-2xl font-bold text-yellow-800">5</p>
-                      </div>
-                      <div className="w-10 h-10 bg-yellow-200 rounded-full flex items-center justify-center">
-                        <Edit className="w-5 h-5 text-yellow-600" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-purple-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-purple-600">مميز</p>
-                        <p className="text-2xl font-bold text-purple-800">3</p>
-                      </div>
-                      <div className="w-10 h-10 bg-purple-200 rounded-full flex items-center justify-center">
-                        <Settings className="w-5 h-5 text-purple-600" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600">إجمالي المقالات</p>
-                        <p className="text-2xl font-bold text-gray-800">17</p>
-                      </div>
-                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                        <Edit className="w-5 h-5 text-gray-600" />
-                      </div>
-                    </div>
+                  <h2 className="text-xl font-semibold">صفحة المدونة</h2>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEditing(!isEditing)}
+                    >
+                      {isEditing ? 'إلغاء التعديل' : 'تعديل'}
+                    </Button>
+                    <Button
+                      onClick={() => window.location.href = '/admin/blog'}
+                      className="flex items-center gap-2"
+                    >
+                      <Edit className="w-4 h-4" />
+                      إدارة المقالات
+                    </Button>
                   </div>
                 </div>
-                <div className="text-center py-4 text-gray-500">
-                  <p className="text-sm">انقر على &quot;إدارة جميع المقالات&quot; لإضافة وتعديل مقالات المدونة</p>
+
+                {/* Language Tabs */}
+                {isEditing && (
+                  <div className="mb-6 border-b">
+                    <div className="flex gap-2">
+                      {[
+                        { code: 'ar', name: 'العربية' },
+                        { code: 'en', name: 'English' },
+                        { code: 'fr', name: 'Français' },
+                        { code: 'es', name: 'Español' }
+                      ].map(lang => (
+                        <button
+                          key={lang.code}
+                          onClick={() => setEditingLang(lang.code)}
+                          className={`px-4 py-2 font-medium transition-colors ${
+                            editingLang === lang.code
+                              ? 'border-b-2 border-primary-600 text-primary-700'
+                              : 'text-gray-500 hover:text-gray-700'
+                          }`}
+                        >
+                          {lang.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-8">
+                  {/* Hero Section */}
+                  <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-lg border-2 border-blue-100 shadow-sm">
+                    <h3 className="font-semibold text-lg mb-4 text-blue-700 border-b-2 border-blue-200 pb-2 flex items-center gap-2">
+                      <Mail className="w-5 h-5" />
+                      القسم الرئيسي
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">العنوان الرئيسي</label>
+                        {isEditing ? (
+                          <Input
+                            value={content[editingLang]?.blog?.hero?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].blog) newContent[editingLang].blog = {}
+                              if (!newContent[editingLang].blog.hero) newContent[editingLang].blog.hero = {}
+                              newContent[editingLang].blog.hero.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="المدونة"
+                          />
+                        ) : (
+                          <div className="p-3 bg-white rounded-md shadow-sm">{content[editingLang]?.blog?.hero?.title || 'غير محدد'}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">النص التوضيحي</label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={3}
+                            value={content[editingLang]?.blog?.hero?.subtitle || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].blog) newContent[editingLang].blog = {}
+                              if (!newContent[editingLang].blog.hero) newContent[editingLang].blog.hero = {}
+                              newContent[editingLang].blog.hero.subtitle = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="آخر الأخبار والمقالات..."
+                          />
+                        ) : (
+                          <div className="p-3 bg-white rounded-md shadow-sm">{content[editingLang]?.blog?.hero?.subtitle || 'غير محدد'}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">صورة الخلفية (اختياري)</label>
+                        {isEditing ? (
+                          <div className="space-y-3">
+                            <div className="space-y-2">
+                              <label className="text-xs text-gray-600 font-medium">رفع صورة:</label>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleImageUpload(e, 'blog', 'hero', 'backgroundImage')}
+                                className="w-full px-3 py-2 border rounded text-sm"
+                              />
+                            </div>
+                            <div className="relative flex items-center">
+                              <div className="flex-grow border-t border-gray-300"></div>
+                              <span className="flex-shrink mx-4 text-gray-500 text-xs">أو</span>
+                              <div className="flex-grow border-t border-gray-300"></div>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-xs text-gray-600 font-medium">رابط مباشر:</label>
+                              <Input
+                                value={content[editingLang]?.blog?.hero?.backgroundImage || ''}
+                                onChange={(e) => {
+                                  const newContent = JSON.parse(JSON.stringify(content))
+                                  if (!newContent[editingLang]) newContent[editingLang] = {}
+                                  if (!newContent[editingLang].blog) newContent[editingLang].blog = {}
+                                  if (!newContent[editingLang].blog.hero) newContent[editingLang].blog.hero = {}
+                                  newContent[editingLang].blog.hero.backgroundImage = e.target.value
+                                  setContent(newContent)
+                                }}
+                                placeholder="https://example.com/image.jpg"
+                                className="text-sm"
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-white rounded-md shadow-sm text-sm">{content[editingLang]?.blog?.hero?.backgroundImage || 'غير محدد'}</div>
+                        )}
+                        {content[editingLang]?.blog?.hero?.backgroundImage && (
+                          <img 
+                            src={content[editingLang].blog.hero.backgroundImage} 
+                            alt="Background"
+                            className="w-40 h-24 object-cover rounded-lg border-2 mt-3"
+                            onError={(e) => { e.currentTarget.style.display = 'none' }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Featured Section */}
+                  <div className="bg-gradient-to-br from-purple-50 to-white p-6 rounded-lg border-2 border-purple-100 shadow-sm">
+                    <h3 className="font-semibold text-lg mb-4 text-purple-700 border-b-2 border-purple-200 pb-2">
+                      قسم المقال المميز
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">عنوان القسم</label>
+                        {isEditing ? (
+                          <Input
+                            value={content[editingLang]?.blog?.featured?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].blog) newContent[editingLang].blog = {}
+                              if (!newContent[editingLang].blog.featured) newContent[editingLang].blog.featured = {}
+                              newContent[editingLang].blog.featured.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="مقال مميز"
+                          />
+                        ) : (
+                          <div className="p-3 bg-white rounded-md shadow-sm">{content[editingLang]?.blog?.featured?.title || 'غير محدد'}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">النص التوضيحي (اختياري)</label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={2}
+                            value={content[editingLang]?.blog?.featured?.subtitle || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].blog) newContent[editingLang].blog = {}
+                              if (!newContent[editingLang].blog.featured) newContent[editingLang].blog.featured = {}
+                              newContent[editingLang].blog.featured.subtitle = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="أهم مقال في المدونة"
+                          />
+                        ) : (
+                          <div className="p-3 bg-white rounded-md shadow-sm">{content[editingLang]?.blog?.featured?.subtitle || 'غير محدد'}</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Recent Section */}
+                  <div className="bg-gradient-to-br from-green-50 to-white p-6 rounded-lg border-2 border-green-100 shadow-sm">
+                    <h3 className="font-semibold text-lg mb-4 text-green-700 border-b-2 border-green-200 pb-2">
+                      قسم المقالات الحديثة
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">عنوان القسم</label>
+                        {isEditing ? (
+                          <Input
+                            value={content[editingLang]?.blog?.recent?.title || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].blog) newContent[editingLang].blog = {}
+                              if (!newContent[editingLang].blog.recent) newContent[editingLang].blog.recent = {}
+                              newContent[editingLang].blog.recent.title = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="المقالات الحديثة"
+                          />
+                        ) : (
+                          <div className="p-3 bg-white rounded-md shadow-sm">{content[editingLang]?.blog?.recent?.title || 'غير محدد'}</div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">النص التوضيحي</label>
+                        {isEditing ? (
+                          <Textarea
+                            rows={2}
+                            value={content[editingLang]?.blog?.recent?.subtitle || ''}
+                            onChange={(e) => {
+                              const newContent = JSON.parse(JSON.stringify(content))
+                              if (!newContent[editingLang]) newContent[editingLang] = {}
+                              if (!newContent[editingLang].blog) newContent[editingLang].blog = {}
+                              if (!newContent[editingLang].blog.recent) newContent[editingLang].blog.recent = {}
+                              newContent[editingLang].blog.recent.subtitle = e.target.value
+                              setContent(newContent)
+                            }}
+                            placeholder="آخر المقالات والأخبار..."
+                          />
+                        ) : (
+                          <div className="p-3 bg-white rounded-md shadow-sm">{content[editingLang]?.blog?.recent?.subtitle || 'غير محدد'}</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* UI Text */}
+                  <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-lg border-2 border-gray-100 shadow-sm">
+                    <h3 className="font-semibold text-lg mb-4 text-gray-700 border-b-2 border-gray-200 pb-2">
+                      نصوص واجهة المستخدم
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {['readMore', 'author', 'date', 'loading', 'noPosts', 'loadMore', 'minutesRead'].map((key) => (
+                        <div key={key}>
+                          <label className="block text-sm font-medium mb-2">
+                            {key === 'readMore' && 'اقرأ المزيد'}
+                            {key === 'author' && 'كتب بواسطة'}
+                            {key === 'date' && 'التاريخ'}
+                            {key === 'loading' && 'جاري التحميل'}
+                            {key === 'noPosts' && 'لا توجد مقالات'}
+                            {key === 'loadMore' && 'تحميل المزيد'}
+                            {key === 'minutesRead' && 'دقائق القراءة'}
+                          </label>
+                          {isEditing ? (
+                            <Input
+                              value={content[editingLang]?.blog?.ui?.[key] || ''}
+                              onChange={(e) => {
+                                const newContent = JSON.parse(JSON.stringify(content))
+                                if (!newContent[editingLang]) newContent[editingLang] = {}
+                                if (!newContent[editingLang].blog) newContent[editingLang].blog = {}
+                                if (!newContent[editingLang].blog.ui) newContent[editingLang].blog.ui = {}
+                                newContent[editingLang].blog.ui[key] = e.target.value
+                                setContent(newContent)
+                              }}
+                              className="text-sm"
+                            />
+                          ) : (
+                            <div className="p-2 bg-white rounded-md shadow-sm text-sm">{content[editingLang]?.blog?.ui?.[key] || 'غير محدد'}</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </Card>
             )}

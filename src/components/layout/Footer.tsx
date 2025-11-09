@@ -30,19 +30,29 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
 
   // Memoize logo URL to prevent unnecessary recalculations
   const logoUrl = useMemo(() => {
-    if (!siteSettings?.logoUrl) return null
-    return siteSettings.darkModeEnabled && siteSettings.darkModeLogoUrl 
-      ? siteSettings.darkModeLogoUrl 
-      : siteSettings.logoUrl
-  }, [siteSettings?.logoUrl, siteSettings?.darkModeLogoUrl, siteSettings?.darkModeEnabled])
+    // Use footerLogoUrl if available, fallback to old logoUrl for backward compatibility
+    const mainLogo = siteSettings?.footerLogoUrl || siteSettings?.logoUrl
+    if (!mainLogo) return null
+    
+    // Check for dark mode logo
+    const darkModeLogo = siteSettings?.footerDarkModeLogoUrl || siteSettings?.darkModeLogoUrl
+    return siteSettings.darkModeEnabled && darkModeLogo ? darkModeLogo : mainLogo
+  }, [siteSettings?.footerLogoUrl, siteSettings?.logoUrl, siteSettings?.footerDarkModeLogoUrl, siteSettings?.darkModeLogoUrl, siteSettings?.darkModeEnabled])
   
   // Memoize alt text
   const logoAlt = useMemo(() => {
     if (!siteSettings) return 'Company Logo'
-    return locale === 'ar' ? siteSettings.logoAltAr || 'شعار الشركة' :
-           locale === 'es' ? siteSettings.logoAltEs || 'Logo de la Empresa' :
-           locale === 'fr' ? siteSettings.logoAltFr || 'Logo de l\'Entreprise' :
-           siteSettings.logoAlt || 'Company Logo'
+    
+    // Use footerLogoAlt if available, fallback to old logoAlt
+    const altAr = siteSettings.footerLogoAltAr || siteSettings.logoAltAr || 'شعار الشركة'
+    const altEs = siteSettings.footerLogoAltEs || siteSettings.logoAltEs || 'Logo de la Empresa'
+    const altFr = siteSettings.footerLogoAltFr || siteSettings.logoAltFr || 'Logo de l\'Entreprise'
+    const altEn = siteSettings.footerLogoAlt || siteSettings.logoAlt || 'Company Logo'
+    
+    return locale === 'ar' ? altAr :
+           locale === 'es' ? altEs :
+           locale === 'fr' ? altFr :
+           altEn
   }, [siteSettings, locale])
 
   const footerSections = {

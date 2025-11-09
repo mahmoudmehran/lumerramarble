@@ -27,19 +27,29 @@ export default function Navbar({ locale }: NavbarProps) {
   
   // Memoize logo URL to prevent unnecessary recalculations
   const logoUrl = useMemo(() => {
-    if (!siteSettings?.logoUrl) return null
-    return siteSettings.darkModeEnabled && siteSettings.darkModeLogoUrl 
-      ? siteSettings.darkModeLogoUrl 
-      : siteSettings.logoUrl
-  }, [siteSettings?.logoUrl, siteSettings?.darkModeLogoUrl, siteSettings?.darkModeEnabled])
+    // Use headerLogoUrl if available, fallback to old logoUrl for backward compatibility
+    const mainLogo = siteSettings?.headerLogoUrl || siteSettings?.logoUrl
+    if (!mainLogo) return null
+    
+    // Check for dark mode logo
+    const darkModeLogo = siteSettings?.headerDarkModeLogoUrl || siteSettings?.darkModeLogoUrl
+    return siteSettings.darkModeEnabled && darkModeLogo ? darkModeLogo : mainLogo
+  }, [siteSettings?.headerLogoUrl, siteSettings?.logoUrl, siteSettings?.headerDarkModeLogoUrl, siteSettings?.darkModeLogoUrl, siteSettings?.darkModeEnabled])
   
   // Memoize alt text
   const logoAlt = useMemo(() => {
     if (!siteSettings) return 'Company Logo'
-    return locale === 'ar' ? siteSettings.logoAltAr || 'شعار الشركة' :
-           locale === 'es' ? siteSettings.logoAltEs || 'Logo de la Empresa' :
-           locale === 'fr' ? siteSettings.logoAltFr || 'Logo de l\'Entreprise' :
-           siteSettings.logoAlt || 'Company Logo'
+    
+    // Use headerLogoAlt if available, fallback to old logoAlt
+    const altAr = siteSettings.headerLogoAltAr || siteSettings.logoAltAr || 'شعار الشركة'
+    const altEs = siteSettings.headerLogoAltEs || siteSettings.logoAltEs || 'Logo de la Empresa'
+    const altFr = siteSettings.headerLogoAltFr || siteSettings.logoAltFr || 'Logo de l\'Entreprise'
+    const altEn = siteSettings.headerLogoAlt || siteSettings.logoAlt || 'Company Logo'
+    
+    return locale === 'ar' ? altAr :
+           locale === 'es' ? altEs :
+           locale === 'fr' ? altFr :
+           altEn
   }, [siteSettings, locale])
   
   const langDropdownRef = useRef<HTMLDivElement>(null)
