@@ -36,9 +36,13 @@ export function ThemeWrapper({ settings, children }: ThemeWrapperProps) {
     // Apply typography and appearance settings
     if (settings.fontFamily) {
       root.style.setProperty('--font-family-base', settings.fontFamily)
+      // Apply directly to body for immediate effect
+      document.body.style.fontFamily = settings.fontFamily
     }
     if (settings.fontSize) {
       root.style.setProperty('--font-size-base', settings.fontSize)
+      // Apply directly to body for immediate effect
+      document.body.style.fontSize = settings.fontSize
     }
     if (settings.borderRadius) {
       root.style.setProperty('--border-radius', settings.borderRadius)

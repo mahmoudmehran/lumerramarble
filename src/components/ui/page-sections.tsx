@@ -115,7 +115,7 @@ export function PageHeader({ title, subtitle, image, className }: PageHeaderProp
 interface ContentSectionProps {
   title?: string
   subtitle?: string
-  variant?: 'white' | 'light' | 'primary' | 'secondary' | 'tertiary'
+  variant?: 'white' | 'light' | 'primary' | 'secondary' | 'tertiary' | 'quinary'
   className?: string
   children: ReactNode
   centered?: boolean
@@ -134,7 +134,8 @@ export function ContentSection({
     light: 'bg-[var(--color-quinary-50)]',
     primary: 'bg-[var(--color-primary)] text-[var(--color-quinary)]',
     secondary: 'bg-[var(--color-secondary)] text-[var(--color-quinary)]',
-    tertiary: 'bg-[var(--color-tertiary)] text-[var(--color-quinary)]'
+    tertiary: 'bg-[var(--color-tertiary)] text-[var(--color-quinary)]',
+    quinary: 'bg-[var(--color-quinary)] text-[var(--color-quaternary)]'
   }
 
   return (
@@ -157,7 +158,7 @@ export function ContentSection({
                 'text-xl max-w-3xl',
                 centered && 'mx-auto',
                 variant === 'white' || variant === 'light'
-                  ? 'text-[var(--color-quaternary)]'
+                  ? 'text-[var(--color-tertiary)]'
                   : 'text-[var(--color-quinary-200)]'
               )}>
                 {subtitle}
@@ -220,8 +221,8 @@ export function StatCard({ number, label, icon, variant = 'light', className }: 
         <div className={cn(
           'w-12 h-12 mx-auto mb-4',
           variant === 'light'
-            ? 'text-[var(--color-secondary)]'
-            : 'text-[var(--color-secondary)]'
+            ? 'text-[var(--color-tertiary)]'
+            : 'text-[var(--color-tertiary)]'
         )}>
           {icon}
         </div>
@@ -229,15 +230,16 @@ export function StatCard({ number, label, icon, variant = 'light', className }: 
       <div className={cn(
         'text-4xl md:text-5xl font-bold mb-2',
         variant === 'light'
-          ? 'text-[var(--color-secondary)]'
-          : 'text-[var(--color-secondary)]'
+          ? 'text-[var(--color-tertiary)]'
+          : 'text-[var(--color-tertiary)]'
       )}>
         {number}
       </div>
       <div className={cn(
+        'text-lg',
         variant === 'light'
-          ? 'text-[var(--color-quaternary)]'
-          : 'text-[var(--color-quaternary-300)]'
+          ? 'text-[var(--color-tertiary)]'
+          : 'text-[var(--color-tertiary-300)]'
       )}>
         {label}
       </div>
@@ -363,7 +365,7 @@ export function CTASection({
 }: CTASectionProps) {
   const backgrounds = {
     primary: 'from-[var(--color-primary)] to-[var(--color-primary-700)]',
-    secondary: 'from-[var(--color-secondary)] to-[var(--color-secondary-700)]',
+    secondary: 'from-[var(--color-quinary)] to-[var(--color-quinary-700)]',
     tertiary: 'from-[var(--color-tertiary)] to-[var(--color-tertiary-700)]'
   }
 
@@ -374,11 +376,11 @@ export function CTASection({
       className
     )}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-quinary)] mb-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-tertiary)] mb-4">
           {title}
         </h2>
         {subtitle && (
-          <p className="text-xl text-[var(--color-quinary-200)] mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-[var(--color-tertiary)] mb-8 max-w-2xl mx-auto">
             {subtitle}
           </p>
         )}

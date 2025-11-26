@@ -129,9 +129,10 @@ export default async function LocaleLayout({
                   className="min-h-screen flex flex-col" 
                   dir={isRTL ? 'rtl' : 'ltr'}
                   data-locale={isRTL ? 'arabic' : 'latin'}
+                  style={{ fontFamily: isRTL ? 'var(--font-cairo)' : 'var(--font-inter)' }}
                 >
                   <Navbar locale={typedLocale} />
-                  <main className="flex-grow">
+                  <main className="flex-grow pt-16">
                     {children}
                   </main>
                   <Footer locale={typedLocale} copyrightText={settings.copyrightText} />

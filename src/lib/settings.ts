@@ -53,6 +53,7 @@ export interface SiteSettings {
   instagram?: string
   linkedin?: string
   youtube?: string
+  tiktok?: string
   
   // SEO Settings
   metaTitle?: string

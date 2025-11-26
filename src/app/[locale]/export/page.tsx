@@ -304,8 +304,8 @@ export default async function ExportPage({ params }: ExportPageProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {currentContent.services.items.map((service, index) => {
               const IconComponent = service.icon
-              // صور خلفية مناسبة لكل خدمة
-              const backgroundImages = [
+              // صور خلفية مناسبة لكل خدمة (الافتراضية)
+              const defaultBackgroundImages = [
                 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800', // استشارة
                 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', // تغليف
                 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800', // شحن
@@ -313,6 +313,13 @@ export default async function ExportPage({ params }: ExportPageProps) {
                 'https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?w=800', // وقت
                 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800'  // خدمة عملاء
               ]
+              
+              // أسماء الخدمات للربط مع قاعدة البيانات
+              const serviceKeys = ['consultation', 'packaging', 'shipping', 'quality', 'delivery', 'aftersales']
+              const serviceKey = serviceKeys[index]
+              
+              // جلب الصورة من قاعدة البيانات أو استخدام الافتراضية
+              const serviceImage = getText('services', `${serviceKey}_image`) || defaultBackgroundImages[index]
               
               return (
                 <div 
@@ -323,7 +330,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
                   <div 
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                     style={{
-                      backgroundImage: `url(${backgroundImages[index]})`,
+                      backgroundImage: `url(${serviceImage})`,
                     }}
                   />
                   
@@ -352,8 +359,8 @@ export default async function ExportPage({ params }: ExportPageProps) {
 
       {/* Process Section - Professional Timeline Design */}
       <ContentSection
-        title={currentContent.process.title}
-        subtitle={currentContent.process.subtitle}
+        title={getText('process', 'title') || currentContent.process.title}
+        subtitle={getText('process', 'subtitle') || currentContent.process.subtitle}
         variant="light"
         centered
       >
@@ -362,8 +369,8 @@ export default async function ExportPage({ params }: ExportPageProps) {
           <div className="hidden lg:block relative">
             <div className="relative grid grid-cols-6 gap-4">
               {currentContent.process.steps.map((step, index) => {
-                // صور خلفية لكل خطوة من خطوات التصدير
-                const stepImages = [
+                // صور خلفية لكل خطوة من خطوات التصدير (افتراضية)
+                const defaultStepImages = [
                   'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800', // طلب عرض السعر
                   'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800', // اختيار المنتجات
                   'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800', // التأكيد والدفع
@@ -372,6 +379,16 @@ export default async function ExportPage({ params }: ExportPageProps) {
                   'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800'  // التسليم
                 ]
                 
+                // أسماء الخطوات للربط مع قاعدة البيانات
+                const stepKeys = ['quote', 'selection', 'confirmation', 'production', 'packaging', 'delivery']
+                const stepKey = stepKeys[index]
+                
+                // جلب البيانات من قاعدة البيانات أو استخدام الافتراضية
+                const stepImage = getText('process', `${stepKey}_image`) || defaultStepImages[index]
+                const stepNumber = getText('process', `${stepKey}_number`) || step.number
+                const stepTitle = getText('process', `${stepKey}_title`) || step.title
+                const stepDescription = getText('process', `${stepKey}_description`) || step.description
+                
                 return (
                 <div key={index} className="relative">
                   {/* Number */}
@@ -379,7 +396,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
                     index % 2 === 0 ? 'mt-0' : 'mt-32'
                   }`}>
                     <span className="text-[var(--color-primary)] font-bold text-3xl">
-                      {step.number}
+                      {stepNumber}
                     </span>
                   </div>
                   
@@ -387,7 +404,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
                   <h3 className={`font-bold text-base text-[var(--color-secondary-900)] mb-8 text-center min-h-[3rem] flex items-center justify-center px-2 ${
                     index % 2 === 0 ? '' : ''
                   }`}>
-                    {step.title}
+                    {stepTitle}
                   </h3>
                   
                   {/* Content Card with Background Image */}
@@ -398,7 +415,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
                     <div 
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                       style={{
-                        backgroundImage: `url(${stepImages[index]})`,
+                        backgroundImage: `url(${stepImage})`,
                       }}
                     />
                     
@@ -432,7 +449,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
           <div className="hidden md:block lg:hidden relative">
             <div className="grid grid-cols-3 gap-6">
               {currentContent.process.steps.map((step, index) => {
-                const stepImages = [
+                const defaultStepImages = [
                   'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800',
                   'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800',
                   'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800',
@@ -440,19 +457,25 @@ export default async function ExportPage({ params }: ExportPageProps) {
                   'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800',
                   'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800'
                 ]
+                const stepKeys = ['quote', 'selection', 'confirmation', 'production', 'packaging', 'delivery']
+                const stepKey = stepKeys[index]
+                const stepImage = getText('process', `${stepKey}_image`) || defaultStepImages[index]
+                const stepNumber = getText('process', `${stepKey}_number`) || step.number
+                const stepTitle = getText('process', `${stepKey}_title`) || step.title
+                const stepDescription = getText('process', `${stepKey}_description`) || step.description
                 
                 return (
                 <div key={index} className="relative">
                   {/* Number */}
                   <div className="text-center mb-4">
                     <span className="text-[var(--color-primary)] font-bold text-2xl">
-                      {step.number}
+                      {stepNumber}
                     </span>
                   </div>
                   
                   {/* Title */}
                   <h3 className="font-bold text-base text-[var(--color-secondary-900)] mb-6 text-center px-2 min-h-[3rem] flex items-center justify-center">
-                    {step.title}
+                    {stepTitle}
                   </h3>
                   
                   {/* Content Card */}
@@ -460,13 +483,13 @@ export default async function ExportPage({ params }: ExportPageProps) {
                     <div 
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                       style={{
-                        backgroundImage: `url(${stepImages[index]})`,
+                        backgroundImage: `url(${stepImage})`,
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 group-hover:from-[var(--color-primary)]/90 group-hover:via-[var(--color-primary)]/60 group-hover:to-[var(--color-primary)]/40 transition-all duration-500" />
                     <div className="relative z-10 p-6 min-h-[160px] flex items-center justify-center">
                       <p className="text-white text-sm leading-relaxed text-center drop-shadow-lg font-medium">
-                        {step.description}
+                        {stepDescription}
                       </p>
                     </div>
                   </div>
@@ -486,7 +509,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
           <div className="block md:hidden relative">
             <div className="space-y-8">
               {currentContent.process.steps.map((step, index) => {
-                const stepImages = [
+                const defaultStepImages = [
                   'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800',
                   'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800',
                   'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800',
@@ -494,19 +517,25 @@ export default async function ExportPage({ params }: ExportPageProps) {
                   'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800',
                   'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800'
                 ]
+                const stepKeys = ['quote', 'selection', 'confirmation', 'production', 'packaging', 'delivery']
+                const stepKey = stepKeys[index]
+                const stepImage = getText('process', `${stepKey}_image`) || defaultStepImages[index]
+                const stepNumber = getText('process', `${stepKey}_number`) || step.number
+                const stepTitle = getText('process', `${stepKey}_title`) || step.title
+                const stepDescription = getText('process', `${stepKey}_description`) || step.description
                 
                 return (
                 <div key={index} className="relative">
                   {/* Number */}
                   <div className="text-center mb-3">
                     <span className="text-[var(--color-primary)] font-bold text-2xl">
-                      {step.number}
+                      {stepNumber}
                     </span>
                   </div>
                   
                   {/* Title */}
                   <h3 className="font-bold text-base text-[var(--color-secondary-900)] mb-4 text-center px-2">
-                    {step.title}
+                    {stepTitle}
                   </h3>
                   
                   {/* Content Card */}
@@ -514,13 +543,13 @@ export default async function ExportPage({ params }: ExportPageProps) {
                     <div 
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
                       style={{
-                        backgroundImage: `url(${stepImages[index]})`,
+                        backgroundImage: `url(${stepImage})`,
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 transition-all duration-500" />
                     <div className="relative z-10 p-5 min-h-[140px] flex items-center justify-center">
                       <p className="text-white text-sm leading-relaxed text-center drop-shadow-lg font-medium">
-                        {step.description}
+                        {stepDescription}
                       </p>
                     </div>
                   </div>
@@ -540,16 +569,16 @@ export default async function ExportPage({ params }: ExportPageProps) {
 
       {/* Countries Section */}
       <ContentSection
-        title={currentContent.countries.title}
-        subtitle={currentContent.countries.subtitle}
+        title={getText('countries', 'title') || currentContent.countries.title}
+        subtitle={getText('countries', 'subtitle') || currentContent.countries.subtitle}
         variant="white"
         centered
       >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {currentContent.countries.regions.map((region, index) => {
-              // صور خلفية للقارات
-              const regionImages = [
+              // صور خلفية للقارات (افتراضية)
+              const defaultRegionImages = [
                 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800', // أوروبا
                 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800', // آسيا
                 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=800', // أمريكا الشمالية
@@ -557,6 +586,16 @@ export default async function ExportPage({ params }: ExportPageProps) {
                 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800', // أفريقيا
                 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800'  // أوقيانوسيا
               ]
+              
+              // مفاتيح المناطق
+              const regionKeys = ['europe', 'asia', 'americas', 'southamerica', 'africa', 'oceania']
+              const regionKey = regionKeys[index]
+              
+              // جلب البيانات من قاعدة البيانات
+              const regionName = getText('countries', `${regionKey}_name`) || region.name
+              const regionCount = getText('countries', `${regionKey}_count`) || region.count
+              const regionImage = getText('countries', `${regionKey}_image`) || defaultRegionImages[index]
+              const regionFlag = getText('countries', `${regionKey}_flag`) || region.flag
               
               return (
                 <div 
@@ -567,7 +606,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
                   <div 
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                     style={{
-                      backgroundImage: `url(${regionImages[index]})`,
+                      backgroundImage: `url(${regionImage})`,
                     }}
                   />
                   
@@ -577,14 +616,14 @@ export default async function ExportPage({ params }: ExportPageProps) {
                   {/* Content */}
                   <div className="relative z-10 p-8 text-center min-h-[280px] flex flex-col justify-center items-center">
                     <div className="text-6xl mb-4 transform group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 filter drop-shadow-lg">
-                      {region.flag}
+                      {regionFlag}
                     </div>
                     <h3 className="font-bold text-2xl text-white mb-2 drop-shadow-lg">
-                      {region.name}
+                      {regionName}
                     </h3>
                     <div className="w-16 h-1 bg-white/50 group-hover:bg-white group-hover:w-24 transition-all duration-500 mb-3 rounded-full" />
                     <p className="text-white font-bold text-xl drop-shadow-lg">
-                      {region.count}
+                      {regionCount}
                     </p>
                     
                     {/* Decorative element */}
@@ -601,21 +640,29 @@ export default async function ExportPage({ params }: ExportPageProps) {
 
       {/* Features Section */}
       <ContentSection
-        title={currentContent.features.title}
+        title={getText('features', 'title') || currentContent.features.title}
         variant="light"
         centered
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {currentContent.features.items.map((feature, index) => {
-            // صور خلفية للمميزات
-            const featureImages = [
-              'https://images.unsplash.com/photo-1494412519320-aa613dfb7738?w=800', // شحن آمن - صندوق محمي
+            // صور خلفية للمميزات (افتراضية)
+            const defaultFeatureImages = [
+              'https://images.unsplash.com/photo-1494412519320-aa613dfb7738?w=800', // شحن آمن
               'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800', // أسعار تنافسية
               'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800', // دعم فني
-              'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800', // مرونة في الدفع - بطاقات
+              'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800', // مرونة في الدفع
               'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', // تتبع الشحنة
-              'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800'  // منتجات عالية الجودة - رخام فاخر
+              'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800'  // منتجات عالية الجودة
             ]
+            
+            // مفاتيح المميزات
+            const featureKeys = ['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6']
+            const featureKey = featureKeys[index]
+            
+            // جلب البيانات من قاعدة البيانات
+            const featureText = getText('features', `${featureKey}_text`) || feature
+            const featureImage = getText('features', `${featureKey}_image`) || defaultFeatureImages[index]
             
             return (
               <div 
@@ -626,7 +673,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
                 <div 
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                   style={{
-                    backgroundImage: `url(${featureImages[index]})`,
+                    backgroundImage: `url(${featureImage})`,
                   }}
                 />
                 
@@ -640,7 +687,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
                       <CheckCircle className="w-14 h-14 text-white drop-shadow-lg" strokeWidth={2.5} />
                     </div>
                     <span className="text-white font-bold text-2xl leading-relaxed drop-shadow-lg flex-1">
-                      {feature}
+                      {featureText}
                     </span>
                   </div>
                 </div>
@@ -654,32 +701,36 @@ export default async function ExportPage({ params }: ExportPageProps) {
       <ContentSection variant="primary" centered>
         <Grid cols={4} gap={8}>
           <StatCard
-            number="50+"
-            label={locale === 'ar' ? 'دولة نصدر إليها' : 'Countries Exported To'}
+            number={getText('stats', 'countries_number') || '50+'}
+            label={getText('stats', 'countries_text') || (locale === 'ar' ? 'دولة نصدر إليها' : 'Countries Exported To')}
             variant="light"
+            className="text-[var(--color-quinary)]"
           />
           <StatCard
-            number="1000+"
-            label={locale === 'ar' ? 'شحنة ناجحة' : 'Successful Shipments'}
+            number={getText('stats', 'shipments_number') || '1000+'}
+            label={getText('stats', 'shipments_text') || (locale === 'ar' ? 'شحنة ناجحة' : 'Successful Shipments')}
             variant="light"
+            className="text-[var(--color-quinary)]"
           />
           <StatCard
-            number="15+"
-            label={locale === 'ar' ? 'سنوات خبرة' : 'Years Experience'}
+            number={getText('stats', 'experience_number') || '15+'}
+            label={getText('stats', 'experience_text') || (locale === 'ar' ? 'سنوات خبرة' : 'Years Experience')}
             variant="light"
+            className="text-[var(--color-quinary)]"
           />
           <StatCard
-            number="100%"
-            label={locale === 'ar' ? 'رضا العملاء' : 'Customer Satisfaction'}
+            number={getText('stats', 'satisfaction_number') || '100%'}
+            label={getText('stats', 'satisfaction_text') || (locale === 'ar' ? 'رضا العملاء' : 'Customer Satisfaction')}
             variant="light"
+            className="text-[var(--color-quinary)]"
           />
         </Grid>
       </ContentSection>
 
       {/* CTA Section */}
       <CTASection
-        title={currentContent.cta.title}
-        subtitle={currentContent.cta.subtitle}
+        title={getText('cta', 'title') || (locale === 'ar' ? 'ابدأ مشروع التصدير الخاص بك' : 'Start Your Export Project')}
+        subtitle={getText('cta', 'subtitle') || (locale === 'ar' ? 'احصل على عرض سعر مخصص وابدأ رحلة التصدير معنا اليوم' : 'Get a custom quote and start your export journey with us today')}
         variant="secondary"
       >
         <Link href={`/${locale}/quote`}>
@@ -687,7 +738,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
             size="lg" 
             className="text-lg px-8 py-3 group transition-all duration-300 hover:scale-105 hover:shadow-xl"
           >
-            {currentContent.cta.button}
+            {getText('cta', 'buttonText') || (locale === 'ar' ? 'اطلب عرض سعر الآن' : 'Request Quote Now')}
             {isRTL ? <ArrowLeft className="ml-2 w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
           </Button>
         </Link>

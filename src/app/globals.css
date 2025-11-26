@@ -134,7 +134,8 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-base, var(--font-inter)), system-ui, -apple-system, sans-serif;
+  font-size: var(--font-size-base, 16px);
   overflow-x: hidden; /* منع السلايد الأفقي */
 }
 
@@ -247,11 +248,13 @@ section {
 }
 
 [data-locale="arabic"] {
-  font-family: "Cairo", "Tajawal", "Amiri", Arial, sans-serif;
+  font-family: var(--font-family-base, var(--font-cairo)), "Tajawal", "Amiri", system-ui, sans-serif;
+  font-size: var(--font-size-base, 16px);
 }
 
 [data-locale="latin"] {
-  font-family: "Inter", "Roboto", Arial, sans-serif;
+  font-family: var(--font-family-base, var(--font-inter)), "Roboto", system-ui, sans-serif;
+  font-size: var(--font-size-base, 16px);
 }
 
 /* Force override any remaining hardcoded colors */

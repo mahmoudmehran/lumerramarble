@@ -25,6 +25,7 @@ interface ThemeSettings {
   instagram?: string
   linkedin?: string
   youtube?: string
+  tiktok?: string
   metaTitle?: string
   metaTitleAr?: string
   metaDescription?: string
@@ -147,6 +148,9 @@ export async function PUT(request: NextRequest) {
 
     const body = await request.json()
     
+    console.log('📥 Received settings update request')
+    console.log('📊 TikTok value:', body.tiktok)
+    
     console.log('📥 Received settings update:', { 
       logoUrl: body.logoUrl, 
       darkModeLogoUrl: body.darkModeLogoUrl,
@@ -154,7 +158,8 @@ export async function PUT(request: NextRequest) {
       headerDarkModeLogoUrl: body.headerDarkModeLogoUrl,
       footerLogoUrl: body.footerLogoUrl,
       footerDarkModeLogoUrl: body.footerDarkModeLogoUrl,
-      faviconUrl: body.faviconUrl 
+      faviconUrl: body.faviconUrl,
+      tiktok: body.tiktok
     })
     
     const {
@@ -199,6 +204,7 @@ export async function PUT(request: NextRequest) {
       instagram,
       linkedin,
       youtube,
+      tiktok,
       metaTitle,
       metaTitleAr,
       metaTitleEs,
@@ -281,6 +287,7 @@ export async function PUT(request: NextRequest) {
           instagram,
           linkedin,
           youtube,
+          tiktok,
           metaTitle,
           metaTitleAr,
           metaTitleEs,
@@ -359,6 +366,7 @@ export async function PUT(request: NextRequest) {
           instagram,
           linkedin,
           youtube,
+          tiktok,
           metaTitle,
           metaTitleAr,
           metaTitleEs,
@@ -402,8 +410,13 @@ export async function PUT(request: NextRequest) {
       message: 'Settings updated successfully',
       settings 
     })
-  } catch (error) {
+    } catch (error) {
     console.error('💥 Error updating settings:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('💥 Error message:', error instanceof Error ? error.message : 'Unknown error')
+    console.error('💥 Error stack:', error instanceof Error ? error.stack : 'No stack')
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }

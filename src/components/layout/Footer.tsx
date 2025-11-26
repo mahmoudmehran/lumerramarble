@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useMemo } from 'react'
-import { Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react'
+import { Instagram, Youtube, Mail, Phone, MapPin, Facebook } from 'lucide-react'
 import { useSiteSettings } from '../../contexts/ThemeContext'
 
 // WhatsApp & TikTok Icons
@@ -187,7 +187,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
               <img
                 src={logoUrl}
                 alt={logoAlt}
-                className="max-h-24 max-w-[250px] h-auto w-auto object-contain"
+                className="max-h-16 max-w-[160px] h-auto w-auto object-contain"
                 loading="eager"
                 fetchPriority="high"
                 decoding="async"
@@ -222,42 +222,61 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
           
           {/* Social Media Links */}
           <div className="inline-flex gap-3 flex-shrink-0">
-            <a 
-              href="https://youtube.com/@lumerramarble" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              aria-label="YouTube"
-              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
-            >
-              <Youtube className="w-7 h-7" />
-            </a>
-            <a 
-              href="https://instagram.com/lumerramarble" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
-            >
-              <Instagram className="w-7 h-7" />
-            </a>
-            <a 
-              href="https://wa.me/201113121444" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              aria-label="WhatsApp"
-              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
-            >
-              <WhatsAppIcon />
-            </a>
-            <a 
-              href="https://tiktok.com/@lumerramarble" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              aria-label="TikTok"
-              className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
-            >
-              <TikTokIcon />
-            </a>
+            {siteSettings?.youtube && (
+              <a 
+                href={siteSettings.youtube} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="YouTube"
+                className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+              >
+                <Youtube className="w-7 h-7" />
+              </a>
+            )}
+            {siteSettings?.instagram && (
+              <a 
+                href={siteSettings.instagram} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+              >
+                <Instagram className="w-7 h-7" />
+              </a>
+            )}
+            {siteSettings?.facebook && (
+              <a 
+                href={siteSettings.facebook} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+              >
+                <Facebook className="w-7 h-7" />
+              </a>
+            )}
+            {siteSettings?.whatsapp && (
+              <a 
+                href={`https://wa.me/${siteSettings.whatsapp.replace(/\D/g, '')}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+              >
+                <WhatsAppIcon />
+              </a>
+            )}
+            {siteSettings?.tiktok && (
+              <a 
+                href={siteSettings.tiktok} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+              >
+                <TikTokIcon />
+              </a>
+            )}
           </div>
         </div>
         

@@ -2411,7 +2411,42 @@ export default function AdminPanel() {
 
                       <div>
                         <label className="block text-sm font-medium mb-2">
-                          صورة الموقع
+                          صورة خلفية كونتينر البيانات
+                        </label>
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, 'about', 'location', 'backgroundImage')}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <p className="text-sm text-gray-500">
+                              اختر صورة خلفية لكونتينر البيانات (خريطة أو صورة أخرى)
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-gray-50 rounded-md">
+                            {content[editingLang]?.about?.location?.backgroundImage || 'غير محدد'}
+                          </div>
+                        )}
+                        {content[editingLang]?.about?.location?.backgroundImage && (
+                          <div className="mt-2">
+                            <img 
+                              src={content[editingLang].about.location.backgroundImage} 
+                              alt="صورة خلفية البيانات" 
+                              className="w-32 h-20 object-cover rounded border"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          صورة الموقع (الجانبية)
                         </label>
                         {isEditing ? (
                           <div className="space-y-2">
@@ -3060,15 +3095,15 @@ export default function AdminPanel() {
                       </div>
 
                       {/* 6 Steps */}
-                      {['inquiry', 'consultation', 'preparation', 'shipping', 'customs', 'delivery'].map((step, idx) => (
+                      {['quote', 'selection', 'confirmation', 'production', 'packaging', 'delivery'].map((step, idx) => (
                         <div key={step} className="bg-white p-5 rounded-lg border-2 border-gray-200 shadow-sm">
                           <h4 className="font-semibold text-md mb-3 text-blue-600 flex items-center gap-2">
                             <span className="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">{idx + 1}</span>
-                            {step === 'inquiry' && 'الاستفسار الأولي'}
-                            {step === 'consultation' && 'الاستشارة والتخطيط'}
-                            {step === 'preparation' && 'التحضير والتعبئة'}
-                            {step === 'shipping' && 'الشحن'}
-                            {step === 'customs' && 'التخليص الجمركي'}
+                            {step === 'quote' && 'طلب عرض السعر'}
+                            {step === 'selection' && 'اختيار المنتجات'}
+                            {step === 'confirmation' && 'التأكيد والدفع'}
+                            {step === 'production' && 'الإنتاج والتجهيز'}
+                            {step === 'packaging' && 'التغليف والشحن'}
                             {step === 'delivery' && 'التسليم'}
                           </h4>
                           
@@ -3235,16 +3270,16 @@ export default function AdminPanel() {
                       </div>
 
                       {/* 6 Regions */}
-                      {['europe', 'asia', 'africa', 'americas', 'oceania', 'middleeast'].map((region, idx) => (
+                      {['europe', 'asia', 'americas', 'southamerica', 'africa', 'oceania'].map((region, idx) => (
                         <div key={region} className="bg-white p-5 rounded-lg border-2 border-gray-200 shadow-sm">
                           <h4 className="font-semibold text-md mb-3 text-green-600 flex items-center gap-2">
                             <span className="bg-green-100 text-green-700 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">{idx + 1}</span>
                             {region === 'europe' && 'أوروبا'}
                             {region === 'asia' && 'آسيا'}
+                            {region === 'americas' && 'أمريكا الشمالية'}
+                            {region === 'southamerica' && 'أمريكا الجنوبية'}
                             {region === 'africa' && 'أفريقيا'}
-                            {region === 'americas' && 'الأمريكتين'}
                             {region === 'oceania' && 'أوقيانوسيا'}
-                            {region === 'middleeast' && 'الشرق الأوسط'}
                           </h4>
                           
                           <div className="space-y-3">
@@ -3287,6 +3322,27 @@ export default function AdminPanel() {
                                 />
                               ) : (
                                 <div className="p-2 bg-gray-50 rounded text-sm">{content[editingLang]?.export?.countries?.[`${region}_count`] || 'غير محدد'}</div>
+                              )}
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-medium mb-1 text-gray-600">علم المنطقة (Emoji)</label>
+                              {isEditing ? (
+                                <Input
+                                  value={content[editingLang]?.export?.countries?.[`${region}_flag`] || ''}
+                                  onChange={(e) => {
+                                    const newContent = JSON.parse(JSON.stringify(content))
+                                    if (!newContent[editingLang]) newContent[editingLang] = {}
+                                    if (!newContent[editingLang].export) newContent[editingLang].export = {}
+                                    if (!newContent[editingLang].export.countries) newContent[editingLang].export.countries = {}
+                                    newContent[editingLang].export.countries[`${region}_flag`] = e.target.value
+                                    setContent(newContent)
+                                  }}
+                                  placeholder="🇪🇺"
+                                  className="text-sm"
+                                />
+                              ) : (
+                                <div className="p-2 bg-gray-50 rounded text-sm text-3xl">{content[editingLang]?.export?.countries?.[`${region}_flag`] || '🌍'}</div>
                               )}
                             </div>
 

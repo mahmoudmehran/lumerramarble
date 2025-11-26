@@ -96,6 +96,7 @@ export default function SiteSettings() {
     instagram: 'https://instagram.com/lumerramarble',
     linkedin: 'https://linkedin.com/company/lumerramarble',
     youtube: 'https://youtube.com/@lumerramarble',
+    tiktok: '',
     
     // SEO Settings (4 languages)
     metaTitle: 'Lumerra Marble - Premium Egyptian Marble & Granite Export',
@@ -280,6 +281,24 @@ export default function SiteSettings() {
         console.log('✅ Save successful:', data)
         setOriginalSettings(settings)
         toast.success('تم حفظ الإعدادات بنجاح!')
+        
+        // Revalidate cache and refresh to apply new theme settings
+        try {
+          await fetch('/api/revalidate?tag=settings', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+          console.log('🔄 Cache revalidated')
+        } catch (e) {
+          console.log('⚠️ Failed to revalidate cache:', e)
+        }
+        
+        // Refresh the page to apply theme changes
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000)
       } else {
         const data = await response.json()
         console.error('❌ Save failed:', data)
@@ -324,6 +343,9 @@ export default function SiteSettings() {
     }
     if (settings.youtube && !urlRegex.test(settings.youtube)) {
       errors.youtube = 'رابط يوتيوب غير صحيح'
+    }
+    if (settings.tiktok && !urlRegex.test(settings.tiktok)) {
+      errors.tiktok = 'رابط تيك توك غير صحيح'
     }
     
     // التحقق من الألوان
@@ -983,6 +1005,25 @@ export default function SiteSettings() {
                   <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.youtube}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  TikTok
+                </label>
+                <Input
+                  name="tiktok"
+                  value={settings.tiktok}
+                  onChange={handleInputChange}
+                  placeholder="https://tiktok.com/@alhotmarble"
+                  className={errors.tiktok ? 'border-red-500' : ''}
+                />
+                {errors.tiktok && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.tiktok}
                   </p>
                 )}
               </div>

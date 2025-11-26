@@ -19,6 +19,8 @@ interface NavbarProps {
 export default function Navbar({ locale }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
   const pathname = usePathname()
   const { t } = useTranslation()
   const nav = useNavTranslation()
@@ -54,6 +56,30 @@ export default function Navbar({ locale }: NavbarProps) {
   
   const langDropdownRef = useRef<HTMLDivElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
+
+  // Handle scroll behavior for showing/hiding navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      
+      // Show navbar when scrolling up or at the top
+      if (currentScrollY < lastScrollY || currentScrollY < 10) {
+        setIsVisible(true)
+      } 
+      // Hide navbar when scrolling down (but only after scrolling past 100px)
+      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false)
+        // Close dropdowns when hiding
+        setLangOpen(false)
+        setIsOpen(false)
+      }
+      
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
 
   // Close language dropdown when clicking outside
   useEffect(() => {
@@ -126,10 +152,12 @@ export default function Navbar({ locale }: NavbarProps) {
   }
 
   return (
-    <nav className="bg-[var(--color-quinary)] shadow-lg sticky top-0 z-50 border-b border-[var(--color-quaternary-100)]">
+    <nav className={`bg-[var(--color-quinary)] shadow-lg fixed top-0 left-0 right-0 z-50 border-b border-[var(--color-quaternary-100)] transition-transform duration-300 ${
+      isVisible ? 'translate-y-0' : '-translate-y-full'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo - Always on the left/right side based on RTL */}
+          {/* Logo */}
           <div className="flex-shrink-0">
             <Link href={`/${locale}`} prefetch={true}>
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -138,7 +166,7 @@ export default function Navbar({ locale }: NavbarProps) {
                   <img
                     src={logoUrl}
                     alt={logoAlt}
-                    className="max-h-24 max-w-[220px] h-auto w-auto object-contain"
+                    className="max-h-16 max-w-[160px] h-auto w-auto object-contain"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
@@ -162,6 +190,21 @@ export default function Navbar({ locale }: NavbarProps) {
                 </span>
               </div>
             </Link>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-[var(--color-quaternary)] hover:text-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--color-primary)] p-2 rounded-md"
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+            >
+              {isOpen ? (
+                <X className="block h-6 w-6" />
+              ) : (
+                <Menu className="block h-6 w-6" />
+              )}
+            </button>
           </div>
 
           {/* Desktop Navigation - Centered with equal spacing */}
@@ -245,21 +288,6 @@ export default function Navbar({ locale }: NavbarProps) {
                 {t('common.quote')}
               </Button>
             </Link>
-          </div>
-
-          {/* Mobile menu button - Always on the opposite side of logo */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-[var(--color-quaternary)] hover:text-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--color-primary)] p-2 rounded-md"
-              aria-label={isOpen ? 'Close menu' : 'Open menu'}
-            >
-              {isOpen ? (
-                <X className="block h-6 w-6" />
-              ) : (
-                <Menu className="block h-6 w-6" />
-              )}
-            </button>
           </div>
         </div>
       </div>

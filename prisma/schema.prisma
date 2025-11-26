@@ -199,6 +199,7 @@ model SiteSettings {
   instagram             String?
   linkedin              String?
   youtube               String?
+  tiktok                String?
   metaTitle             String?
   metaTitleAr           String?
   metaTitleEs           String?

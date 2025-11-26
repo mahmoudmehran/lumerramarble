@@ -1,6 +1,7 @@
-import { MapPin, Phone, Mail, Clock, Youtube, Instagram } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Youtube, Instagram, Facebook } from 'lucide-react'
 import { Card } from '../../../components/ui/card'
 import { getContent } from '../../../lib/content'
+import { getSiteSettings } from '../../../lib/settings'
 import ContactForm from './ContactForm'
 import { PageHeader, ContentSection } from '../../../components/ui/page-sections'
 
@@ -27,6 +28,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
   
   // جلب المحتوى من قاعدة البيانات
   const content = await getContent('contact')
+  const siteSettings = await getSiteSettings()
   
   const getText = (sectionKey: string, contentKey: string) => {
     return content[sectionKey]?.[contentKey]?.[locale as keyof typeof content[string][string]] || ''
@@ -54,33 +56,39 @@ export default async function ContactPage({ params }: ContactPageProps) {
                   </h3>
                   <div className="grid grid-cols-4 gap-4 mb-4">
                     {/* WhatsApp */}
-                    <a 
-                      href="https://wa.me/201000000000" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
-                      title="WhatsApp"
-                    >
-                      <WhatsAppIcon />
-                    </a>
+                    {siteSettings?.whatsapp && (
+                      <a 
+                        href={`https://wa.me/${siteSettings.whatsapp.replace(/\D/g, '')}`}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
+                        title="WhatsApp"
+                      >
+                        <WhatsAppIcon />
+                      </a>
+                    )}
 
                     {/* Phone */}
-                    <a 
-                      href={`tel:${getText('info', 'phone_value')}`}
-                      className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
-                      title={locale === 'ar' ? 'اتصل بنا' : locale === 'en' ? 'Call Us' : locale === 'es' ? 'Llámanos' : 'Appelez-nous'}
-                    >
-                      <Phone className="w-7 h-7" />
-                    </a>
+                    {siteSettings?.phone && (
+                      <a 
+                        href={`tel:${siteSettings.phone}`}
+                        className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
+                        title={locale === 'ar' ? 'اتصل بنا' : locale === 'en' ? 'Call Us' : locale === 'es' ? 'Llámanos' : 'Appelez-nous'}
+                      >
+                        <Phone className="w-7 h-7" />
+                      </a>
+                    )}
 
                     {/* Email */}
-                    <a 
-                      href={`mailto:${getText('info', 'email_value')}`}
-                      className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
-                      title={locale === 'ar' ? 'راسلنا' : locale === 'en' ? 'Email Us' : locale === 'es' ? 'Envíanos un correo' : 'Envoyez-nous un email'}
-                    >
-                      <Mail className="w-7 h-7" />
-                    </a>
+                    {siteSettings?.email && (
+                      <a 
+                        href={`mailto:${siteSettings.email}`}
+                        className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
+                        title={locale === 'ar' ? 'راسلنا' : locale === 'en' ? 'Email Us' : locale === 'es' ? 'Envíanos un correo' : 'Envoyez-nous un email'}
+                      >
+                        <Mail className="w-7 h-7" />
+                      </a>
+                    )}
 
                     {/* Location */}
                     <a 
@@ -94,37 +102,56 @@ export default async function ContactPage({ params }: ContactPageProps) {
                     </a>
 
                     {/* YouTube */}
-                    <a 
-                      href="https://youtube.com/@yourcompany" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
-                      title="YouTube"
-                    >
-                      <Youtube className="w-7 h-7" />
-                    </a>
+                    {siteSettings?.youtube && (
+                      <a 
+                        href={siteSettings.youtube}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
+                        title="YouTube"
+                      >
+                        <Youtube className="w-7 h-7" />
+                      </a>
+                    )}
 
                     {/* TikTok */}
-                    <a 
-                      href="https://tiktok.com/@yourcompany" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
-                      title="TikTok"
-                    >
-                      <TikTokIcon />
-                    </a>
+                    {siteSettings?.tiktok && (
+                      <a 
+                        href={siteSettings.tiktok}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
+                        title="TikTok"
+                      >
+                        <TikTokIcon />
+                      </a>
+                    )}
 
                     {/* Instagram */}
-                    <a 
-                      href="https://instagram.com/yourcompany" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
-                      title="Instagram"
-                    >
-                      <Instagram className="w-7 h-7" />
-                    </a>
+                    {siteSettings?.instagram && (
+                      <a 
+                        href={siteSettings.instagram}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
+                        title="Instagram"
+                      >
+                        <Instagram className="w-7 h-7" />
+                      </a>
+                    )}
+
+                    {/* Facebook */}
+                    {siteSettings?.facebook && (
+                      <a 
+                        href={siteSettings.facebook}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
+                        title="Facebook"
+                      >
+                        <Facebook className="w-7 h-7" />
+                      </a>
+                    )}
                   </div>
                 </div>
 

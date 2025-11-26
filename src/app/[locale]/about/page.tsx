@@ -251,7 +251,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
               {/* Background Map Image */}
               <div className="absolute inset-0 z-0">
                 <Image
-                  src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+f74e4e(31.2357,30.0444)/31.2357,30.0444,12,0/800x600@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw"
+                  src={getText('location', 'backgroundImage') || "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+f74e4e(31.2357,30.0444)/31.2357,30.0444,12,0/800x600@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw"}
                   alt="Map Location"
                   fill
                   className="object-cover opacity-15 group-hover:opacity-25 transition-opacity duration-300"
