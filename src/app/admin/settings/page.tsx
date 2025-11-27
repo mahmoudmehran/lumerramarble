@@ -98,6 +98,9 @@ export default function SiteSettings() {
     youtube: 'https://youtube.com/@lumerramarble',
     tiktok: '',
     
+    // Location
+    googleMapsLink: '',
+    
     // SEO Settings (4 languages)
     metaTitle: 'Lumerra Marble - Premium Egyptian Marble & Granite Export',
     metaTitleAr: 'لوميرا للرخام - تصدير الرخام والجرانيت المصري الفاخر',
@@ -346,6 +349,9 @@ export default function SiteSettings() {
     }
     if (settings.tiktok && !urlRegex.test(settings.tiktok)) {
       errors.tiktok = 'رابط تيك توك غير صحيح'
+    }
+    if (settings.googleMapsLink && !urlRegex.test(settings.googleMapsLink)) {
+      errors.googleMapsLink = 'رابط Google Maps غير صحيح'
     }
     
     // التحقق من الألوان
@@ -1024,6 +1030,25 @@ export default function SiteSettings() {
                   <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.tiktok}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  رابط Google Maps
+                </label>
+                <Input
+                  name="googleMapsLink"
+                  value={settings.googleMapsLink}
+                  onChange={handleInputChange}
+                  placeholder="https://maps.app.goo.gl/..."
+                  className={errors.googleMapsLink ? 'border-red-500' : ''}
+                />
+                {errors.googleMapsLink && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.googleMapsLink}
                   </p>
                 )}
               </div>

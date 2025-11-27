@@ -26,6 +26,7 @@ interface ThemeSettings {
   linkedin?: string
   youtube?: string
   tiktok?: string
+  googleMapsLink?: string
   metaTitle?: string
   metaTitleAr?: string
   metaDescription?: string
@@ -205,6 +206,7 @@ export async function PUT(request: NextRequest) {
       linkedin,
       youtube,
       tiktok,
+      googleMapsLink,
       metaTitle,
       metaTitleAr,
       metaTitleEs,
@@ -288,6 +290,7 @@ export async function PUT(request: NextRequest) {
           linkedin,
           youtube,
           tiktok,
+          googleMapsLink,
           metaTitle,
           metaTitleAr,
           metaTitleEs,
@@ -367,6 +370,7 @@ export async function PUT(request: NextRequest) {
           linkedin,
           youtube,
           tiktok,
+          googleMapsLink,
           metaTitle,
           metaTitleAr,
           metaTitleEs,

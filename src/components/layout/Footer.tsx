@@ -221,14 +221,14 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
           </p>
           
           {/* Social Media Links */}
-          <div className="inline-flex gap-3 flex-shrink-0">
+          <div className="flex flex-wrap gap-6 justify-center items-center">
             {siteSettings?.youtube && (
               <a 
                 href={siteSettings.youtube} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="YouTube"
-                className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+                className="text-[var(--color-quinary)] hover:text-[var(--color-primary)] transition-colors duration-300"
               >
                 <Youtube className="w-7 h-7" />
               </a>
@@ -239,7 +239,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+                className="text-[var(--color-quinary)] hover:text-[var(--color-primary)] transition-colors duration-300"
               >
                 <Instagram className="w-7 h-7" />
               </a>
@@ -250,7 +250,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+                className="text-[var(--color-quinary)] hover:text-[var(--color-primary)] transition-colors duration-300"
               >
                 <Facebook className="w-7 h-7" />
               </a>
@@ -261,7 +261,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
-                className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+                className="text-[var(--color-quinary)] hover:text-[var(--color-primary)] transition-colors duration-300"
               >
                 <WhatsAppIcon />
               </a>
@@ -272,7 +272,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="w-14 h-14 flex items-center justify-center rounded-full bg-[var(--color-secondary-700)] text-[var(--color-quinary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] transition-all duration-300 transform hover:scale-110 hover:shadow-lg active:scale-95 flex-shrink-0"
+                className="text-[var(--color-quinary)] hover:text-[var(--color-primary)] transition-colors duration-300"
               >
                 <TikTokIcon />
               </a>
@@ -308,7 +308,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         <div className="border-t border-[var(--color-secondary-700)] pt-6 lg:pt-7">
           <div className="flex flex-wrap justify-center items-center gap-4">
             <a 
-              href="https://maps.google.com/?q=Shaq+Al-Thuban+Industrial+Zone+Cairo+Egypt"
+              href={siteSettings?.googleMapsLink || "https://maps.google.com/?q=Shaq+Al-Thuban+Industrial+Zone+Cairo+Egypt"}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[var(--color-secondary-700)] px-5 py-3 rounded hover:bg-[var(--color-primary)] transition-all duration-200 group"

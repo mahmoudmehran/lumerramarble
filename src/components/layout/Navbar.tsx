@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X, Globe, ChevronDown } from 'lucide-react'
 import { Button } from '../ui/button'
 import { DarkModeToggle } from '../ui/dark-mode-toggle'
@@ -22,10 +22,20 @@ export default function Navbar({ locale }: NavbarProps) {
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const pathname = usePathname()
+  const router = useRouter()
   const { t } = useTranslation()
   const nav = useNavTranslation()
   const { supportedLocales, setLocale } = useLanguage()
   const siteSettings = useSiteSettings()
+  
+  // Save and restore scroll position on language change
+  useEffect(() => {
+    const savedScrollY = sessionStorage.getItem('scrollPosition')
+    if (savedScrollY) {
+      window.scrollTo(0, parseInt(savedScrollY))
+      sessionStorage.removeItem('scrollPosition')
+    }
+  }, [pathname])
   
   // Memoize logo URL to prevent unnecessary recalculations
   const logoUrl = useMemo(() => {
@@ -252,33 +262,44 @@ export default function Navbar({ locale }: NavbarProps) {
                       {t('common.language')}
                     </p>
                   </div>
-                  {supportedLocales.map((lang) => (
-                    <Link
-                      key={lang.code}
-                      href={`/${lang.code}`}
-                      className={`flex items-center px-4 py-3 text-sm transition-all duration-200 ${
-                        lang.code === locale 
-                          ? 'bg-gradient-to-r from-[var(--color-primary-50)] to-[var(--color-primary-100)] text-[var(--color-primary)] font-semibold border-l-4 border-[var(--color-primary)] rtl:border-l-0 rtl:border-r-4' 
-                          : 'text-[var(--color-quaternary)] hover:bg-[var(--color-quinary-100)] hover:text-[var(--color-primary)] hover:translate-x-1 rtl:hover:-translate-x-1'
-                      }`}
-                      onClick={() => {
-                        setLangOpen(false)
-                        setLocale(lang.code)
-                      }}
-                    >
-                      <span className="text-2xl mr-3 rtl:mr-0 rtl:ml-3 flex-shrink-0">{lang.flag}</span>
-                      <div className="flex flex-col flex-1 min-w-0">
-                        <span className="font-medium text-base whitespace-nowrap overflow-hidden text-ellipsis">
-                          {lang.nativeName}
-                        </span>
-                        {lang.code === locale && (
-                          <span className="text-xs text-[var(--color-primary-600)] mt-0.5">
-                            ✓ {t('common.active') || 'نشط'}
+                  {supportedLocales.map((lang) => {
+                    // Get current path without locale prefix
+                    const pathWithoutLocale = pathname.replace(/^\/(ar|en|es|fr)/, '') || '/'
+                    const newPath = `/${lang.code}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`
+                    
+                    const handleLanguageChange = (e: React.MouseEvent) => {
+                      e.preventDefault()
+                      sessionStorage.setItem('scrollPosition', window.scrollY.toString())
+                      setLangOpen(false)
+                      setLocale(lang.code)
+                      router.push(newPath)
+                    }
+                    
+                    return (
+                      <a
+                        key={lang.code}
+                        href={newPath}
+                        onClick={handleLanguageChange}
+                        className={`flex items-center px-4 py-3 text-sm transition-all duration-200 cursor-pointer ${
+                          lang.code === locale 
+                            ? 'bg-gradient-to-r from-[var(--color-primary-50)] to-[var(--color-primary-100)] text-[var(--color-primary)] font-semibold border-l-4 border-[var(--color-primary)] rtl:border-l-0 rtl:border-r-4' 
+                            : 'text-[var(--color-quaternary)] hover:bg-[var(--color-quinary-100)] hover:text-[var(--color-primary)] hover:translate-x-1 rtl:hover:-translate-x-1'
+                        }`}
+                      >
+                        <span className="text-2xl mr-3 rtl:mr-0 rtl:ml-3 flex-shrink-0">{lang.flag}</span>
+                        <div className="flex flex-col flex-1 min-w-0">
+                          <span className="font-medium text-base whitespace-nowrap overflow-hidden text-ellipsis">
+                            {lang.nativeName}
                           </span>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
+                          {lang.code === locale && (
+                            <span className="text-xs text-[var(--color-primary-600)] mt-0.5">
+                              ✓ {t('common.active') || 'نشط'}
+                            </span>
+                          )}
+                        </div>
+                      </a>
+                    )
+                  })}
                 </div>
               )}
             </div>
@@ -322,36 +343,46 @@ export default function Navbar({ locale }: NavbarProps) {
                 {t('common.language')}
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {supportedLocales.map((lang, index) => (
-                  <Link
-                    key={lang.code}
-                    href={`/${lang.code}`}
-                    prefetch={true}
-                    className={`flex items-center justify-center px-3 py-3 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 ${
-                      lang.code === locale
-                        ? 'bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-700)] text-[var(--color-quinary)] shadow-lg shadow-[var(--color-primary)]/30 scale-105'
-                        : 'bg-[var(--color-quinary)] text-[var(--color-quaternary)] hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary)] hover:shadow-md border border-[var(--color-quaternary-200)] hover:border-[var(--color-primary-200)]'
-                    }`}
-                    style={{
-                      animationDelay: `${index * 50}ms`,
-                      animation: 'fadeInUp 0.3s ease-out forwards'
-                    }}
-                    onClick={() => {
-                      setIsOpen(false)
-                      setLocale(lang.code)
-                    }}
-                  >
-                    <span className={`mr-2 rtl:mr-0 rtl:ml-2 text-xl transition-transform duration-300 ${
-                      lang.code === locale ? 'scale-110' : 'group-hover:scale-110'
-                    }`}>
-                      {lang.flag}
-                    </span>
-                    <span className="whitespace-nowrap font-semibold">{lang.nativeName}</span>
-                    {lang.code === locale && (
-                      <span className="ml-1.5 rtl:ml-0 rtl:mr-1.5 text-xs animate-pulse">✓</span>
-                    )}
-                  </Link>
-                ))}
+                {supportedLocales.map((lang, index) => {
+                  // Get current path without locale prefix
+                  const pathWithoutLocale = pathname.replace(/^\/(ar|en|es|fr)/, '') || '/'
+                  const newPath = `/${lang.code}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`
+                  
+                  const handleLanguageChange = (e: React.MouseEvent) => {
+                    e.preventDefault()
+                    sessionStorage.setItem('scrollPosition', window.scrollY.toString())
+                    setIsOpen(false)
+                    setLocale(lang.code)
+                    router.push(newPath)
+                  }
+                  
+                  return (
+                    <a
+                      key={lang.code}
+                      href={newPath}
+                      onClick={handleLanguageChange}
+                      className={`flex items-center justify-center px-3 py-3 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer ${
+                        lang.code === locale
+                          ? 'bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-700)] text-[var(--color-quinary)] shadow-lg shadow-[var(--color-primary)]/30 scale-105'
+                          : 'bg-[var(--color-quinary)] text-[var(--color-quaternary)] hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary)] hover:shadow-md border border-[var(--color-quaternary-200)] hover:border-[var(--color-primary-200)]'
+                      }`}
+                      style={{
+                        animationDelay: `${index * 50}ms`,
+                        animation: 'fadeInUp 0.3s ease-out forwards'
+                      }}
+                    >
+                      <span className={`mr-2 rtl:mr-0 rtl:ml-2 text-xl transition-transform duration-300 ${
+                        lang.code === locale ? 'scale-110' : 'group-hover:scale-110'
+                      }`}>
+                        {lang.flag}
+                      </span>
+                      <span className="whitespace-nowrap font-semibold">{lang.nativeName}</span>
+                      {lang.code === locale && (
+                        <span className="ml-1.5 rtl:ml-0 rtl:mr-1.5 text-xs animate-pulse">✓</span>
+                      )}
+                    </a>
+                  )
+                })}
               </div>
             </div>
             

@@ -55,6 +55,9 @@ export interface SiteSettings {
   youtube?: string
   tiktok?: string
   
+  // Location
+  googleMapsLink?: string
+  
   // SEO Settings
   metaTitle?: string
   metaTitleAr?: string
@@ -222,6 +225,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       instagram: settings.instagram || undefined,
       linkedin: settings.linkedin || undefined,
       youtube: settings.youtube || undefined,
+      tiktok: settings.tiktok || undefined,
+      
+      googleMapsLink: settings.googleMapsLink || undefined,
       
       metaTitle: settings.metaTitle || undefined,
       metaTitleAr: settings.metaTitleAr || undefined,

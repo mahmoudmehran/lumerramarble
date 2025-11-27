@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { MapPin, Award, Users, Globe, Clock, Shield, Target, Eye, Heart, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react'
 import { getContent } from '../../../lib/content'
+import { getSiteSettings } from '../../../lib/settings'
 import { Button } from '../../../components/ui/button'
 import {
   PageHeader,
@@ -25,6 +26,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
 
   // جلب المحتوى من قاعدة البيانات
   const contentData = await getContent('about')
+  const siteSettings = await getSiteSettings()
 
   // دالة للحصول على النص بلغة محددة
   const getText = (sectionKey: string, contentKey: string) => {
@@ -243,7 +245,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Location Info Container - Clickable with Map Background */}
             <a 
-              href="https://maps.app.goo.gl/4to6WUKDMY7KEjRVA" 
+              href={siteSettings?.googleMapsLink || "https://maps.app.goo.gl/4to6WUKDMY7KEjRVA"} 
               target="_blank" 
               rel="noopener noreferrer"
               className="relative block overflow-hidden p-10 rounded-2xl shadow-2xl border-2 border-[var(--color-primary-200)] hover:shadow-3xl hover:border-[var(--color-primary)] transition-all duration-300 min-h-[400px] group cursor-pointer"

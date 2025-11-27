@@ -200,6 +200,7 @@ model SiteSettings {
   linkedin              String?
   youtube               String?
   tiktok                String?
+  googleMapsLink        String?
   metaTitle             String?
   metaTitleAr           String?
   metaTitleEs           String?

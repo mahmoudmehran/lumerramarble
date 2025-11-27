@@ -45,7 +45,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
       <ContentSection variant="white">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Contact Information */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 order-2 lg:order-1">
             {/* Combined Card - Same height as form */}
             <div className="bg-gradient-to-br from-white via-[var(--color-primary-50)] to-[var(--color-secondary-50)] rounded-2xl shadow-xl border-2 border-[var(--color-primary-200)] h-full flex flex-col p-8">
                 
@@ -92,7 +92,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
 
                     {/* Location */}
                     <a 
-                      href="https://maps.google.com" 
+                      href={siteSettings?.googleMapsLink || "https://maps.google.com"} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
@@ -198,7 +198,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
           </div>
 
           {/* Contact Form */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 order-1 lg:order-2">
             <Card className="p-8 bg-[var(--color-quinary)] border border-[var(--color-quaternary-100)]">
               <div className="mb-8">
                 <h2 className="text-2xl font-bold text-[var(--color-tertiary)] mb-4">
