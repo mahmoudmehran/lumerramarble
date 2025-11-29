@@ -191,7 +191,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </Link>
 
         {/* Article Header */}
-        <article className="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
+        <article className="bg-white rounded-lg shadow-sm overflow-hidden mb-8 border">
           {/* Featured Image */}
           {blogPost.featuredImage && (
             <div className="aspect-video relative">
@@ -217,46 +217,46 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                      blogPost.category.nameAr}
                   </span>
                 )}
-                <div className="flex items-center text-gray-500 text-sm">
+                <div className="flex items-center text-gray-500 dark:text-[var(--color-quaternary-300)] text-sm">
                   <Calendar className="w-4 h-4 mr-1" />
                   {new Date(blogPost.createdAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US')}
                 </div>
-                <div className="flex items-center text-gray-500 text-sm">
+                <div className="flex items-center text-gray-500 dark:text-[var(--color-quaternary-300)] text-sm">
                   <Clock className="w-4 h-4 mr-1" />
                   {readingTime} {currentLabels.minutes}
                 </div>
               </div>
               
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <div className="flex items-center text-gray-500 text-sm">
+                <div className="flex items-center text-gray-500 dark:text-[var(--color-quaternary-300)] text-sm">
                   <Eye className="w-4 h-4 mr-1" />
                   {blogPost.views || 0}
                 </div>
-                <button className="text-gray-400 hover:text-red-500 transition-colors">
+                <button className="text-gray-400 dark:text-[var(--color-quaternary-400)] hover:text-[var(--color-error)] dark:hover:text-[var(--color-error)] transition-colors">
                   <Heart className="w-5 h-5" />
                 </button>
-                <button className="text-gray-400 hover:text-primary transition-colors">
+                <button className="text-gray-400 dark:text-[var(--color-quaternary-400)] hover:text-primary dark:hover:text-primary transition-colors">
                   <Share2 className="w-5 h-5" />
                 </button>
               </div>
             </div>
 
             {/* Title */}
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-[var(--color-quaternary)] mb-6 leading-tight">
               {getPostTitle(blogPost)}
             </h1>
 
             {/* Author Info */}
             {blogPost.author && (
-              <div className="flex items-center mb-8 pb-6 border-b">
-                <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mr-4">
-                  <User className="w-6 h-6 text-gray-400" />
+              <div className="flex items-center mb-8 pb-6 border-b dark:border-[var(--color-quaternary-700)]">
+                <div className="w-12 h-12 bg-gray-200 dark:bg-[var(--color-quaternary-800)] rounded-full flex items-center justify-center mr-4">
+                  <User className="w-6 h-6 text-gray-400 dark:text-[var(--color-quaternary-400)]" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p className="font-medium text-gray-900 dark:text-[var(--color-quaternary)]">
                     {blogPost.author.name || 'مجهول'}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-[var(--color-quaternary-300)]">
                     {currentLabels.author}
                   </p>
                 </div>
@@ -265,23 +265,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             {/* Excerpt */}
             {getPostExcerpt(blogPost) && (
-              <div className="text-xl text-gray-600 mb-8 leading-relaxed font-medium">
+              <div className="text-xl text-gray-600 dark:text-[var(--color-quaternary-300)] mb-8 leading-relaxed font-medium">
                 {getPostExcerpt(blogPost)}
               </div>
             )}
 
             {/* Content */}
-            <div className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-primary prose-strong:text-gray-900">
+            <div className="prose prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-[var(--color-quaternary)] prose-p:text-gray-700 dark:prose-p:text-[var(--color-quaternary-300)] prose-a:text-primary prose-strong:text-gray-900 dark:prose-strong:text-[var(--color-quaternary)]">
               <div dangerouslySetInnerHTML={{ __html: getPostContent(blogPost) }} />
             </div>
 
             {/* Tags */}
             {blogPost.tags && (
-              <div className="mt-8 pt-6 border-t">
-                <h3 className="text-sm font-medium text-gray-900 mb-3">{currentLabels.tags}:</h3>
+              <div className="mt-8 pt-6 border-t dark:border-[var(--color-quaternary-700)]">
+                <h3 className="text-sm font-medium text-gray-900 dark:text-[var(--color-quaternary)] mb-3">{currentLabels.tags}:</h3>
                 <div className="flex flex-wrap gap-2">
                   {blogPost.tags.split(',').map((tag: string, index: number) => (
-                    <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                    <span key={index} className="bg-gray-100 dark:bg-[var(--color-quaternary-800)] text-gray-700 dark:text-[var(--color-quaternary-300)] px-3 py-1 rounded-full text-sm">
                       <Tag className="w-3 h-3 inline mr-1" />
                       {tag.trim()}
                     </span>
@@ -295,11 +295,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">{currentLabels.relatedPosts}</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-[var(--color-quaternary)] mb-6">{currentLabels.relatedPosts}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {relatedPosts.map((relatedPost: any) => (
-                <Card key={relatedPost.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <Card key={relatedPost.id} className="overflow-hidden hover:shadow-lg dark:hover:shadow-[var(--color-quaternary-900)] transition-shadow">
                   {relatedPost.featuredImage ? (
                     <div className="aspect-video relative">
                       <Image
@@ -310,23 +310,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                       />
                     </div>
                   ) : (
-                    <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                      <div className="text-gray-400 text-center">
+                    <div className="aspect-video bg-gray-200 dark:bg-[var(--color-quaternary-800)] flex items-center justify-center">
+                      <div className="text-gray-400 dark:text-[var(--color-quaternary-400)] text-center">
                         <Calendar className="w-12 h-12 mx-auto mb-2" />
                         <p>مقال</p>
                       </div>
                     </div>
                   )}
                   <div className="p-4">
-                    <div className="flex items-center text-sm text-gray-500 mb-2">
+                    <div className="flex items-center text-sm text-gray-500 dark:text-[var(--color-quaternary-300)] mb-2">
                       <Calendar className="w-4 h-4 mr-1" />
                       {new Date(relatedPost.createdAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US')}
                     </div>
-                    <h3 className="font-semibold mb-2 line-clamp-2">
+                    <h3 className="font-semibold dark:text-[var(--color-quaternary)] mb-2 line-clamp-2">
                       {getPostTitle(relatedPost)}
                     </h3>
                     {getPostExcerpt(relatedPost) && (
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                      <p className="text-gray-600 dark:text-[var(--color-quaternary-300)] text-sm mb-3 line-clamp-2">
                         {getPostExcerpt(relatedPost)}
                       </p>
                     )}

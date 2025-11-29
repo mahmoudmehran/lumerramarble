@@ -273,7 +273,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
   const currentContent = content[locale as keyof typeof content] || content.en
 
   return (
-    <div className="min-h-screen bg-[var(--color-quinary-50)]">
+    <div className="min-h-screen bg-[var(--color-quinary-50)] dark:bg-[var(--color-quinary)]">
       {/* Hero Section */}
       <PageHeader
         title={getText('hero', 'title') || currentContent.hero.title}
@@ -408,7 +408,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
                   </h3>
                   
                   {/* Content Card with Background Image */}
-                  <div className={`group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 ${
+                  <div className={`group relative overflow-hidden rounded-2xl shadow-xl dark:shadow-[var(--color-quaternary-900)] hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 ${
                     index % 2 === 0 ? 'mt-0' : 'mt-0'
                   }`}>
                     {/* Background Image */}
@@ -667,7 +667,7 @@ export default async function ExportPage({ params }: ExportPageProps) {
             return (
               <div 
                 key={index} 
-                className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                className="group relative overflow-hidden rounded-2xl shadow-lg dark:shadow-[var(--color-quaternary-900)] hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
               >
                 {/* Background Image */}
                 <div 

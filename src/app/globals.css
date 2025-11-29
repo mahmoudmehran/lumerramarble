@@ -124,13 +124,6 @@
   --color-info-rgb: 59, 130, 246;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -460,5 +453,72 @@ section {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* iOS Safari fixes - Hardware acceleration & Z-index issues */
+nav[class*="fixed"],
+.fixed {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+}
+
+/* Critical iOS fix - Force navbar and children to be visible BUT respect responsive classes */
+nav {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Don't override display for responsive elements - let Tailwind handle it */
+nav img,
+nav span:not([class*="hidden"]),
+nav a:not([class*="hidden"]),
+nav button:not([class*="hidden"]) {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Touch action and tap highlight fixes */
+.touch-action-manipulation,
+a, 
+button, 
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.pointer-events-auto {
+  pointer-events: auto;
+}
+
+/* Force GPU acceleration for iOS */
+nav[class*="z-"], 
+[class*="z-50"],
+[class*="z-["],
+[class*="z-[100]"],
+[class*="z-[110]"] {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Fix iOS Safari click/touch issues */
+input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Fix iOS viewport height */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
   }
 }

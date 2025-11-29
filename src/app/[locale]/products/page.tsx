@@ -147,7 +147,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
 
   return (
     <div
-      className={`bg-[var(--color-quinary)] rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group transform hover:-translate-y-1 ${
+      className={`bg-[var(--color-quinary)] rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group transform hover:-translate-y-1 border ${
         viewMode === 'list' ? 'flex' : ''
       }`}
       onClick={handleCardClick}
@@ -195,7 +195,7 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-xl font-bold text-[var(--color-secondary-900)] group-hover:text-[var(--color-primary)] transition-colors duration-300">
+            <h3 className="text-xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] group-hover:text-[var(--color-primary)] transition-colors duration-300">
               {getProductName()}
             </h3>
           </div>
@@ -207,10 +207,10 @@ function ProductCard({ product, locale, viewMode, currentContent }: {
             </span>
           </div>
           
-          <div className="space-y-2 text-sm text-[var(--color-quaternary)] mb-4">
-            <p><span className="font-medium">{currentContent.origin}:</span> {product.originCountry}</p>
-            <p><span className="font-medium">{currentContent.thickness}:</span> {product.thickness}</p>
-            <p><span className="font-medium">{currentContent.finishes}:</span> {getLocalizedFinishes(product.finishes)}</p>
+          <div className="space-y-2 text-sm text-[var(--color-quaternary)] dark:text-[var(--color-quaternary-300)] mb-4">
+            <p><span className="font-medium dark:text-[var(--color-quaternary)]">{currentContent.origin}:</span> {product.originCountry}</p>
+            <p><span className="font-medium dark:text-[var(--color-quaternary)]">{currentContent.thickness}:</span> {product.thickness}</p>
+            <p><span className="font-medium dark:text-[var(--color-quaternary)]">{currentContent.finishes}:</span> {getLocalizedFinishes(product.finishes)}</p>
           </div>
         </div>
         
@@ -515,7 +515,7 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {filteredProducts.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-xl text-[var(--color-quaternary)]">{currentContent.noProducts}</p>
+              <p className="text-xl text-[var(--color-quaternary)] dark:text-[var(--color-quaternary-300)]">{currentContent.noProducts}</p>
             </div>
           ) : (
             <div className={`grid gap-8 ${

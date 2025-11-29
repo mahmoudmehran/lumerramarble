@@ -140,10 +140,10 @@ export default async function AboutPage({ params }: AboutPageProps) {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="order-2 lg:order-1">
-              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary-900)] mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mb-6">
                 {currentContent.story.title}
               </h2>
-              <div className="text-[var(--color-quaternary)] leading-relaxed space-y-4">
+              <div className="text-[var(--color-quaternary)] dark:text-[var(--color-quaternary-300)] leading-relaxed space-y-4">
                 {currentContent.story.content.split('\n\n').map((paragraph, index) => (
                   <p key={index} className="text-base md:text-lg break-words">
                     {paragraph.trim()}
@@ -187,7 +187,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
         <div className="relative z-10 container mx-auto px-4">
           {/* Section Title */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary-900)] mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mb-4">
               {currentContent.values.title}
             </h2>
           </div>
@@ -199,13 +199,13 @@ export default async function AboutPage({ params }: AboutPageProps) {
               {valuesItems.map((value, index) => {
                 const IconComponent = value.icon
                 return (
-                  <div key={index} className="bg-gradient-to-br from-[var(--color-primary-100)] via-[var(--color-secondary-50)] to-[var(--color-tertiary-50)] backdrop-blur-sm p-10 rounded-2xl shadow-lg border border-[var(--color-quaternary-200)] hover:shadow-xl hover:from-[var(--color-secondary-100)] hover:via-[var(--color-primary-100)] hover:to-[var(--color-quinary)] transition-all duration-300">
+                  <div key={index} className="bg-gradient-to-br from-[var(--color-primary-100)] via-[var(--color-secondary-50)] to-[var(--color-tertiary-50)] dark:from-[var(--color-quaternary-800)] dark:via-[var(--color-secondary)] dark:to-[var(--color-quaternary-900)] backdrop-blur-sm p-10 rounded-2xl shadow-lg dark:shadow-[var(--color-quaternary-900)] border border-[var(--color-quaternary-200)] dark:border-[var(--color-quaternary-700)] hover:shadow-xl hover:from-[var(--color-secondary-100)] hover:via-[var(--color-primary-100)] hover:to-[var(--color-quinary)] dark:hover:from-[var(--color-quaternary-700)] dark:hover:via-[var(--color-secondary-900)] dark:hover:to-[var(--color-quaternary-800)] transition-all duration-300">
                     <div className="flex flex-col items-center text-center h-full">
                       <IconComponent className="w-16 h-16 text-[var(--color-primary)] mb-6 flex-shrink-0" strokeWidth={1.5} />
-                      <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] mb-5">
+                      <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mb-5">
                         {value.title}
                       </h3>
-                      <p className="text-[var(--color-quaternary)] text-base leading-relaxed">
+                      <p className="text-[var(--color-quaternary)] dark:text-[var(--color-quaternary-300)] text-base leading-relaxed">
                         {value.description}
                       </p>
                     </div>
@@ -235,7 +235,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
       <ContentSection variant="light">
         {/* Title in the middle of the page */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary-900)] mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mb-4">
             {currentContent.location.title}
           </h2>
           <div className="w-24 h-1 bg-[var(--color-primary)] mx-auto rounded-full"></div>
@@ -331,7 +331,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
             <Button 
               variant="outline" 
               size="lg" 
-              className="text-lg px-8 py-3 border-2 border-[var(--color-quinary)] text-[var(--color-quinary)] bg-transparent hover:bg-[var(--color-quinary)] hover:text-[var(--color-secondary)] group transition-all duration-300 hover:scale-105"
+              className="text-lg px-8 py-3 border-2 border-[var(--color-primary)] text-[var(--color-primary)] bg-transparent hover:bg-[var(--color-primary)] hover:text-[var(--color-quinary)] group transition-all duration-300 hover:scale-105"
             >
               {locale === 'ar' ? 'تواصل معنا' : 'Contact Us'}
             </Button>

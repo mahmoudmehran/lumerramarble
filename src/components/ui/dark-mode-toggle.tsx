@@ -51,14 +51,14 @@ export function DarkModeToggle({ enabled = true, className = '' }: DarkModeToggl
   return (
     <button
       onClick={toggleDarkMode}
-      className={`p-2 rounded-lg transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 ${className}`}
+      className={`p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--color-quinary-200)] ${className}`}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       title={isDark ? 'الوضع النهاري' : 'الوضع الليلي'}
     >
       {isDark ? (
-        <Sun className="w-5 h-5 text-yellow-500" />
+        <Sun className="w-5 h-5 text-[var(--color-warning)]" />
       ) : (
-        <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+        <Moon className="w-5 h-5 text-[var(--color-quaternary-700)]" />
       )}
     </button>
   )

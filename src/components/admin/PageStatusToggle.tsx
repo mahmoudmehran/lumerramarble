@@ -71,18 +71,18 @@ export default function PageStatusToggle({ pageKey, pageName }: PageStatusToggle
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">
+      <div className="flex items-center gap-2 px-4 py-2 bg-[var(--color-quinary-100)] rounded-lg">
         <Loader2 className="w-4 h-4 animate-spin" />
-        <span className="text-sm text-gray-600">جاري التحميل...</span>
+        <span className="text-sm text-[var(--color-quaternary-600)]">جاري التحميل...</span>
       </div>
     )
   }
 
   return (
-    <div className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div className="flex items-center gap-3 p-4 bg-[var(--color-quinary)] border border-[var(--color-quaternary-200)] rounded-lg shadow-sm">
       <div className="flex-1">
-        <h3 className="font-semibold text-gray-900">حالة عرض الصفحة</h3>
-        <p className="text-sm text-gray-600">
+        <h3 className="font-semibold text-[var(--color-quaternary)]">حالة عرض الصفحة</h3>
+        <p className="text-sm text-[var(--color-quaternary-600)]">
           {isActive 
             ? 'الصفحة معروضة في الموقع والفوتر' 
             : 'الصفحة مخفية من الموقع والفوتر'}
@@ -94,8 +94,8 @@ export default function PageStatusToggle({ pageKey, pageName }: PageStatusToggle
         variant={isActive ? 'default' : 'outline'}
         className={`gap-2 ${
           isActive 
-            ? 'bg-green-600 hover:bg-green-700 text-white' 
-            : 'border-red-300 text-red-600 hover:bg-red-50'
+            ? 'bg-[var(--color-success)] hover:bg-[var(--color-success-700)] text-[var(--color-quinary)]' 
+            : 'border-[var(--color-error-300)] text-[var(--color-error)] hover:bg-[var(--color-error-50)]'
         }`}
       >
         {isSaving ? (

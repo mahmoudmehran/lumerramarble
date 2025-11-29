@@ -122,7 +122,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
                         href={`https://wa.me/${siteSettings.whatsapp.replace(/\D/g, '')}`}
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
+                        className="flex items-center justify-center text-[var(--color-secondary)] dark:text-[var(--color-quaternary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
                         title="WhatsApp"
                       >
                         <WhatsAppIcon />
@@ -133,7 +133,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
                     {siteSettings?.phone && (
                       <a 
                         href={`tel:${siteSettings.phone}`}
-                        className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
+                        className="flex items-center justify-center text-[var(--color-secondary)] dark:text-[var(--color-quaternary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
                         title={locale === 'ar' ? 'اتصل بنا' : locale === 'en' ? 'Call Us' : locale === 'es' ? 'Llámanos' : 'Appelez-nous'}
                       >
                         <Phone className="w-7 h-7" />
@@ -144,7 +144,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
                     {siteSettings?.email && (
                       <a 
                         href={`mailto:${siteSettings.email}`}
-                        className="flex items-center justify-center text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
+                        className="flex items-center justify-center text-[var(--color-secondary)] dark:text-[var(--color-quaternary)] hover:text-[var(--color-primary)] transition-all duration-300 transform hover:scale-125"
                         title={locale === 'ar' ? 'راسلنا' : locale === 'en' ? 'Email Us' : locale === 'es' ? 'Envíanos un correo' : 'Envoyez-nous un email'}
                       >
                         <Mail className="w-7 h-7" />
@@ -240,12 +240,12 @@ export default async function ContactPage({ params }: ContactPageProps) {
                         </span>
                       </div>
                     </div>
-                    <div className="bg-gradient-to-r from-red-50 to-red-100 rounded-xl px-4 py-3 border-2 border-red-300 shadow-md">
+                    <div className="bg-gradient-to-r from-[var(--color-error-50)] to-[var(--color-error-100)] rounded-xl px-4 py-3 border-2 border-[var(--color-error-300)] shadow-md">
                       <div className="flex items-center justify-between gap-3 flex-nowrap">
-                        <span className="font-bold text-red-700 text-base whitespace-nowrap">
+                        <span className="font-bold text-[var(--color-error-700)] text-base whitespace-nowrap">
                           {locale === 'ar' ? 'الجمعة والسبت' : locale === 'en' ? 'Fri & Sat' : locale === 'es' ? 'Vie y Sáb' : 'Ven et Sam'}
                         </span>
-                        <span className="text-red-600 font-bold text-base whitespace-nowrap">
+                        <span className="text-[var(--color-error)] font-bold text-base whitespace-nowrap">
                           {locale === 'ar' ? 'مغلق' : locale === 'en' ? 'Closed' : locale === 'es' ? 'Cerrado' : 'Fermé'}
                         </span>
                       </div>
@@ -260,7 +260,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
 
           {/* Contact Form */}
           <div className="lg:col-span-2 order-1 lg:order-2">
-            <Card className="p-8 bg-[var(--color-quinary)] border border-[var(--color-quaternary-100)]">
+            <Card className="p-8 bg-[var(--color-quinary)] border border-[var(--color-quaternary-100)] shadow-xl">
               <div className="mb-8">
                 <h2 className="text-2xl font-bold text-[var(--color-tertiary)] mb-4">
                   {getText('form', 'title')}

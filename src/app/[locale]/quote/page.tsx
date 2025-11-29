@@ -795,15 +795,15 @@ export default function QuotePage({ params }: QuotePageProps) {
 
   if (showSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[var(--color-quinary-50)] via-[var(--color-primary-50)] to-[var(--color-quinary-50)] flex items-center justify-center p-4">
-        <Card className="max-w-lg mx-auto p-10 text-center bg-[var(--color-quinary)] shadow-2xl border-t-4 border-[var(--color-success)]">
+      <div className="min-h-screen bg-gradient-to-br from-[var(--color-quinary-50)] via-[var(--color-primary-50)] to-[var(--color-quinary-50)] dark:from-[var(--color-quinary)] dark:via-[var(--color-secondary)] dark:to-[var(--color-quinary)] flex items-center justify-center p-4">
+        <Card className="max-w-lg mx-auto p-10 text-center bg-[var(--color-quinary)] dark:bg-[var(--color-secondary)] shadow-2xl dark:shadow-[var(--color-quaternary-900)] border-t-4 border-[var(--color-success)] dark:border-[var(--color-success-600)]">
           <div className="w-20 h-20 bg-gradient-to-br from-[var(--color-success)] to-[var(--color-success-600)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl animate-bounce">
             <CheckCircle className="w-12 h-12 text-[var(--color-quinary)]" />
           </div>
-          <h1 className="text-3xl font-bold text-[var(--color-secondary-900)] mb-4">
+          <h1 className="text-3xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mb-4">
             {currentContent.success.title}
           </h1>
-          <p className="text-lg text-[var(--color-quaternary)] mb-8 leading-relaxed">
+          <p className="text-lg text-[var(--color-quaternary)] dark:text-[var(--color-quaternary-300)] mb-8 leading-relaxed">
             {currentContent.success.message}
           </p>
           <Button 
@@ -818,7 +818,7 @@ export default function QuotePage({ params }: QuotePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[var(--color-quinary-50)] via-[var(--color-primary-50)] to-[var(--color-quinary-50)]">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--color-quinary-50)] via-[var(--color-primary-50)] to-[var(--color-quinary-50)] dark:from-[var(--color-quinary)] dark:via-[var(--color-secondary)] dark:to-[var(--color-quinary)]">
       {/* Header */}
       <section className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-700)] py-20 relative overflow-hidden" style={seoData?.ogImage ? { backgroundImage: `url(${seoData.ogImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
         {seoData?.ogImage && <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)]/90 to-[var(--color-primary-700)]/90"></div>}
@@ -829,13 +829,13 @@ export default function QuotePage({ params }: QuotePageProps) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="flex items-center justify-center mb-6">
             <div className="bg-[var(--color-quinary-100)] p-4 rounded-2xl shadow-xl">
-              <Calculator className="w-12 h-12 text-[var(--color-primary)]" />
+              <Calculator className="w-12 h-12 text-[var(--color-quinary)]" />
             </div>
           </div>
           <h1 className="text-5xl font-bold text-[var(--color-quinary)] mb-4 drop-shadow-lg">
             {seoData ? (locale === 'ar' ? seoData.titleAr : locale === 'en' ? seoData.titleEn : locale === 'es' ? seoData.titleEs : seoData.titleFr) || currentContent.title : currentContent.title}
           </h1>
-          <p className="text-xl text-[var(--color-quinary-100)] max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-[var(--color-quinary)] max-w-2xl mx-auto leading-relaxed">
             {seoData ? (locale === 'ar' ? seoData.descriptionAr : locale === 'en' ? seoData.descriptionEn : locale === 'es' ? seoData.descriptionEs : seoData.descriptionFr) || currentContent.subtitle : currentContent.subtitle}
           </p>
         </div>
@@ -844,7 +844,7 @@ export default function QuotePage({ params }: QuotePageProps) {
       {/* Form */}
       <section className="py-12 -mt-8 relative z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="p-8 md:p-12 bg-[var(--color-quinary)] shadow-2xl rounded-2xl border-t-4 border-[var(--color-primary)]">
+          <Card className="p-8 md:p-12 bg-[var(--color-quinary)] dark:bg-[var(--color-secondary)] shadow-2xl dark:shadow-[var(--color-quaternary-900)] rounded-2xl border-t-4 border-[var(--color-primary)] dark:border-[var(--color-primary-600)]">
             <form onSubmit={handleSubmit} className="space-y-10">
               {/* Section 1: Personal Information */}
               {(
@@ -853,7 +853,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                     <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-600)] p-3 rounded-xl shadow-lg">
                       <User className="w-7 h-7 text-[var(--color-quinary)]" />
                     </div>
-                    <h2 className="text-3xl font-bold text-[var(--color-secondary-900)] mr-4">
+                    <h2 className="text-3xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mr-4">
                       {currentContent.personalInfo.title}
                     </h2>
                   </div>
@@ -935,12 +935,12 @@ export default function QuotePage({ params }: QuotePageProps) {
                     </div>
 
                     {/* Product Selection Section */}
-                    <div className="w-full bg-gradient-to-br from-[var(--color-primary-50)] to-[var(--color-quinary)] border-2 border-[var(--color-primary-200)] rounded-xl p-6 mt-8 shadow-lg">
+                    <div className="w-full bg-gradient-to-br from-[var(--color-primary-50)] to-[var(--color-quinary)] dark:from-[var(--color-quaternary-900)] dark:to-[var(--color-secondary)] border-2 border-[var(--color-primary-200)] dark:border-[var(--color-quaternary-700)] rounded-xl p-6 mt-8 shadow-lg dark:shadow-[var(--color-quaternary-900)]">
                       <div className="flex items-center mb-6">
                         <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-600)] p-3 rounded-xl shadow-lg">
                           <Package className="w-7 h-7 text-[var(--color-quinary)]" />
                         </div>
-                        <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] mr-4">
+                        <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mr-4">
                           {currentContent.productSelection.title}
                         </h3>
                       </div>
@@ -971,7 +971,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                     <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-600)] p-3 rounded-xl shadow-lg">
                       <Building className="w-7 h-7 text-[var(--color-quinary)]" />
                     </div>
-                    <h2 className="text-3xl font-bold text-[var(--color-secondary-900)] mr-4">
+                    <h2 className="text-3xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mr-4">
                       {currentContent.projectInfo.title}
                     </h2>
                   </div>
@@ -1036,21 +1036,21 @@ export default function QuotePage({ params }: QuotePageProps) {
                     <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-600)] p-3 rounded-xl shadow-lg">
                       <Package className="w-7 h-7 text-[var(--color-quinary)]" />
                     </div>
-                    <h2 className="text-3xl font-bold text-[var(--color-secondary-900)] mr-4">
+                    <h2 className="text-3xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mr-4">
                       {currentContent.productRequirements.title}
                     </h2>
                   </div>
                   
                   <div className="space-y-8">
                     {/* Product Requirements */}
-                    <div className="bg-[var(--color-quinary-50)] rounded-xl p-6 shadow-inner">
-                      <h3 className="text-xl font-semibold text-[var(--color-secondary-900)] mb-6 flex items-center">
+                    <div className="bg-[var(--color-quinary-50)] dark:bg-[var(--color-quaternary-900)] rounded-xl p-6 shadow-inner">
+                      <h3 className="text-xl font-semibold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mb-6 flex items-center">
                         <div className="w-2 h-8 bg-[var(--color-primary)] rounded-full ml-3"></div>
                         {currentContent.productRequirements.productRequirementsTitle}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="transform transition-all duration-300 hover:scale-[1.02]">
-                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] mb-2">
+                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] dark:text-[var(--color-quaternary-300)] mb-2">
                             {currentContent.productRequirements.quantity} *
                           </label>
                           <Input
@@ -1063,7 +1063,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                         </div>
                         
                         <div className="transform transition-all duration-300 hover:scale-[1.02]">
-                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] mb-2">
+                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] dark:text-[var(--color-quaternary-300)] mb-2">
                             {currentContent.productRequirements.thickness}
                           </label>
                           <Input
@@ -1075,7 +1075,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                         </div>
                         
                         <div className="transform transition-all duration-300 hover:scale-[1.02]">
-                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] mb-2">
+                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] dark:text-[var(--color-quaternary-300)] mb-2">
                             {currentContent.productRequirements.finish}
                           </label>
                           <div className="relative">
@@ -1099,7 +1099,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                         </div>
                         
                         <div className="transform transition-all duration-300 hover:scale-[1.02]">
-                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] mb-2">
+                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] dark:text-[var(--color-quaternary-300)] mb-2">
                             {currentContent.productRequirements.dimensions}
                           </label>
                           <Input
@@ -1111,7 +1111,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                         </div>
                         
                         <div className="transform transition-all duration-300 hover:scale-[1.02]">
-                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] mb-2">
+                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] dark:text-[var(--color-quaternary-300)] mb-2">
                             {currentContent.productRequirements.color}
                           </label>
                           <Input
@@ -1123,19 +1123,19 @@ export default function QuotePage({ params }: QuotePageProps) {
                         </div>
                       </div>
                     </div>                    {/* Additional Information Section */}
-                    <div className="bg-gradient-to-br from-[var(--color-primary-50)] to-[var(--color-quinary)] border-2 border-[var(--color-primary-200)] rounded-xl p-6 shadow-lg">
+                    <div className="bg-gradient-to-br from-[var(--color-primary-50)] to-[var(--color-quinary)] dark:from-[var(--color-quaternary-900)] dark:to-[var(--color-secondary)] border-2 border-[var(--color-primary-200)] dark:border-[var(--color-quaternary-700)] rounded-xl p-6 shadow-lg dark:shadow-[var(--color-quaternary-900)]">
                       <div className="flex items-center mb-6">
                         <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-600)] p-3 rounded-xl shadow-lg">
                           <FileText className="w-7 h-7 text-[var(--color-quinary)]" />
                         </div>
-                        <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] mr-4">
+                        <h3 className="text-2xl font-bold text-[var(--color-secondary-900)] dark:text-[var(--color-quaternary)] mr-4">
                           {currentContent.productRequirements.additionalInfoTitle}
                         </h3>
                       </div>
                       
                       <div className="space-y-6">
                         <div className="transform transition-all duration-300 hover:scale-[1.01]">
-                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] mb-2">
+                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] dark:text-[var(--color-quaternary-300)] mb-2">
                             {currentContent.productRequirements.message}
                           </label>
                           <textarea
@@ -1149,7 +1149,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                         </div>
                         
                         <div className="transform transition-all duration-300 hover:scale-[1.01]">
-                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] mb-2">
+                          <label className="block text-sm font-semibold text-[var(--color-secondary-700)] dark:text-[var(--color-quaternary-300)] mb-2">
                             {currentContent.productRequirements.attachments}
                           </label>
                           
@@ -1206,7 +1206,7 @@ export default function QuotePage({ params }: QuotePageProps) {
                                   <button
                                     type="button"
                                     onClick={() => removeFile(index)}
-                                    className="text-red-500 hover:text-red-700 transition-colors"
+                                    className="text-[var(--color-error)] hover:text-[var(--color-error-700)] transition-colors"
                                   >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

@@ -18,15 +18,15 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label className="block text-sm font-medium text-quaternary mb-2">
             {label}
-            {props.required && <span className="text-red-500 ml-1 rtl:ml-0 rtl:mr-1">*</span>}
+            {props.required && <span className="text-[var(--color-error)] ml-1 rtl:ml-0 rtl:mr-1">*</span>}
           </label>
         )}
         <div className="relative">
           <select
             className={cn(
-              "flex h-10 w-full rounded-md border border-quaternary-300 bg-quinary px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer pr-10",
+              "flex h-10 w-full rounded-md border border-quaternary-300 bg-quinary px-3 py-2 text-sm transition-colors text-[var(--color-quaternary)] focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer pr-10",
               error 
-                ? "border-red-300 focus:border-red-500 focus:ring-red-500" 
+                ? "border-[var(--color-error-300)] focus:border-[var(--color-error)] focus:ring-[var(--color-error)]" 
                 : "border-quaternary-300",
               className
             )}
@@ -49,7 +49,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           </div>
         </div>
         {error && (
-          <p className="mt-2 text-sm text-red-600">{error}</p>
+          <p className="mt-2 text-sm text-[var(--color-error)]">{error}</p>
         )}
         {helperText && !error && (
           <p className="mt-2 text-sm text-quaternary-500">{helperText}</p>

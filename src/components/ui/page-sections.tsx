@@ -61,7 +61,7 @@ export function HeroSection({
           {title}
         </h1>
         {subtitle && (
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-[var(--color-quinary-200)]">
+          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-[var(--color-quinary)]">
             {subtitle}
           </p>
         )}

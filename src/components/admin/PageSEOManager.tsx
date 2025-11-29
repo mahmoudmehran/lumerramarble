@@ -332,10 +332,10 @@ export default function PageSEOManager({ pageKey, pageName }: PageSEOProps) {
             </Button>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mt-4">
+          <div className="bg-[var(--color-info-50)] border border-[var(--color-info-200)] rounded-md p-4 mt-4">
             <div className="flex gap-2">
-              <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-blue-800">
+              <AlertCircle className="w-5 h-5 text-[var(--color-info)] flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-[var(--color-info-800)]">
                 <p className="font-semibold mb-1">نصائح لتحسين SEO:</p>
                 <ul className="list-disc list-inside space-y-1">
                   <li>استخدم عناوين وصفية وجذابة (40-60 حرف)</li>

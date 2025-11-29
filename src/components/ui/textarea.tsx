@@ -18,15 +18,15 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label className="block text-sm font-medium text-quaternary mb-2">
             {label}
-            {props.required && <span className="text-red-500 ml-1 rtl:ml-0 rtl:mr-1">*</span>}
+            {props.required && <span className="text-[var(--color-error)] ml-1 rtl:ml-0 rtl:mr-1">*</span>}
           </label>
         )}
         <textarea
           value={safeValue}
           className={cn(
-            "flex min-h-[120px] w-full rounded-md border border-quaternary-300 bg-quinary px-3 py-2 text-sm transition-colors placeholder:text-quaternary-400 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary disabled:cursor-not-allowed disabled:opacity-50 resize-y",
+            "flex min-h-[120px] w-full rounded-md border border-quaternary-300 bg-quinary px-3 py-2 text-sm transition-colors text-[var(--color-quaternary)] placeholder:text-quaternary-400 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary disabled:cursor-not-allowed disabled:opacity-50 resize-y",
             error 
-              ? "border-red-300 focus:border-red-500 focus:ring-red-500" 
+              ? "border-[var(--color-error-300)] focus:border-[var(--color-error)] focus:ring-[var(--color-error)]" 
               : "border-quaternary-300",
             className
           )}
@@ -34,7 +34,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {error && (
-          <p className="mt-2 text-sm text-red-600">{error}</p>
+          <p className="mt-2 text-sm text-[var(--color-error)]">{error}</p>
         )}
         {helperText && !error && (
           <p className="mt-2 text-sm text-quaternary-500">{helperText}</p>

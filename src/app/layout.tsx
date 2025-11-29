@@ -62,10 +62,19 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         
-        <link rel="icon" href="/favicon.ico" />
+        {/* Dynamic Favicon from Database */}
+        {settings.faviconUrl && (
+          <>
+            <link rel="icon" type="image/x-icon" href={`${settings.faviconUrl}?v=${Date.now()}`} />
+            <link rel="shortcut icon" type="image/x-icon" href={`${settings.faviconUrl}?v=${Date.now()}`} />
+            <link rel="icon" type="image/png" sizes="32x32" href={`${settings.faviconUrl}?v=${Date.now()}`} />
+            <link rel="icon" type="image/png" sizes="16x16" href={`${settings.faviconUrl}?v=${Date.now()}`} />
+          </>
+        )}
+        {!settings.faviconUrl && <link rel="icon" href="/favicon.ico" />}
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#f59000" />
+        <meta name="theme-color" content={settings.primaryColor || "#f59000"} />
       </head>
       <body
         className={`${cairo.variable} ${inter.variable} antialiased`}

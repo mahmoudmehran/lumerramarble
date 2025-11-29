@@ -200,7 +200,7 @@ export default function BlogPage({ params }: BlogPageProps) {
             </div>
             
             <Link href={`/${locale}/blog/${featuredPost.slug}`} className="block">
-              <div className="bg-[var(--color-quinary)] rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 cursor-pointer">
+              <div className="bg-[var(--color-quinary)] rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 cursor-pointer border">
                 <div className="grid md:grid-cols-2 gap-0">
                   <div className="relative h-80 md:h-auto group overflow-hidden">
                     <Image
@@ -216,18 +216,18 @@ export default function BlogPage({ params }: BlogPageProps) {
                   </div>
                   <div className="p-8 md:p-10 flex flex-col justify-center">
                     <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--color-quaternary)] mb-4">
-                      <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] px-3 py-1 rounded-full">
+                      <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] dark:bg-[var(--color-quaternary-800)] px-3 py-1 rounded-full">
                         <Calendar className="w-4 h-4 text-[var(--color-primary)]" />
                         {new Date(featuredPost.createdAt).toLocaleDateString(locale === 'ar' ? 'ar-EG' : 'en-US')}
                       </div>
                       {featuredPost.author && (
-                        <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] px-3 py-1 rounded-full">
+                        <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] dark:bg-[var(--color-quaternary-800)] px-3 py-1 rounded-full">
                           <User className="w-4 h-4 text-[var(--color-primary)]" />
                           {featuredPost.author.name}
                         </div>
                       )}
                       {featuredPost.category && (
-                        <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] px-3 py-1 rounded-full">
+                        <div className="flex items-center gap-2 bg-[var(--color-quinary-100)] dark:bg-[var(--color-quaternary-800)] px-3 py-1 rounded-full">
                           <Tag className="w-4 h-4 text-[var(--color-primary)]" />
                           {locale === 'ar' ? featuredPost.category.nameAr : featuredPost.category.nameEn}
                         </div>
@@ -267,7 +267,7 @@ export default function BlogPage({ params }: BlogPageProps) {
             <Grid cols={3}>
               {recentPosts.map((post) => (
                 <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="group">
-                  <div className="bg-[var(--color-quinary)] rounded-xl shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2">
+                  <div className="bg-[var(--color-quinary)] rounded-xl shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 border">
                     <div className="relative h-56 overflow-hidden">
                       <Image
                         src={post.featuredImage || placeholderImage}

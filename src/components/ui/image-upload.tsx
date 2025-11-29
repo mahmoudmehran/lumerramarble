@@ -177,7 +177,7 @@ export function ImageUpload({
 
       {/* رسالة خطأ */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="bg-[var(--color-error-50)] border border-[var(--color-error-200)] text-[var(--color-error-700)] px-4 py-3 rounded">
           {error}
         </div>
       )}
@@ -195,7 +195,7 @@ export function ImageUpload({
               <button
                 type="button"
                 onClick={() => handleRemove(url)}
-                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 right-2 p-1 bg-[var(--color-error)] text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <X className="w-4 h-4" />
               </button>

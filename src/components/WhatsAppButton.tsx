@@ -69,43 +69,49 @@ export default function WhatsAppButton({
       <div className={`fixed ${positionClasses} z-50`}>
         {isOpen && (
           <div 
-            className="mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-4 w-72 animate-in slide-in-from-bottom-5 duration-300"
+            className="mb-4 bg-[var(--color-quinary)] rounded-lg shadow-2xl p-4 w-72 animate-in slide-in-from-bottom-5 duration-300"
             style={{
               animation: 'slideUp 0.3s ease-out',
             }}
           >
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-[var(--color-quinary)] rounded-full flex items-center justify-center">
                   <WhatsAppIcon className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
+                  <h3 className="font-semibold text-[var(--color-quaternary)] text-sm">
                     {buttonText}
                   </h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-[var(--color-quaternary-500)]">
                     متصل الآن
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="text-[var(--color-quaternary-400)] hover:text-[var(--color-quaternary-600)]"
                 aria-label="إغلاق"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-3">
-              <p className="text-sm text-gray-700 dark:text-gray-300">
+            <div className="bg-[var(--color-quinary-50)] rounded-lg p-3 mb-3">
+              <p className="text-sm text-[var(--color-quaternary-700)">
                 {greeting}
               </p>
             </div>
 
             <button
               onClick={handleWhatsAppClick}
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              className="w-full font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              style={{
+                backgroundColor: '#25D366',
+                color: 'white'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1faa52'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#25D366'}
             >
               <WhatsAppIcon className="w-5 h-5" />
               ابدأ المحادثة
@@ -116,14 +122,14 @@ export default function WhatsAppButton({
         {/* Main Floating Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="bg-white hover:bg-gray-50 text-white rounded-full p-4 shadow-2xl transition-all duration-300 transform hover:scale-110 active:scale-95 animate-bounce hover:animate-none"
+          className="bg-[var(--color-quinary)] hover:bg-[var(--color-quinary-50)] rounded-full p-4 shadow-2xl transition-all duration-300 transform hover:scale-110 active:scale-95 animate-bounce hover:animate-none"
           aria-label="فتح واتساب"
           style={{
             boxShadow: '0 10px 40px rgba(37, 211, 102, 0.4)',
           }}
         >
           {isOpen ? (
-            <X className="w-7 h-7 text-gray-700" />
+            <X className="w-7 h-7 text-[var(--color-quaternary-700)]" />
           ) : (
             <WhatsAppIcon className="w-8 h-8" />
           )}

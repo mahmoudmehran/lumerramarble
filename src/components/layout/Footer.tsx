@@ -56,24 +56,19 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
 
   // Memoize logo URL to prevent unnecessary recalculations
   const logoUrl = useMemo(() => {
-    // Use footerLogoUrl if available, fallback to old logoUrl for backward compatibility
-    const mainLogo = siteSettings?.footerLogoUrl || siteSettings?.logoUrl
-    if (!mainLogo) return null
-    
-    // Check for dark mode logo
-    const darkModeLogo = siteSettings?.footerDarkModeLogoUrl || siteSettings?.darkModeLogoUrl
-    return siteSettings.darkModeEnabled && darkModeLogo ? darkModeLogo : mainLogo
-  }, [siteSettings?.footerLogoUrl, siteSettings?.logoUrl, siteSettings?.footerDarkModeLogoUrl, siteSettings?.darkModeLogoUrl, siteSettings?.darkModeEnabled])
+    const mainLogo = siteSettings?.footerLogoUrl
+    return mainLogo || null
+  }, [siteSettings?.footerLogoUrl])
   
   // Memoize alt text
   const logoAlt = useMemo(() => {
     if (!siteSettings) return 'Company Logo'
     
-    // Use footerLogoAlt if available, fallback to old logoAlt
-    const altAr = siteSettings.footerLogoAltAr || siteSettings.logoAltAr || 'شعار الشركة'
-    const altEs = siteSettings.footerLogoAltEs || siteSettings.logoAltEs || 'Logo de la Empresa'
-    const altFr = siteSettings.footerLogoAltFr || siteSettings.logoAltFr || 'Logo de l\'Entreprise'
-    const altEn = siteSettings.footerLogoAlt || siteSettings.logoAlt || 'Company Logo'
+    // Use only footerLogoAlt (removed fallback to old logoAlt)
+    const altAr = siteSettings.footerLogoAltAr || 'شعار الشركة'
+    const altEs = siteSettings.footerLogoAltEs || 'Logo de la Empresa'
+    const altFr = siteSettings.footerLogoAltFr || 'Logo de l\'Entreprise'
+    const altEn = siteSettings.footerLogoAlt || 'Company Logo'
     
     return locale === 'ar' ? altAr :
            locale === 'es' ? altEs :
@@ -210,18 +205,15 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
           <div className="inline-flex items-center gap-3 mb-4">
             {/* Show Logo if available, otherwise show fallback */}
             {logoUrl ? (
-              <img
-                src={logoUrl}
-                alt={logoAlt}
-                className="max-h-16 max-w-[160px] h-auto w-auto object-contain"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                style={{ 
-                  willChange: 'auto',
-                  imageRendering: 'crisp-edges'
-                }}
-              />
+              <div className="h-12 flex items-center">
+                <img
+                  src={logoUrl}
+                  alt={logoAlt}
+                  className="max-h-12 w-auto object-contain"
+                  loading="eager"
+                  fetchPriority="high"
+                />
+              </div>
             ) : (
               <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] rounded-lg flex items-center justify-center shadow-lg flex-shrink-0">
                 <span className="text-[var(--color-quinary)] font-bold text-2xl">L</span>
@@ -383,7 +375,7 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
                 : `© ${new Date().getFullYear()} Lumerra Marble. Tous droits réservés.`
             )}
           </p>
-          <p className="text-[var(--color-quaternary)] text-base lg:text-lg mt-2 flex items-center justify-center gap-1">
+          <p className="text-[var(--color-quinary)] text-base lg:text-lg mt-2 flex items-center justify-center gap-1">
             {locale === 'ar' 
               ? 'صُنع بكل'
               : locale === 'en'

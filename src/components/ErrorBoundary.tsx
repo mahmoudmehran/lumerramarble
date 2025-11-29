@@ -67,11 +67,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
             {/* Error details (فقط في development) */}
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-left">
-                <h3 className="text-sm font-semibold text-red-800 mb-2">
+              <div className="mb-6 p-4 bg-[var(--color-error-50)] border border-[var(--color-error-200)] rounded-lg text-left">
+                <h3 className="text-sm font-semibold text-[var(--color-error-800)] mb-2">
                   Error Details (Development Only):
                 </h3>
-                <pre className="text-xs text-red-700 overflow-auto">
+                <pre className="text-xs text-[var(--color-error-700)] overflow-auto">
                   {this.state.error.message}
                 </pre>
               </div>
@@ -148,14 +148,14 @@ export function APIErrorBoundary({ children }: { children: ReactNode }) {
   return (
     <ErrorBoundary
       fallback={
-        <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
+        <div className="p-6 bg-[var(--color-error-50)] border border-[var(--color-error-200)] rounded-lg">
           <div className="flex items-start gap-3">
             <div className="text-2xl">❌</div>
             <div>
-              <h3 className="font-semibold text-red-900 mb-1">
+              <h3 className="font-semibold text-[var(--color-error-800)] mb-1">
                 خطأ في الاتصال بالخادم
               </h3>
-              <p className="text-sm text-red-700">
+              <p className="text-sm text-[var(--color-error-700)]">
                 تعذر تحميل البيانات. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.
               </p>
             </div>

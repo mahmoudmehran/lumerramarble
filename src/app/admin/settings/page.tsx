@@ -440,18 +440,18 @@ export default function SiteSettings() {
                 <Button
                   variant="ghost"
                   onClick={() => router.push('/admin')}
-                  className="flex items-center gap-1 bg-indigo-500 hover:bg-indigo-600 text-white transition-all duration-200 rounded-md sm:rounded-lg px-2 sm:px-3 py-1 sm:py-2 border-0 shadow-sm text-xs sm:text-sm"
+                  className="flex items-center gap-1 bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-700)] text-[var(--color-quinary)] transition-all duration-200 rounded-md sm:rounded-lg px-2 sm:px-3 py-1 sm:py-2 border-0 shadow-sm text-xs sm:text-sm"
                 >
                   <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="hidden xs:inline">عودة</span>
                 </Button>
                 
                 <div className="flex items-center gap-1.5 sm:gap-3">
-                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl shadow-md">
-                    <Settings className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
+                  <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-700)] p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl shadow-md">
+                    <Settings className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[var(--color-quinary)]" />
                   </div>
                   <div>
-                    <h1 className="text-sm sm:text-xl font-bold text-gray-900">
+                    <h1 className="text-sm sm:text-xl font-bold text-[var(--color-quaternary)]">
                       إعدادات الموقع
                     </h1>
                   </div>
@@ -463,7 +463,7 @@ export default function SiteSettings() {
                 <Button 
                   onClick={handleReset}
                   disabled={isSaving || !originalSettings}
-                  className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 rounded-md sm:rounded-lg px-2 sm:px-4 py-1 sm:py-2 disabled:bg-gray-300 disabled:cursor-not-allowed text-xs sm:text-sm"
+                  className="flex items-center gap-1 bg-[var(--color-error)] hover:bg-[var(--color-error-700)] text-[var(--color-quinary)] border-0 shadow-md hover:shadow-lg transition-all duration-200 rounded-md sm:rounded-lg px-2 sm:px-4 py-1 sm:py-2 disabled:bg-[var(--color-quaternary-300)] disabled:cursor-not-allowed text-xs sm:text-sm"
                 >
                   <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="hidden xs:inline">إلغاء</span>
@@ -471,7 +471,7 @@ export default function SiteSettings() {
                 <Button 
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 rounded-md sm:rounded-lg px-2 sm:px-6 py-1 sm:py-2 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-xs sm:text-sm"
+                  className="flex items-center gap-1 bg-gradient-to-r from-[var(--color-success)] to-[var(--color-success-600)] hover:from-[var(--color-success-600)] hover:to-[var(--color-success-700)] text-[var(--color-quinary)] border-0 shadow-md hover:shadow-lg transition-all duration-200 rounded-md sm:rounded-lg px-2 sm:px-6 py-1 sm:py-2 disabled:from-[var(--color-quaternary-300)] disabled:to-[var(--color-quaternary-400)] disabled:cursor-not-allowed text-xs sm:text-sm"
                 >
                   <Save className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>{isSaving ? 'حفظ...' : 'حفظ'}</span>
@@ -482,27 +482,27 @@ export default function SiteSettings() {
         </div>
 
         {/* Language Selection Bar - Fixed Below Header */}
-        <div className="bg-white/95 backdrop-blur-sm shadow-md border-b border-gray-200 fixed top-[50px] sm:top-[73px] left-0 right-0 z-40">
+        <div className="bg-[var(--color-quinary)]/95 backdrop-blur-sm shadow-md border-b border-[var(--color-quaternary-200)] fixed top-[50px] sm:top-[73px] left-0 right-0 z-40">
           <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1 sm:gap-2">
-                <Globe className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-blue-600" />
-                <span className="text-xs sm:text-sm font-semibold text-gray-700">لغة:</span>
+                <Globe className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[var(--color-primary)]" />
+                <span className="text-xs sm:text-sm font-semibold text-[var(--color-quaternary-700)]">لغة:</span>
               </div>
               <div className="flex gap-1 sm:gap-2 flex-nowrap">
                 {[
-                  { code: 'ar' as const, name: 'العربية', flag: '🇪🇬', bgActive: 'bg-gradient-to-r from-green-600 to-red-600', bgInactive: 'bg-green-100 hover:bg-green-200', textInactive: 'text-green-800' },
-                  { code: 'en' as const, name: 'English', flag: '🇬🇧', bgActive: 'bg-gradient-to-r from-blue-600 to-red-600', bgInactive: 'bg-blue-100 hover:bg-blue-200', textInactive: 'text-blue-800' },
-                  { code: 'es' as const, name: 'Español', flag: '🇪🇸', bgActive: 'bg-gradient-to-r from-yellow-500 to-red-600', bgInactive: 'bg-yellow-100 hover:bg-yellow-200', textInactive: 'text-yellow-900' },
-                  { code: 'fr' as const, name: 'Français', flag: '🇫🇷', bgActive: 'bg-gradient-to-r from-blue-700 to-red-600', bgInactive: 'bg-indigo-100 hover:bg-indigo-200', textInactive: 'text-indigo-800' }
+                  { code: 'ar' as const, name: 'العربية', flag: '🇪🇬' },
+                  { code: 'en' as const, name: 'English', flag: '🇬🇧' },
+                  { code: 'es' as const, name: 'Español', flag: '🇪🇸' },
+                  { code: 'fr' as const, name: 'Français', flag: '🇫🇷' }
                 ].map(lang => (
                   <button
                     key={lang.code}
                     onClick={() => setActiveLanguage(lang.code)}
                     className={`flex items-center gap-0.5 sm:gap-1.5 px-1.5 sm:px-3 py-1 sm:py-2 rounded-md sm:rounded-lg font-semibold transition-all duration-200 whitespace-nowrap shadow-sm hover:shadow-md text-xs sm:text-sm ${
                       activeLanguage === lang.code
-                        ? `${lang.bgActive} text-white ring-1 sm:ring-2 ring-offset-1 ring-white`
-                        : `${lang.bgInactive} ${lang.textInactive}`
+                        ? 'bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-700)] text-[var(--color-quinary)] ring-1 sm:ring-2 ring-offset-1 ring-[var(--color-quinary)]'
+                        : 'bg-[var(--color-primary-100)] hover:bg-[var(--color-primary-200)] text-[var(--color-primary-800)]'
                     }`}
                   >
                     <span className="text-sm sm:text-lg">{lang.flag}</span>
@@ -559,7 +559,7 @@ export default function SiteSettings() {
                   }
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-md focus:ring-2 focus:ring-primary-500"
                   placeholder={activeLanguage === 'ar' ? 'وصف الشركة بالعربية' : 'Company description'}
                 />
               </div>
@@ -578,9 +578,9 @@ export default function SiteSettings() {
             </div>
             
             {/* Header Logo Section */}
-            <div className="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h3 className="text-md font-bold text-blue-900 mb-4 flex items-center gap-2">
-                <span className="bg-blue-500 text-white px-2 py-1 rounded text-sm">Header</span>
+            <div className="mb-8 p-4 bg-[var(--color-primary-50)] rounded-lg border border-[var(--color-primary-200)]">
+              <h3 className="text-md font-bold text-[var(--color-primary-800)] mb-4 flex items-center gap-2">
+                <span className="bg-[var(--color-primary)] text-[var(--color-quinary)] px-2 py-1 rounded text-sm">Header</span>
                 لوجو الهيدر (رأس الصفحة)
               </h3>
               
@@ -685,9 +685,9 @@ export default function SiteSettings() {
             </div>
 
             {/* Footer Logo Section */}
-            <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
-              <h3 className="text-md font-bold text-green-900 mb-4 flex items-center gap-2">
-                <span className="bg-green-500 text-white px-2 py-1 rounded text-sm">Footer</span>
+            <div className="mb-6 p-4 bg-[var(--color-tertiary-50)] rounded-lg border border-[var(--color-tertiary-200)]">
+              <h3 className="text-md font-bold text-[var(--color-tertiary-800)] mb-4 flex items-center gap-2">
+                <span className="bg-[var(--color-tertiary)] text-[var(--color-quinary)] px-2 py-1 rounded text-sm">Footer</span>
                 لوجو الفوتر (ذيل الصفحة)
               </h3>
               
@@ -838,10 +838,10 @@ export default function SiteSettings() {
                   value={settings.phone}
                   onChange={handleInputChange}
                   placeholder="+20 111 312 1444"
-                  className={errors.phone ? 'border-red-500' : ''}
+                  className={errors.phone ? 'border-[var(--color-error)]' : ''}
                 />
                 {errors.phone && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-[var(--color-error)] text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.phone}
                   </p>
@@ -857,10 +857,10 @@ export default function SiteSettings() {
                   value={settings.email}
                   onChange={handleInputChange}
                   placeholder="info@alhotmarble.com"
-                  className={errors.email ? 'border-red-500' : ''}
+                  className={errors.email ? 'border-[var(--color-error)]' : ''}
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-[var(--color-error)] text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.email}
                   </p>
@@ -875,10 +875,10 @@ export default function SiteSettings() {
                   value={settings.whatsapp}
                   onChange={handleInputChange}
                   placeholder="+20 111 312 1444"
-                  className={errors.whatsapp ? 'border-red-500' : ''}
+                  className={errors.whatsapp ? 'border-[var(--color-error)]' : ''}
                 />
                 {errors.whatsapp && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-[var(--color-error)] text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.whatsapp}
                   </p>
@@ -951,10 +951,10 @@ export default function SiteSettings() {
                   value={settings.facebook}
                   onChange={handleInputChange}
                   placeholder="https://facebook.com/alhotmarble"
-                  className={errors.facebook ? 'border-red-500' : ''}
+                  className={errors.facebook ? 'border-[var(--color-error)]' : ''}
                 />
                 {errors.facebook && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-[var(--color-error)] text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.facebook}
                   </p>
@@ -969,10 +969,10 @@ export default function SiteSettings() {
                   value={settings.instagram}
                   onChange={handleInputChange}
                   placeholder="https://instagram.com/alhotmarble"
-                  className={errors.instagram ? 'border-red-500' : ''}
+                  className={errors.instagram ? 'border-[var(--color-error)]' : ''}
                 />
                 {errors.instagram && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-[var(--color-error)] text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.instagram}
                   </p>
@@ -987,10 +987,10 @@ export default function SiteSettings() {
                   value={settings.linkedin}
                   onChange={handleInputChange}
                   placeholder="https://linkedin.com/company/alhotmarble"
-                  className={errors.linkedin ? 'border-red-500' : ''}
+                  className={errors.linkedin ? 'border-[var(--color-error)]' : ''}
                 />
                 {errors.linkedin && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-[var(--color-error)] text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.linkedin}
                   </p>
@@ -1005,10 +1005,10 @@ export default function SiteSettings() {
                   value={settings.youtube}
                   onChange={handleInputChange}
                   placeholder="https://youtube.com/@alhotmarble"
-                  className={errors.youtube ? 'border-red-500' : ''}
+                  className={errors.youtube ? 'border-[var(--color-error)]' : ''}
                 />
                 {errors.youtube && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-[var(--color-error)] text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.youtube}
                   </p>
@@ -1024,10 +1024,10 @@ export default function SiteSettings() {
                   value={settings.tiktok}
                   onChange={handleInputChange}
                   placeholder="https://tiktok.com/@alhotmarble"
-                  className={errors.tiktok ? 'border-red-500' : ''}
+                  className={errors.tiktok ? 'border-[var(--color-error)]' : ''}
                 />
                 {errors.tiktok && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-[var(--color-error)] text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.tiktok}
                   </p>
@@ -1043,10 +1043,10 @@ export default function SiteSettings() {
                   value={settings.googleMapsLink}
                   onChange={handleInputChange}
                   placeholder="https://maps.app.goo.gl/..."
-                  className={errors.googleMapsLink ? 'border-red-500' : ''}
+                  className={errors.googleMapsLink ? 'border-[var(--color-error)]' : ''}
                 />
                 {errors.googleMapsLink && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-[var(--color-error)] text-xs mt-1 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.googleMapsLink}
                   </p>
@@ -1098,7 +1098,7 @@ export default function SiteSettings() {
                   }
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-md focus:ring-2 focus:ring-primary-500"
                   placeholder={activeLanguage === 'ar' ? 'وصف الموقع بالعربية' : 'Site description'}
                 />
               </div>
@@ -1134,8 +1134,8 @@ export default function SiteSettings() {
             </div>
             
             <div className="space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                <p className="text-sm text-blue-800">
+              <div className="bg-[var(--color-info-50)] border border-[var(--color-info-200)] rounded-lg p-4 mb-4">
+                <p className="text-sm text-[var(--color-info-800)]">
                   <strong>ملاحظة:</strong> هذه الإعدادات تُستخدم لإرسال رسائل البريد الإلكتروني من الموقع (طلبات الأسعار، إشعارات الاتصال، إلخ).
                   للحصول على بيانات SMTP من Gmail، قم بتفعيل &quot;تطبيقات أقل أماناً&quot; أو استخدم &quot;كلمة مرور التطبيق&quot;.
                 </p>
@@ -1217,7 +1217,7 @@ export default function SiteSettings() {
                   name="smtpSecure"
                   checked={settings.smtpSecure}
                   onChange={(e) => setSettings(prev => ({ ...prev, smtpSecure: e.target.checked }))}
-                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                  className="w-4 h-4 text-primary-600 border-[var(--color-quaternary-300)] rounded focus:ring-primary-500"
                 />
                 <label htmlFor="smtpSecure" className="text-sm font-medium text-gray-700">
                   <Lock className="w-4 h-4 inline mr-1" />
@@ -1270,8 +1270,8 @@ export default function SiteSettings() {
                 <p className="text-xs text-gray-500 mt-1">البريد الذي يستلم إشعارات طلبات الأسعار والرسائل</p>
               </div>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p className="text-sm text-yellow-800">
+              <div className="bg-[var(--color-warning-50)] border border-[var(--color-warning-200)] rounded-lg p-4">
+                <p className="text-sm text-[var(--color-warning-800)]">
                   <strong>تنبيه أمني:</strong> لا تشارك بيانات SMTP مع أي شخص. يُنصح باستخدام &quot;كلمة مرور التطبيق&quot; بدلاً من كلمة المرور الأساسية.
                 </p>
               </div>
@@ -1385,7 +1385,7 @@ export default function SiteSettings() {
                       onChange={(e) => {
                         updateSetting('autoOptimize', e.target.checked)
                       }}
-                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="w-5 h-5 text-[var(--color-info)] border-[var(--color-quaternary-300)] rounded focus:ring-[var(--color-info)]"
                     />
                     <span className="text-sm text-gray-700">
                       {activeLanguage === 'ar' && 'تفعيل التحسين التلقائي عند رفع الصور'}
@@ -1404,8 +1404,8 @@ export default function SiteSettings() {
               </div>
 
               {/* Thumbnail Settings */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-blue-900 mb-3 flex items-center gap-2">
+              <div className="bg-[var(--color-info-50)] border border-[var(--color-info-200)] rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-[var(--color-info-800)] mb-3 flex items-center gap-2">
                   <FileImage className="w-4 h-4" />
                   {activeLanguage === 'ar' && 'إعدادات الصور المصغرة'}
                   {activeLanguage === 'en' && 'Thumbnail Settings'}
@@ -1414,7 +1414,7 @@ export default function SiteSettings() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-blue-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-info-800)] mb-2">
                       {activeLanguage === 'ar' && 'عرض الصورة المصغرة (بكسل)'}
                       {activeLanguage === 'en' && 'Thumbnail Width (px)'}
                       {activeLanguage === 'es' && 'Ancho de Miniatura (px)'}
@@ -1432,7 +1432,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-blue-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-info-800)] mb-2">
                       {activeLanguage === 'ar' && 'ارتفاع الصورة المصغرة (بكسل)'}
                       {activeLanguage === 'en' && 'Thumbnail Height (px)'}
                       {activeLanguage === 'es' && 'Alto de Miniatura (px)'}
@@ -1452,8 +1452,8 @@ export default function SiteSettings() {
               </div>
 
               {/* Max Dimensions */}
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-purple-900 mb-3 flex items-center gap-2">
+              <div className="bg-[var(--color-secondary-50)] border border-[var(--color-secondary-200)] rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-[var(--color-secondary-800)] mb-3 flex items-center gap-2">
                   <Maximize2 className="w-4 h-4" />
                   {activeLanguage === 'ar' && 'الأبعاد القصوى للصور'}
                   {activeLanguage === 'en' && 'Maximum Image Dimensions'}
@@ -1462,7 +1462,7 @@ export default function SiteSettings() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-purple-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-secondary-800)] mb-2">
                       {activeLanguage === 'ar' && 'العرض الأقصى (بكسل)'}
                       {activeLanguage === 'en' && 'Maximum Width (px)'}
                       {activeLanguage === 'es' && 'Ancho Máximo (px)'}
@@ -1477,7 +1477,7 @@ export default function SiteSettings() {
                       max="4000"
                       placeholder="1920"
                     />
-                    <p className="text-xs text-purple-700 mt-1">
+                    <p className="text-xs text-[var(--color-secondary-700)] mt-1">
                       {activeLanguage === 'ar' && 'سيتم تصغير الصور الأكبر تلقائياً'}
                       {activeLanguage === 'en' && 'Larger images will be resized automatically'}
                       {activeLanguage === 'es' && 'Las imágenes más grandes se redimensionarán automáticamente'}
@@ -1486,7 +1486,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-purple-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-secondary-800)] mb-2">
                       {activeLanguage === 'ar' && 'الارتفاع الأقصى (بكسل)'}
                       {activeLanguage === 'en' && 'Maximum Height (px)'}
                       {activeLanguage === 'es' && 'Alto Máximo (px)'}
@@ -1501,7 +1501,7 @@ export default function SiteSettings() {
                       max="4000"
                       placeholder="1080"
                     />
-                    <p className="text-xs text-purple-700 mt-1">
+                    <p className="text-xs text-[var(--color-primary-700)] mt-1">
                       {activeLanguage === 'ar' && 'الحفاظ على نسبة العرض إلى الارتفاع'}
                       {activeLanguage === 'en' && 'Aspect ratio will be maintained'}
                       {activeLanguage === 'es' && 'Se mantendrá la relación de aspecto'}
@@ -1512,8 +1512,8 @@ export default function SiteSettings() {
               </div>
 
               {/* Info Alert */}
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="text-sm text-green-800">
+              <div className="bg-[var(--color-success-50)] border border-[var(--color-success-200)] rounded-lg p-4">
+                <p className="text-sm text-[var(--color-success-800)]">
                   <strong>
                     {activeLanguage === 'ar' && 'معلومة:'}
                     {activeLanguage === 'en' && 'Info:'}
@@ -1545,8 +1545,8 @@ export default function SiteSettings() {
             
             <div className="space-y-6">
               {/* Analytics Tracking Codes */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-blue-900 mb-3 flex items-center gap-2">
+              <div className="bg-[var(--color-info-50)] border border-[var(--color-info-200)] rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-[var(--color-info-800)] mb-3 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4" />
                   {activeLanguage === 'ar' && 'أكواد التتبع والتحليلات'}
                   {activeLanguage === 'en' && 'Tracking & Analytics Codes'}
@@ -1556,7 +1556,7 @@ export default function SiteSettings() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-blue-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-info-800)] mb-2">
                       Google Analytics ID
                     </label>
                     <Input
@@ -1565,7 +1565,7 @@ export default function SiteSettings() {
                       onChange={handleInputChange}
                       placeholder="G-XXXXXXXXXX"
                     />
-                    <p className="text-xs text-blue-700 mt-1">
+                    <p className="text-xs text-[var(--color-info-700)] mt-1">
                       {activeLanguage === 'ar' && 'معرّف Google Analytics GA4'}
                       {activeLanguage === 'en' && 'Google Analytics GA4 Measurement ID'}
                       {activeLanguage === 'es' && 'ID de Medición de Google Analytics GA4'}
@@ -1574,7 +1574,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-blue-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-info-800)] mb-2">
                       Google Tag Manager ID
                     </label>
                     <Input
@@ -1583,7 +1583,7 @@ export default function SiteSettings() {
                       onChange={handleInputChange}
                       placeholder="GTM-XXXXXXX"
                     />
-                    <p className="text-xs text-blue-700 mt-1">
+                    <p className="text-xs text-[var(--color-info-700)] mt-1">
                       {activeLanguage === 'ar' && 'معرّف Google Tag Manager'}
                       {activeLanguage === 'en' && 'Google Tag Manager Container ID'}
                       {activeLanguage === 'es' && 'ID de Contenedor de Google Tag Manager'}
@@ -1592,7 +1592,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-blue-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-info-800)] mb-2">
                       Facebook Pixel ID
                     </label>
                     <Input
@@ -1601,7 +1601,7 @@ export default function SiteSettings() {
                       onChange={handleInputChange}
                       placeholder="123456789012345"
                     />
-                    <p className="text-xs text-blue-700 mt-1">
+                    <p className="text-xs text-[var(--color-info-700)] mt-1">
                       {activeLanguage === 'ar' && 'معرّف Facebook Pixel للإعلانات'}
                       {activeLanguage === 'en' && 'Facebook Pixel ID for Ads'}
                       {activeLanguage === 'es' && 'ID de Pixel de Facebook para Anuncios'}
@@ -1610,7 +1610,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-blue-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-info-800)] mb-2">
                       LinkedIn Partner ID
                     </label>
                     <Input
@@ -1619,7 +1619,7 @@ export default function SiteSettings() {
                       onChange={handleInputChange}
                       placeholder="1234567"
                     />
-                    <p className="text-xs text-blue-700 mt-1">
+                    <p className="text-xs text-[var(--color-info-700)] mt-1">
                       {activeLanguage === 'ar' && 'معرّف LinkedIn Insight Tag'}
                       {activeLanguage === 'en' && 'LinkedIn Insight Tag Partner ID'}
                       {activeLanguage === 'es' && 'ID de Socio de LinkedIn Insight Tag'}
@@ -1628,7 +1628,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-blue-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-info-800)] mb-2">
                       TikTok Pixel ID
                     </label>
                     <Input
@@ -1637,7 +1637,7 @@ export default function SiteSettings() {
                       onChange={handleInputChange}
                       placeholder="ABCDEFGHIJKLMNOP"
                     />
-                    <p className="text-xs text-blue-700 mt-1">
+                    <p className="text-xs text-[var(--color-info-700)] mt-1">
                       {activeLanguage === 'ar' && 'معرّف TikTok Pixel للإعلانات'}
                       {activeLanguage === 'en' && 'TikTok Pixel ID for Ads'}
                       {activeLanguage === 'es' && 'ID de Pixel de TikTok para Anuncios'}
@@ -1646,7 +1646,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-blue-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-info-800)] mb-2">
                       Microsoft Bing UET Tag ID
                     </label>
                     <Input
@@ -1655,7 +1655,7 @@ export default function SiteSettings() {
                       onChange={handleInputChange}
                       placeholder="12345678"
                     />
-                    <p className="text-xs text-blue-700 mt-1">
+                    <p className="text-xs text-[var(--color-info-700)] mt-1">
                       {activeLanguage === 'ar' && 'معرّف Microsoft Bing Ads UET'}
                       {activeLanguage === 'en' && 'Microsoft Bing Ads UET Tag ID'}
                       {activeLanguage === 'es' && 'ID de Etiqueta UET de Microsoft Bing Ads'}
@@ -1666,8 +1666,8 @@ export default function SiteSettings() {
               </div>
 
               {/* SEO Settings */}
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-green-900 mb-3 flex items-center gap-2">
+              <div className="bg-[var(--color-success-50)] border border-[var(--color-success-200)] rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-[var(--color-success-800)] mb-3 flex items-center gap-2">
                   <Search className="w-4 h-4" />
                   {activeLanguage === 'ar' && 'إعدادات محركات البحث'}
                   {activeLanguage === 'en' && 'Search Engine Settings'}
@@ -1678,7 +1678,7 @@ export default function SiteSettings() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-green-900 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-success-800)] mb-2">
                         {activeLanguage === 'ar' && 'السماح بالفهرسة'}
                         {activeLanguage === 'en' && 'Allow Indexing'}
                         {activeLanguage === 'es' && 'Permitir Indexación'}
@@ -1690,7 +1690,7 @@ export default function SiteSettings() {
                           name="seoIndexing"
                           checked={settings.seoIndexing}
                           onChange={(e) => updateSetting('seoIndexing', e.target.checked)}
-                          className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                          className="w-5 h-5 text-[var(--color-success)] border-[var(--color-quaternary-300)] rounded focus:ring-[var(--color-success)]"
                         />
                         <span className="text-sm text-gray-700">
                           {activeLanguage === 'ar' && 'السماح لمحركات البحث بفهرسة الموقع'}
@@ -1702,7 +1702,7 @@ export default function SiteSettings() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-green-900 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-success-800)] mb-2">
                         {activeLanguage === 'ar' && 'متابعة الروابط'}
                         {activeLanguage === 'en' && 'Follow Links'}
                         {activeLanguage === 'es' && 'Seguir Enlaces'}
@@ -1714,7 +1714,7 @@ export default function SiteSettings() {
                           name="seoFollowLinks"
                           checked={settings.seoFollowLinks}
                           onChange={(e) => updateSetting('seoFollowLinks', e.target.checked)}
-                          className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                          className="w-5 h-5 text-[var(--color-success)] border-[var(--color-quaternary-300)] rounded focus:ring-[var(--color-success)]"
                         />
                         <span className="text-sm text-gray-700">
                           {activeLanguage === 'ar' && 'السماح لمحركات البحث بمتابعة الروابط'}
@@ -1727,7 +1727,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-green-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-success-800)] mb-2">
                       {activeLanguage === 'ar' && 'رابط الموقع الأساسي (Canonical URL)'}
                       {activeLanguage === 'en' && 'Canonical URL'}
                       {activeLanguage === 'es' && 'URL Canónica'}
@@ -1739,7 +1739,7 @@ export default function SiteSettings() {
                       onChange={handleInputChange}
                       placeholder="https://www.lumerramarble.com"
                     />
-                    <p className="text-xs text-green-700 mt-1">
+                    <p className="text-xs text-[var(--color-success-700)] mt-1">
                       {activeLanguage === 'ar' && 'الدومين الأساسي للموقع لتجنب المحتوى المكرر في SEO'}
                       {activeLanguage === 'en' && 'Primary domain to avoid duplicate content in SEO'}
                       {activeLanguage === 'es' && 'Dominio principal para evitar contenido duplicado en SEO'}
@@ -1748,7 +1748,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-green-900 mb-2 flex items-center gap-2">
+                    <label className="block text-sm font-medium text-[var(--color-success-800)] mb-2 flex items-center gap-2">
                       <Code className="w-4 h-4" />
                       {activeLanguage === 'ar' && 'محتوى robots.txt مخصص'}
                       {activeLanguage === 'en' && 'Custom robots.txt Content'}
@@ -1760,10 +1760,10 @@ export default function SiteSettings() {
                       value={settings.robotsTxt}
                       onChange={handleInputChange}
                       rows={6}
-                      className="w-full px-3 py-2 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm"
+                      className="w-full px-3 py-2 border border-[var(--color-success-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-success)] focus:border-transparent font-mono text-sm"
                       placeholder="User-agent: *&#10;Allow: /&#10;Sitemap: https://www.lumerramarble.com/sitemap.xml"
                     />
-                    <p className="text-xs text-green-700 mt-1">
+                    <p className="text-xs text-[var(--color-success-700)] mt-1">
                       {activeLanguage === 'ar' && 'محتوى مخصص لملف robots.txt (اتركه فارغاً للإعدادات الافتراضية)'}
                       {activeLanguage === 'en' && 'Custom content for robots.txt file (leave empty for defaults)'}
                       {activeLanguage === 'es' && 'Contenido personalizado para archivo robots.txt (dejar vacío para predeterminados)'}
@@ -1774,8 +1774,8 @@ export default function SiteSettings() {
               </div>
 
               {/* Info Alert */}
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p className="text-sm text-yellow-800">
+              <div className="bg-[var(--color-warning-50)] border border-[var(--color-warning-200)] rounded-lg p-4">
+                <p className="text-sm text-[var(--color-warning-800)]">
                   <strong>
                     {activeLanguage === 'ar' && 'تنبيه:'}
                     {activeLanguage === 'en' && 'Warning:'}
@@ -1789,8 +1789,8 @@ export default function SiteSettings() {
                 </p>
               </div>
 
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <p className="text-sm text-purple-800">
+              <div className="bg-[var(--color-info-50)] border border-[var(--color-info-200)] rounded-lg p-4">
+                <p className="text-sm text-[var(--color-info-800)]">
                   <strong>
                     {activeLanguage === 'ar' && 'نصيحة:'}
                     {activeLanguage === 'en' && 'Tip:'}
@@ -1840,7 +1840,7 @@ export default function SiteSettings() {
                   }
                   onChange={handleInputChange}
                   rows={8}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-info)] focus:border-transparent"
                   placeholder={
                     activeLanguage === 'ar' ? 'اكتب سياسة الخصوصية هنا...' :
                     activeLanguage === 'en' ? 'Write privacy policy here...' :
@@ -1875,7 +1875,7 @@ export default function SiteSettings() {
                   }
                   onChange={handleInputChange}
                   rows={8}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-info)] focus:border-transparent"
                   placeholder={
                     activeLanguage === 'ar' ? 'اكتب الشروط والأحكام هنا...' :
                     activeLanguage === 'en' ? 'Write terms & conditions here...' :
@@ -1913,8 +1913,8 @@ export default function SiteSettings() {
                 </p>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-800">
+              <div className="bg-[var(--color-info-50)] border border-[var(--color-info-200)] rounded-lg p-4">
+                <p className="text-sm text-[var(--color-info-800)]">
                   <strong>
                     {activeLanguage === 'ar' && 'معلومة:'}
                     {activeLanguage === 'en' && 'Info:'}
@@ -1958,7 +1958,7 @@ export default function SiteSettings() {
                     name="fontFamily"
                     value={settings.fontFamily}
                     onChange={handleInputChange as any}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-info)] focus:border-transparent"
                   >
                     <option value="Inter">Inter</option>
                     <option value="Cairo">Cairo (عربي)</option>
@@ -2013,7 +2013,7 @@ export default function SiteSettings() {
                     name="buttonStyle"
                     value={settings.buttonStyle}
                     onChange={handleInputChange as any}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-info)] focus:border-transparent"
                   >
                     <option value="rounded">
                       {activeLanguage === 'ar' ? 'مدور' : activeLanguage === 'en' ? 'Rounded' : activeLanguage === 'es' ? 'Redondeado' : 'Arrondi'}
@@ -2059,7 +2059,7 @@ export default function SiteSettings() {
                       name="animationsEnabled"
                       checked={settings.animationsEnabled}
                       onChange={(e) => updateSetting('animationsEnabled', e.target.checked)}
-                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="w-5 h-5 text-[var(--color-info)] border-[var(--color-quaternary-300)] rounded focus:ring-[var(--color-info)]"
                     />
                     <span className="text-sm text-gray-700">
                       {activeLanguage === 'ar' && 'تفعيل الحركات والتأثيرات في الصفحات'}
@@ -2083,7 +2083,7 @@ export default function SiteSettings() {
                       name="darkModeEnabled"
                       checked={settings.darkModeEnabled}
                       onChange={(e) => updateSetting('darkModeEnabled', e.target.checked)}
-                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="w-5 h-5 text-[var(--color-info)] border-[var(--color-quaternary-300)] rounded focus:ring-[var(--color-info)]"
                     />
                     <span className="text-sm text-gray-700">
                       {activeLanguage === 'ar' && 'تفعيل الوضع الليلي للموقع'}
@@ -2113,8 +2113,8 @@ export default function SiteSettings() {
             
             <div className="space-y-6">
               {/* reCAPTCHA Settings */}
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-red-900 mb-3 flex items-center gap-2">
+              <div className="bg-[var(--color-error-50)] border border-[var(--color-error-200)] rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-[var(--color-error-800)] mb-3 flex items-center gap-2">
                   <Shield className="w-4 h-4" />
                   {activeLanguage === 'ar' && 'إعدادات reCAPTCHA'}
                   {activeLanguage === 'en' && 'reCAPTCHA Settings'}
@@ -2124,7 +2124,7 @@ export default function SiteSettings() {
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-red-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-error-800)] mb-2">
                       {activeLanguage === 'ar' && 'تفعيل reCAPTCHA'}
                       {activeLanguage === 'en' && 'Enable reCAPTCHA'}
                       {activeLanguage === 'es' && 'Activar reCAPTCHA'}
@@ -2136,7 +2136,7 @@ export default function SiteSettings() {
                         name="enableRecaptcha"
                         checked={settings.enableRecaptcha}
                         onChange={(e) => updateSetting('enableRecaptcha', e.target.checked)}
-                        className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                        className="w-5 h-5 text-[var(--color-error)] border-[var(--color-quaternary-300)] rounded focus:ring-[var(--color-error)]"
                       />
                       <span className="text-sm text-gray-700">
                         {activeLanguage === 'ar' && 'حماية النماذج من السبام والروبوتات'}
@@ -2149,7 +2149,7 @@ export default function SiteSettings() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-red-900 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-error-800)] mb-2">
                         reCAPTCHA Site Key
                       </label>
                       <Input
@@ -2161,7 +2161,7 @@ export default function SiteSettings() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-red-900 mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-error-800)] mb-2">
                         reCAPTCHA Secret Key
                       </label>
                       <Input
@@ -2177,8 +2177,8 @@ export default function SiteSettings() {
               </div>
 
               {/* Login Security */}
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-orange-900 mb-3">
+              <div className="bg-[var(--color-warning-50)] border border-[var(--color-warning-200)] rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-[var(--color-warning-800)] mb-3">
                   {activeLanguage === 'ar' && 'أمان تسجيل الدخول'}
                   {activeLanguage === 'en' && 'Login Security'}
                   {activeLanguage === 'es' && 'Seguridad de Inicio de Sesión'}
@@ -2187,7 +2187,7 @@ export default function SiteSettings() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-orange-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-warning-800)] mb-2">
                       {activeLanguage === 'ar' && 'الحد الأقصى لمحاولات تسجيل الدخول'}
                       {activeLanguage === 'en' && 'Max Login Attempts'}
                       {activeLanguage === 'es' && 'Intentos Máximos de Inicio de Sesión'}
@@ -2205,7 +2205,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-orange-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-warning-800)] mb-2">
                       {activeLanguage === 'ar' && 'مدة الجلسة (بالدقائق)'}
                       {activeLanguage === 'en' && 'Session Timeout (minutes)'}
                       {activeLanguage === 'es' && 'Tiempo de Espera de Sesión (minutos)'}
@@ -2224,7 +2224,7 @@ export default function SiteSettings() {
                 </div>
 
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-orange-900 mb-2">
+                  <label className="block text-sm font-medium text-[var(--color-warning-800)] mb-2">
                     {activeLanguage === 'ar' && 'تفعيل المصادقة الثنائية'}
                     {activeLanguage === 'en' && 'Enable Two-Factor Authentication'}
                     {activeLanguage === 'es' && 'Activar Autenticación de Dos Factores'}
@@ -2236,7 +2236,7 @@ export default function SiteSettings() {
                       name="enableTwoFactor"
                       checked={settings.enableTwoFactor}
                       onChange={(e) => updateSetting('enableTwoFactor', e.target.checked)}
-                      className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                      className="w-5 h-5 text-[var(--color-warning)] border-[var(--color-quaternary-300)] rounded focus:ring-[var(--color-warning)]"
                     />
                     <span className="text-sm text-gray-700">
                       {activeLanguage === 'ar' && 'طبقة أمان إضافية لحساب المسؤول'}
@@ -2249,8 +2249,8 @@ export default function SiteSettings() {
               </div>
 
               {/* IP Management */}
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-purple-900 mb-3">
+              <div className="bg-[var(--color-secondary-50)] border border-[var(--color-secondary-200)] rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-[var(--color-secondary-800)] mb-3">
                   {activeLanguage === 'ar' && 'إدارة عناوين IP'}
                   {activeLanguage === 'en' && 'IP Address Management'}
                   {activeLanguage === 'es' && 'Gestión de Direcciones IP'}
@@ -2259,7 +2259,7 @@ export default function SiteSettings() {
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-purple-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-secondary-800)] mb-2">
                       {activeLanguage === 'ar' && 'عناوين IP المسموح بها'}
                       {activeLanguage === 'en' && 'Allowed IP Addresses'}
                       {activeLanguage === 'es' && 'Direcciones IP Permitidas'}
@@ -2271,7 +2271,7 @@ export default function SiteSettings() {
                       onChange={handleInputChange}
                       placeholder="192.168.1.1, 10.0.0.1"
                     />
-                    <p className="text-xs text-purple-700 mt-1">
+                    <p className="text-xs text-[var(--color-secondary-700)] mt-1">
                       {activeLanguage === 'ar' && 'افصل عناوين IP بفاصلة. اتركه فارغاً للسماح لجميع العناوين'}
                       {activeLanguage === 'en' && 'Separate IPs with comma. Leave empty to allow all'}
                       {activeLanguage === 'es' && 'Separe las IP con comas. Deje vacío para permitir todas'}
@@ -2280,7 +2280,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-purple-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-secondary-800)] mb-2">
                       {activeLanguage === 'ar' && 'عناوين IP المحظورة'}
                       {activeLanguage === 'en' && 'Blocked IP Addresses'}
                       {activeLanguage === 'es' && 'Direcciones IP Bloqueadas'}
@@ -2292,7 +2292,7 @@ export default function SiteSettings() {
                       onChange={handleInputChange}
                       placeholder="123.456.789.0"
                     />
-                    <p className="text-xs text-purple-700 mt-1">
+                    <p className="text-xs text-[var(--color-secondary-700)] mt-1">
                       {activeLanguage === 'ar' && 'عناوين IP المحظورة من الوصول للموقع'}
                       {activeLanguage === 'en' && 'IP addresses blocked from accessing the site'}
                       {activeLanguage === 'es' && 'Direcciones IP bloqueadas para acceder al sitio'}
@@ -2302,8 +2302,8 @@ export default function SiteSettings() {
                 </div>
               </div>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p className="text-sm text-yellow-800">
+              <div className="bg-[var(--color-warning-50)] border border-[var(--color-warning-200)] rounded-lg p-4">
+                <p className="text-sm text-[var(--color-warning-800)]">
                   <strong>
                     {activeLanguage === 'ar' && 'تحذير:'}
                     {activeLanguage === 'en' && 'Warning:'}
@@ -2369,7 +2369,7 @@ export default function SiteSettings() {
                     value={settings.whatsappAutoReply}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-info)] focus:border-transparent"
                     placeholder={
                       activeLanguage === 'ar' ? 'شكراً لتواصلك معنا! سنرد عليك في أقرب وقت.' :
                       activeLanguage === 'en' ? 'Thank you for contacting us! We will reply as soon as possible.' :
@@ -2396,8 +2396,8 @@ export default function SiteSettings() {
               </div>
 
               {/* Display Settings */}
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-green-900 mb-3">
+              <div className="bg-[var(--color-success-50)] border border-[var(--color-success-200)] rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-[var(--color-success-800)] mb-3">
                   {activeLanguage === 'ar' && 'إعدادات العرض'}
                   {activeLanguage === 'en' && 'Display Settings'}
                   {activeLanguage === 'es' && 'Configuración de Visualización'}
@@ -2406,7 +2406,7 @@ export default function SiteSettings() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-green-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-success-800)] mb-2">
                       {activeLanguage === 'ar' && 'إظهار على الهاتف'}
                       {activeLanguage === 'en' && 'Show on Mobile'}
                       {activeLanguage === 'es' && 'Mostrar en Móvil'}
@@ -2418,7 +2418,7 @@ export default function SiteSettings() {
                         name="whatsappShowOnMobile"
                         checked={settings.whatsappShowOnMobile}
                         onChange={(e) => updateSetting('whatsappShowOnMobile', e.target.checked)}
-                        className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                        className="w-5 h-5 text-[var(--color-success)] border-[var(--color-quaternary-300)] rounded focus:ring-[var(--color-success)]"
                       />
                       <span className="text-sm text-gray-700">
                         {activeLanguage === 'ar' && 'عرض زر واتساب على الأجهزة المحمولة'}
@@ -2430,7 +2430,7 @@ export default function SiteSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-green-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-success-800)] mb-2">
                       {activeLanguage === 'ar' && 'إظهار على الكمبيوتر'}
                       {activeLanguage === 'en' && 'Show on Desktop'}
                       {activeLanguage === 'es' && 'Mostrar en Escritorio'}
@@ -2442,7 +2442,7 @@ export default function SiteSettings() {
                         name="whatsappShowOnDesktop"
                         checked={settings.whatsappShowOnDesktop}
                         onChange={(e) => updateSetting('whatsappShowOnDesktop', e.target.checked)}
-                        className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                        className="w-5 h-5 text-[var(--color-success)] border-[var(--color-quaternary-300)] rounded focus:ring-[var(--color-success)]"
                       />
                       <span className="text-sm text-gray-700">
                         {activeLanguage === 'ar' && 'عرض زر واتساب على سطح المكتب'}
@@ -2455,7 +2455,7 @@ export default function SiteSettings() {
                 </div>
 
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-green-900 mb-2">
+                  <label className="block text-sm font-medium text-[var(--color-success-800)] mb-2">
                     {activeLanguage === 'ar' && 'موضع الزر'}
                     {activeLanguage === 'en' && 'Button Position'}
                     {activeLanguage === 'es' && 'Posición del Botón'}
@@ -2465,7 +2465,7 @@ export default function SiteSettings() {
                     name="whatsappPosition"
                     value={settings.whatsappPosition}
                     onChange={handleInputChange as any}
-                    className="w-full px-3 py-2 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[var(--color-success-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-success)] focus:border-transparent"
                   >
                     <option value="bottom-right">
                       {activeLanguage === 'ar' ? 'أسفل اليمين' : activeLanguage === 'en' ? 'Bottom Right' : activeLanguage === 'es' ? 'Inferior Derecha' : 'En Bas à Droite'}
@@ -2477,8 +2477,8 @@ export default function SiteSettings() {
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-800">
+              <div className="bg-[var(--color-info-50)] border border-[var(--color-info-200)] rounded-lg p-4">
+                <p className="text-sm text-[var(--color-info-800)]">
                   <strong>
                     {activeLanguage === 'ar' && 'نصيحة:'}
                     {activeLanguage === 'en' && 'Tip:'}
@@ -2517,7 +2517,7 @@ export default function SiteSettings() {
                     name="primaryColor"
                     value={settings.primaryColor}
                     onChange={handleInputChange}
-                    className="w-12 h-10 border border-gray-300 rounded"
+                    className="w-12 h-10 border border-[var(--color-quaternary-300)] rounded"
                   />
                   <Input
                     name="primaryColor"
@@ -2539,7 +2539,7 @@ export default function SiteSettings() {
                     name="secondaryColor"
                     value={settings.secondaryColor}
                     onChange={handleInputChange}
-                    className="w-12 h-10 border border-gray-300 rounded"
+                    className="w-12 h-10 border border-[var(--color-quaternary-300)] rounded"
                   />
                   <Input
                     name="secondaryColor"
@@ -2561,7 +2561,7 @@ export default function SiteSettings() {
                     name="tertiaryColor"
                     value={settings.tertiaryColor}
                     onChange={handleInputChange}
-                    className="w-12 h-10 border border-gray-300 rounded"
+                    className="w-12 h-10 border border-[var(--color-quaternary-300)] rounded"
                   />
                   <Input
                     name="tertiaryColor"
@@ -2583,7 +2583,7 @@ export default function SiteSettings() {
                     name="quaternaryColor"
                     value={settings.quaternaryColor}
                     onChange={handleInputChange}
-                    className="w-12 h-10 border border-gray-300 rounded"
+                    className="w-12 h-10 border border-[var(--color-quaternary-300)] rounded"
                   />
                   <Input
                     name="quaternaryColor"
@@ -2605,7 +2605,7 @@ export default function SiteSettings() {
                     name="quinaryColor"
                     value={settings.quinaryColor}
                     onChange={handleInputChange}
-                    className="w-12 h-10 border border-gray-300 rounded"
+                    className="w-12 h-10 border border-[var(--color-quaternary-300)] rounded"
                   />
                   <Input
                     name="quinaryColor"
@@ -2659,7 +2659,7 @@ export default function SiteSettings() {
                 </div>
                 <div className="text-center">
                   <div 
-                    className="w-full h-20 rounded-lg shadow-md mb-2 flex items-center justify-center border border-gray-300 font-bold"
+                    className="w-full h-20 rounded-lg shadow-md mb-2 flex items-center justify-center border border-[var(--color-quaternary-300)] font-bold"
                     style={{ 
                       backgroundColor: settings.quinaryColor,
                       color: settings.quaternaryColor
@@ -2673,23 +2673,23 @@ export default function SiteSettings() {
             </div>
             
             {/* Fixed Alert Colors Info */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">ألوان التنبيهات (ثابتة في الكود)</h3>
+            <div className="mt-6 p-4 bg-[var(--color-quinary-50)] rounded-lg">
+              <h3 className="text-sm font-medium text-[var(--color-quaternary-700)] mb-2">ألوان التنبيهات (ثابتة في الكود)</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-green-500 rounded"></div>
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: 'var(--color-success)' }}></div>
                   <span>نجاح (#10b981)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: 'var(--color-warning)' }}></div>
                   <span>تحذير (#f59e0b)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-red-500 rounded"></div>
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: 'var(--color-error)' }}></div>
                   <span>خطأ (#ef4444)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: 'var(--color-info)' }}></div>
                   <span>معلومات (#3b82f6)</span>
                 </div>
               </div>
@@ -2725,7 +2725,7 @@ export default function SiteSettings() {
                   }
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--color-quaternary-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-info)] focus:border-transparent"
                   placeholder={
                     activeLanguage === 'ar' ? 'شركة رائدة في تصدير الرخام والجرانيت...' :
                     activeLanguage === 'en' ? 'Leading company in exporting...' :
@@ -2741,8 +2741,8 @@ export default function SiteSettings() {
                 </p>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-800">
+              <div className="bg-[var(--color-info-50)] border border-[var(--color-info-200)] rounded-lg p-4">
+                <p className="text-sm text-[var(--color-info-800)]">
                   <strong>
                     {activeLanguage === 'ar' && 'ملاحظة:'}
                     {activeLanguage === 'en' && 'Note:'}
