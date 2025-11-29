@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // ✅ أمان: إخفاء X-Powered-By header
+  poweredByHeader: false,
+  
+  // ✅ تحسين Production: حذف console.log
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production'
+  },
+  
   images: {
     // ✅ Remote patterns للصور الخارجية
     remotePatterns: [

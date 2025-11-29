@@ -6,7 +6,9 @@ import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
 import { Textarea } from '../../../components/ui/textarea'
 import { Card } from '../../../components/ui/card'
-import { Save, Eye, Settings, LogOut, Building, Ship, Edit } from 'lucide-react'
+import { Save, Eye, Settings, LogOut, Building, Ship, Edit, MessageSquare, FileText } from 'lucide-react'
+import PageSEOManager from '../../../components/admin/PageSEOManager'
+import PageStatusToggle from '../../../components/admin/PageStatusToggle'
 
 export default function AdminContentEditor() {
   const [activeTab, setActiveTab] = useState('homepage')
@@ -21,6 +23,8 @@ export default function AdminContentEditor() {
     { id: 'homepage', name: 'الصفحة الرئيسية', icon: Eye },
     { id: 'about', name: 'عن الشركة', icon: Building },
     { id: 'export', name: 'خدمات التصدير', icon: Ship },
+    { id: 'contact', name: 'تواصل معنا', icon: MessageSquare },
+    { id: 'quote', name: 'طلب عرض سعر', icon: FileText },
     { id: 'settings', name: 'الإعدادات', icon: Settings }
   ]
 
@@ -57,6 +61,13 @@ export default function AdminContentEditor() {
     const loadContent = async () => {
       const token = localStorage.getItem('admin_token')
       if (!token || !user) return
+
+      // Skip loading content for contact and quote (they use SEO manager)
+      if (activeTab === 'contact' || activeTab === 'quote') {
+        setContent({}) // Set empty content
+        setIsLoading(false)
+        return
+      }
 
       try {
         setIsLoading(true)
@@ -159,7 +170,7 @@ export default function AdminContentEditor() {
     )
   }
 
-  if (!content || !user) return null
+  if (!user) return null
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
@@ -172,14 +183,17 @@ export default function AdminContentEditor() {
               <p className="text-sm text-gray-500">مرحباً {user?.name}</p>
             </div>
             <div className="flex gap-4">
-              <Button
-                onClick={handleSave}
-                disabled={isSaving}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <Save className="w-4 h-4 ml-2" />
-                {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
-              </Button>
+              {/* Only show save button for pages with editable content */}
+              {activeTab !== 'contact' && activeTab !== 'quote' && (
+                <Button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Save className="w-4 h-4 ml-2" />
+                  {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                </Button>
+              )}
               <Button
                 variant="outline"
                 onClick={handleLogout}
@@ -229,60 +243,82 @@ export default function AdminContentEditor() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             <Card className="p-6">
-              {/* Language Tabs */}
-              <div className="mb-6 border-b">
-                <div className="flex gap-2">
-                  {languages.map(lang => (
-                    <button
-                      key={lang.code}
-                      onClick={() => setEditingLang(lang.code)}
-                      className={`px-4 py-2 font-medium transition-colors ${
-                        editingLang === lang.code
-                          ? 'border-b-2 border-primary-600 text-primary-700'
-                          : 'text-gray-500 hover:text-gray-700'
-                      }`}
-                    >
-                      {lang.name}
-                    </button>
-                  ))}
+              {/* Show SEO Manager for contact and quote pages */}
+              {(activeTab === 'contact' || activeTab === 'quote') ? (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold">
+                      {activeTab === 'contact' ? 'إعدادات صفحة تواصل معنا' : 'إعدادات صفحة طلب عرض سعر'}
+                    </h2>
+                    <PageStatusToggle pageKey={activeTab} />
+                  </div>
+                  
+                  <PageSEOManager pageKey={activeTab} />
                 </div>
-              </div>
-
-              {/* Dynamic Content Rendering */}
-              <div className="space-y-6">
-                {Object.keys(content).map(sectionKey => (
-                  <div key={sectionKey} className="bg-gray-50 p-6 rounded-lg border">
-                    <h3 className="font-semibold text-lg mb-4 text-primary-700 border-b pb-2">
-                      {sectionKey}
-                    </h3>
-                    <div className="space-y-4">
-                      {Object.keys(content[sectionKey]).map(fieldKey => (
-                        <div key={fieldKey}>
-                          <label className="block text-sm font-medium mb-2">
-                            {fieldKey}
-                          </label>
-                          {fieldKey.includes('description') || fieldKey.includes('content') ? (
-                            <Textarea
-                              rows={4}
-                              value={getValue(sectionKey, fieldKey)}
-                              onChange={(e) => updateField(sectionKey, fieldKey, e.target.value)}
-                              className="w-full"
-                              dir={editingLang === 'ar' ? 'rtl' : 'ltr'}
-                            />
-                          ) : (
-                            <Input
-                              value={getValue(sectionKey, fieldKey)}
-                              onChange={(e) => updateField(sectionKey, fieldKey, e.target.value)}
-                              className="w-full"
-                              dir={editingLang === 'ar' ? 'rtl' : 'ltr'}
-                            />
-                          )}
-                        </div>
+              ) : (
+                <>
+                  {/* Language Tabs */}
+                  <div className="mb-6 border-b">
+                    <div className="flex gap-2">
+                      {languages.map(lang => (
+                        <button
+                          key={lang.code}
+                          onClick={() => setEditingLang(lang.code)}
+                          className={`px-4 py-2 font-medium transition-colors ${
+                            editingLang === lang.code
+                              ? 'border-b-2 border-primary-600 text-primary-700'
+                              : 'text-gray-500 hover:text-gray-700'
+                          }`}
+                        >
+                          {lang.name}
+                        </button>
                       ))}
                     </div>
                   </div>
-                ))}
-              </div>
+
+                  {/* Dynamic Content Rendering */}
+                  <div className="space-y-6">
+                    {content && Object.keys(content).length > 0 ? (
+                      Object.keys(content).map(sectionKey => (
+                        <div key={sectionKey} className="bg-gray-50 p-6 rounded-lg border">
+                          <h3 className="font-semibold text-lg mb-4 text-primary-700 border-b pb-2">
+                            {sectionKey}
+                          </h3>
+                          <div className="space-y-4">
+                            {Object.keys(content[sectionKey]).map(fieldKey => (
+                              <div key={fieldKey}>
+                                <label className="block text-sm font-medium mb-2">
+                                  {fieldKey}
+                                </label>
+                                {fieldKey.includes('description') || fieldKey.includes('content') ? (
+                                  <Textarea
+                                    rows={4}
+                                    value={getValue(sectionKey, fieldKey)}
+                                    onChange={(e) => updateField(sectionKey, fieldKey, e.target.value)}
+                                    className="w-full"
+                                    dir={editingLang === 'ar' ? 'rtl' : 'ltr'}
+                                  />
+                                ) : (
+                                  <Input
+                                    value={getValue(sectionKey, fieldKey)}
+                                    onChange={(e) => updateField(sectionKey, fieldKey, e.target.value)}
+                                    className="w-full"
+                                    dir={editingLang === 'ar' ? 'rtl' : 'ltr'}
+                                  />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-12 text-gray-500">
+                        لا يوجد محتوى متاح لهذه الصفحة
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </Card>
           </div>
         </div>

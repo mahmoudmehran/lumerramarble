@@ -336,10 +336,7 @@ model PageSEO {
   keywordsEn    String?
   keywordsEs    String?
   keywordsFr    String?
-  ogImageAr     String?
-  ogImageEn     String?
-  ogImageEs     String?
-  ogImageFr     String?
+  ogImage       String?
   schemaMarkup  Json?
   canonicalUrl  String?
   isActive      Boolean  @default(true)
@@ -410,6 +407,105 @@ model SiteStats {
   newSubscribers  Int      @default(0)
 
   @@map("site_stats")
+}
+
+model FAQ {
+  id          String   @id @default(cuid())
+  questionAr  String
+  questionEn  String
+  questionEs  String
+  questionFr  String
+  answerAr    String
+  answerEn    String
+  answerEs    String
+  answerFr    String
+  category    String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("faqs")
+}
+
+model Certificate {
+  id             String   @id @default(cuid())
+  nameAr         String
+  nameEn         String
+  nameEs         String
+  nameFr         String
+  descriptionAr  String?
+  descriptionEn  String?
+  descriptionEs  String?
+  descriptionFr  String?
+  issuer         String?
+  issuerAr       String?
+  issuerEn       String?
+  issuerEs       String?
+  issuerFr       String?
+  issueDate      DateTime?
+  expiryDate     DateTime?
+  certificateUrl String?
+  imageUrl       String?
+  category       String?
+  sortOrder      Int      @default(0)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("certificates")
+}
+
+model Project {
+  id             String   @id @default(cuid())
+  nameAr         String
+  nameEn         String
+  nameEs         String
+  nameFr         String
+  descriptionAr  String
+  descriptionEn  String
+  descriptionEs  String
+  descriptionFr  String
+  clientName     String?
+  location       String?
+  locationAr     String?
+  locationEn     String?
+  locationEs     String?
+  locationFr     String?
+  area           String?
+  duration       String?
+  completionDate DateTime?
+  category       String?
+  images         Json?
+  featuredImage  String?
+  slug           String   @unique
+  featured       Boolean  @default(false)
+  isActive       Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("projects")
+}
+
+model ExportGuide {
+  id          String   @id @default(cuid())
+  titleAr     String
+  titleEn     String
+  titleEs     String
+  titleFr     String
+  contentAr   String
+  contentEn   String
+  contentEs   String
+  contentFr   String
+  category    String?
+  icon        String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("export_guides")
 }
 
 enum Role {

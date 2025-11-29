@@ -32,11 +32,12 @@ interface QuotePageProps {
 export default function QuotePage({ params }: QuotePageProps) {
   const { locale } = use(params)
   const searchParams = useSearchParams()
-  const [currentStep, setCurrentStep] = useState(1)
   const [products, setProducts] = useState<any[]>([])
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
   const [uploading, setUploading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [seoData, setSeoData] = useState<any>(null)
+  const [showSuccess, setShowSuccess] = useState(false)
   
   // reCAPTCHA from settings
   const recaptchaConfig = useRecaptchaConfig()
@@ -76,6 +77,19 @@ export default function QuotePage({ params }: QuotePageProps) {
 
   // Load products and check for URL params
   useEffect(() => {
+    // Fetch SEO data
+    const fetchSEOData = async () => {
+      try {
+        const response = await fetch('/api/page-seo/quote')
+        if (response.ok) {
+          const data = await response.json()
+          setSeoData(data)
+        }
+      } catch (error) {
+        console.error('Error fetching SEO data:', error)
+      }
+    }
+
     // Fetch products list
     const fetchProducts = async () => {
       try {
@@ -89,6 +103,7 @@ export default function QuotePage({ params }: QuotePageProps) {
       }
     }
     
+    fetchSEOData()
     fetchProducts()
     
     // Check if product was passed via URL
@@ -114,11 +129,6 @@ export default function QuotePage({ params }: QuotePageProps) {
     ar: {
       title: 'طلب عرض سعر',
       subtitle: 'احصل على عرض سعر مخصص لمشروعك خلال 24 ساعة',
-      steps: {
-        1: 'معلومات شخصية ونوع المنتج',
-        2: 'تفاصيل المشروع', 
-        3: 'متطلبات المنتج والمعلومات الإضافية'
-      },
       personalInfo: {
         title: 'معلوماتك الشخصية',
         fullName: 'الاسم الكامل',
@@ -229,11 +239,6 @@ export default function QuotePage({ params }: QuotePageProps) {
     en: {
       title: 'Request Quote',
       subtitle: 'Get a custom quote for your project within 24 hours',
-      steps: {
-        1: 'Personal Information & Product',
-        2: 'Project Details',
-        3: 'Product Requirements & Additional Info'
-      },
       personalInfo: {
         title: 'Your Personal Information',
         fullName: 'Full Name',
@@ -344,11 +349,6 @@ export default function QuotePage({ params }: QuotePageProps) {
     es: {
       title: 'Solicitar Cotización',
       subtitle: 'Obtenga una cotización personalizada para su proyecto en 24 horas',
-      steps: {
-        1: 'Información Personal y Producto',
-        2: 'Detalles del Proyecto',
-        3: 'Requisitos del Producto e Información Adicional'
-      },
       personalInfo: {
         title: 'Su Información Personal',
         fullName: 'Nombre Completo',
@@ -459,11 +459,6 @@ export default function QuotePage({ params }: QuotePageProps) {
     fr: {
       title: 'Demander un Devis',
       subtitle: 'Obtenez un devis personnalisé pour votre projet en 24 heures',
-      steps: {
-        1: 'Informations Personnelles et Produit',
-        2: 'Détails du Projet',
-        3: 'Exigences du Produit et Informations Supplémentaires'
-      },
       personalInfo: {
         title: 'Vos Informations Personnelles',
         fullName: 'Nom Complet',
@@ -597,109 +592,71 @@ export default function QuotePage({ params }: QuotePageProps) {
     }))
   }
 
-  const validateStep = (step: number): boolean => {
-    switch (step) {
-      case 1:
-        // Step 1: Personal Info + Product Selection
-        if (!formData.fullName.trim()) {
-          alert(currentContent.validation.nameRequired)
-          return false
-        }
-        
-        // Check if name contains at least 2 characters and looks valid
-        if (formData.fullName.trim().length < 2) {
-          alert(currentContent.validation.nameMin)
-          return false
-        }
-        
-        if (!formData.email.trim()) {
-          alert(currentContent.validation.emailRequired)
-          return false
-        }
-        
-        // Enhanced email validation
-        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-        if (!emailRegex.test(formData.email)) {
-          alert(currentContent.validation.invalidEmail)
-          return false
-        }
-        
-        // Check for common fake email patterns
-        const fakeEmailPatterns = ['test@test', 'fake@fake', 'example@example', 'noreply@']
-        if (fakeEmailPatterns.some(pattern => formData.email.toLowerCase().includes(pattern))) {
-          alert(currentContent.validation.emailFake)
-          return false
-        }
-        
-        if (!formData.phone.trim()) {
-          alert(currentContent.validation.phoneRequired)
-          return false
-        }
-        
-        // Phone validation - allow international formats with flexibility
-        // Accept: +20 123 456 7890, 01234567890, +1-234-567-8900, etc.
-        const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,4}[-\s\.]?[0-9]{1,9}$/
-        const cleanPhone = formData.phone.replace(/\s/g, '') // Remove spaces for validation
-        
-        if (!phoneRegex.test(formData.phone) || cleanPhone.length < 8) {
-          alert(currentContent.validation.phoneInvalid)
-          return false
-        }
-        
-        if (!formData.country.trim()) {
-          alert(currentContent.validation.countryRequired)
-          return false
-        }
-        if (!formData.city.trim()) {
-          alert(currentContent.validation.cityRequired)
-          return false
-        }
-        if (!formData.productName.trim()) {
-          alert(currentContent.validation.productRequired)
-          return false
-        }
-        return true
-
-      case 2:
-        // Step 2: Project Details
-        if (!formData.projectType.trim()) {
-          alert(currentContent.validation.step2Required)
-          return false
-        }
-        return true
-
-      case 3:
-        // Step 3: Product Requirements
-        if (!formData.quantity.trim()) {
-          alert(currentContent.validation.step3Required)
-          return false
-        }
-        return true
-
-      default:
-        return true
+  const validateForm = (): { valid: boolean; errors: string[] } => {
+    const errors: string[] = []
+    
+    // Personal Info Validation
+    if (!formData.fullName.trim()) {
+      errors.push(currentContent.validation.nameRequired)
+    } else if (formData.fullName.trim().length < 2) {
+      errors.push(currentContent.validation.nameMin)
     }
-  }
-
-  const handleNext = () => {
-    if (validateStep(currentStep)) {
-      if (currentStep < 3) {
-        setCurrentStep(currentStep + 1)
+    
+    if (!formData.email.trim()) {
+      errors.push(currentContent.validation.emailRequired)
+    } else {
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+      if (!emailRegex.test(formData.email)) {
+        errors.push(currentContent.validation.invalidEmail)
+      }
+      const fakeEmailPatterns = ['test@test', 'fake@fake', 'example@example', 'noreply@']
+      if (fakeEmailPatterns.some(pattern => formData.email.toLowerCase().includes(pattern))) {
+        errors.push(currentContent.validation.emailFake)
       }
     }
-  }
-
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
+    
+    if (!formData.phone.trim()) {
+      errors.push(currentContent.validation.phoneRequired)
+    } else {
+      const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,4}[-\s\.]?[0-9]{1,9}$/
+      const cleanPhone = formData.phone.replace(/\s/g, '')
+      if (!phoneRegex.test(formData.phone) || cleanPhone.length < 8) {
+        errors.push(currentContent.validation.phoneInvalid)
+      }
     }
+    
+    if (!formData.country.trim()) {
+      errors.push(currentContent.validation.countryRequired)
+    }
+    
+    if (!formData.city.trim()) {
+      errors.push(currentContent.validation.cityRequired)
+    }
+    
+    if (!formData.productName.trim()) {
+      errors.push(currentContent.validation.productRequired)
+    }
+    
+    // Project Info Validation
+    if (!formData.projectType.trim()) {
+      errors.push(currentContent.validation.step2Required)
+    }
+    
+    // Product Requirements Validation
+    if (!formData.quantity.trim()) {
+      errors.push(currentContent.validation.step3Required)
+    }
+    
+    return { valid: errors.length === 0, errors }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Validate step 3 before submission
-    if (!validateStep(3)) {
+    // Validate entire form before submission
+    const validation = validateForm()
+    if (!validation.valid) {
+      alert(validation.errors.join('\n'))
       return
     }
     
@@ -746,7 +703,31 @@ export default function QuotePage({ params }: QuotePageProps) {
 
       if (response.ok) {
         console.log('Quote request submitted successfully:', data)
-        setCurrentStep(4) // Success step
+        setShowSuccess(true)
+        
+        // Reset form
+        setFormData({
+          fullName: '',
+          email: '',
+          phone: '',
+          company: '',
+          country: '',
+          city: '',
+          productName: '',
+          productId: '',
+          projectType: '',
+          projectName: '',
+          expectedDate: '',
+          budget: '',
+          quantity: '',
+          thickness: '',
+          finish: '',
+          dimensions: '',
+          color: '',
+          message: '',
+          attachments: []
+        })
+        setUploadedFiles([])
       } else {
         console.error('Quote submission error:', data)
         alert(currentContent.validation.submitError)
@@ -812,41 +793,7 @@ export default function QuotePage({ params }: QuotePageProps) {
     }))
   }
 
-  const StepIndicator = () => (
-    <div className="flex items-center justify-center mb-12">
-      {[1, 2, 3].map((step) => (
-        <div key={step} className="flex items-center">
-          <div className="flex flex-col items-center">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center font-semibold text-lg transition-all duration-300 ${
-              step === currentStep
-                ? 'bg-[var(--color-primary)] text-[var(--color-quinary)] shadow-lg scale-110 ring-4 ring-[var(--color-primary-200)]'
-                : step < currentStep
-                ? 'bg-[var(--color-success)] text-[var(--color-quinary)] shadow-md'
-                : 'bg-[var(--color-quinary-200)] text-[var(--color-quaternary-400)]'
-            }`}>
-              {step < currentStep ? <CheckCircle className="w-7 h-7" /> : step}
-            </div>
-            <p className={`mt-2 text-sm font-medium transition-colors ${
-              step === currentStep 
-                ? 'text-[var(--color-primary)]' 
-                : step < currentStep
-                ? 'text-[var(--color-success)]'
-                : 'text-[var(--color-quaternary-400)]'
-            }`}>
-              {currentContent.steps[step as keyof typeof currentContent.steps]}
-            </p>
-          </div>
-          {step < 3 && (
-            <div className={`w-24 h-1 mx-4 rounded-full transition-all duration-500 ${
-              step < currentStep ? 'bg-gradient-to-r from-[var(--color-success)] to-[var(--color-primary)]' : 'bg-[var(--color-quinary-200)]'
-            }`} />
-          )}
-        </div>
-      ))}
-    </div>
-  )
-
-  if (currentStep === 4) {
+  if (showSuccess) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[var(--color-quinary-50)] via-[var(--color-primary-50)] to-[var(--color-quinary-50)] flex items-center justify-center p-4">
         <Card className="max-w-lg mx-auto p-10 text-center bg-[var(--color-quinary)] shadow-2xl border-t-4 border-[var(--color-success)]">
@@ -873,7 +820,8 @@ export default function QuotePage({ params }: QuotePageProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[var(--color-quinary-50)] via-[var(--color-primary-50)] to-[var(--color-quinary-50)]">
       {/* Header */}
-      <section className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-700)] py-20 relative overflow-hidden">
+      <section className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-700)] py-20 relative overflow-hidden" style={seoData?.ogImage ? { backgroundImage: `url(${seoData.ogImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+        {seoData?.ogImage && <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)]/90 to-[var(--color-primary-700)]/90"></div>}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-[var(--color-quinary)] rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-[var(--color-secondary)] rounded-full blur-3xl"></div>
@@ -885,10 +833,10 @@ export default function QuotePage({ params }: QuotePageProps) {
             </div>
           </div>
           <h1 className="text-5xl font-bold text-[var(--color-quinary)] mb-4 drop-shadow-lg">
-            {currentContent.title}
+            {seoData ? (locale === 'ar' ? seoData.titleAr : locale === 'en' ? seoData.titleEn : locale === 'es' ? seoData.titleEs : seoData.titleFr) || currentContent.title : currentContent.title}
           </h1>
           <p className="text-xl text-[var(--color-quinary-100)] max-w-2xl mx-auto leading-relaxed">
-            {currentContent.subtitle}
+            {seoData ? (locale === 'ar' ? seoData.descriptionAr : locale === 'en' ? seoData.descriptionEn : locale === 'es' ? seoData.descriptionEs : seoData.descriptionFr) || currentContent.subtitle : currentContent.subtitle}
           </p>
         </div>
       </section>
@@ -896,12 +844,10 @@ export default function QuotePage({ params }: QuotePageProps) {
       {/* Form */}
       <section className="py-12 -mt-8 relative z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <StepIndicator />
-          
           <Card className="p-8 md:p-12 bg-[var(--color-quinary)] shadow-2xl rounded-2xl border-t-4 border-[var(--color-primary)]">
-            <form onSubmit={handleSubmit}>
-              {/* Step 1: Personal Information & Product Selection */}
-              {currentStep === 1 && (
+            <form onSubmit={handleSubmit} className="space-y-10">
+              {/* Section 1: Personal Information */}
+              {(
                 <div className="animate-fadeIn">
                   <div className="flex items-center mb-8 pb-4 border-b-2 border-[var(--color-primary-100)]">
                     <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-600)] p-3 rounded-xl shadow-lg">
@@ -1018,8 +964,8 @@ export default function QuotePage({ params }: QuotePageProps) {
                 </div>
               )}
 
-              {/* Step 2: Project Details */}
-              {currentStep === 2 && (
+              {/* Section 2: Project Details */}
+              {(
                 <div className="animate-fadeIn">
                   <div className="flex items-center mb-8 pb-4 border-b-2 border-[var(--color-primary-100)]">
                     <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-600)] p-3 rounded-xl shadow-lg">
@@ -1083,8 +1029,8 @@ export default function QuotePage({ params }: QuotePageProps) {
                 </div>
               )}
 
-              {/* Step 3: Product Requirements & Additional Information */}
-              {currentStep === 3 && (
+              {/* Section 3: Product Requirements & Additional Information */}
+              {(
                 <div className="animate-fadeIn">
                   <div className="flex items-center mb-8 pb-4 border-b-2 border-[var(--color-primary-100)]">
                     <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-600)] p-3 rounded-xl shadow-lg">
@@ -1277,56 +1223,30 @@ export default function QuotePage({ params }: QuotePageProps) {
                 </div>
               )}
 
-              {/* Navigation Buttons */}
-              <div className="flex justify-between mt-12 pt-6 border-t-2 border-[var(--color-quaternary-100)]">
+              {/* Submit Button */}
+              <div className="flex justify-center mt-12 pt-6 border-t-2 border-[var(--color-quaternary-100)]">
                 <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handlePrevious}
-                  disabled={currentStep === 1}
-                  className="group transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed px-8 py-6 text-lg font-semibold shadow-md hover:shadow-xl"
+                  type="submit"
+                  disabled={submitting}
+                  className="group transition-all duration-300 hover:scale-105 hover:shadow-2xl px-12 py-6 text-lg font-semibold bg-gradient-to-r from-[var(--color-success)] to-[var(--color-success-600)] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span className="flex items-center gap-2">
-                    {locale === 'ar' ? '→' : '←'}
-                    {currentContent.buttons.previous}
+                  <span className="flex items-center gap-3">
+                    {submitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-6 w-6 border-4 border-white border-t-transparent"></div>
+                        {locale === 'ar' ? 'جاري الإرسال...' : 
+                         locale === 'es' ? 'Enviando...' :
+                         locale === 'fr' ? 'Envoi en cours...' :
+                         'Sending...'}
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                        {currentContent.buttons.submit}
+                      </>
+                    )}
                   </span>
                 </Button>
-                
-                {currentStep < 3 ? (
-                  <Button
-                    type="button"
-                    onClick={handleNext}
-                    className="group transition-all duration-300 hover:scale-105 hover:shadow-2xl px-8 py-6 text-lg font-semibold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-600)] shadow-lg"
-                  >
-                    <span className="flex items-center gap-2">
-                      {currentContent.buttons.next}
-                      {locale === 'ar' ? '←' : '→'}
-                    </span>
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={submitting}
-                    className="group transition-all duration-300 hover:scale-105 hover:shadow-2xl px-8 py-6 text-lg font-semibold bg-gradient-to-r from-[var(--color-success)] to-[var(--color-success-600)] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span className="flex items-center gap-3">
-                      {submitting ? (
-                        <>
-                          <div className="animate-spin rounded-full h-6 w-6 border-4 border-white border-t-transparent"></div>
-                          {locale === 'ar' ? 'جاري الإرسال...' : 
-                           locale === 'es' ? 'Enviando...' :
-                           locale === 'fr' ? 'Envoi en cours...' :
-                           'Sending...'}
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-                          {currentContent.buttons.submit}
-                        </>
-                      )}
-                    </span>
-                  </Button>
-                )}
               </div>
               
               {/* reCAPTCHA Notice */}

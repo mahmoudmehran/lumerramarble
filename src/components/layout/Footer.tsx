@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useMemo } from 'react'
+import { useMemo, useEffect, useState } from 'react'
 import { Instagram, Youtube, Mail, Phone, MapPin, Facebook } from 'lucide-react'
 import { useSiteSettings } from '../../contexts/ThemeContext'
 
@@ -27,6 +27,32 @@ interface FooterProps {
 export default function Footer({ locale, copyrightText }: FooterProps) {
   const isRTL = locale === 'ar'
   const siteSettings = useSiteSettings()
+  const [activePages, setActivePages] = useState({
+    faq: true,
+    certificates: true,
+    projects: true,
+    'export-guide': true
+  })
+
+  useEffect(() => {
+    // Fetch active page statuses
+    const fetchPageStatuses = async () => {
+      try {
+        const response = await fetch('/api/admin/page-seo')
+        if (response.ok) {
+          const data = await response.json()
+          const statuses: any = {}
+          data.forEach((page: any) => {
+            statuses[page.pageKey] = page.isActive ?? true
+          })
+          setActivePages(statuses)
+        }
+      } catch (error) {
+        console.error('Error fetching page statuses:', error)
+      }
+    }
+    fetchPageStatuses()
+  }, [])
 
   // Memoize logo URL to prevent unnecessary recalculations
   const logoUrl = useMemo(() => {
@@ -62,8 +88,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         links: [
           { name: 'عن الشركة', href: '/ar/about' },
           { name: 'خدمات التصدير', href: '/ar/export' },
-          { name: 'المشاريع', href: '/ar/projects' },
-          { name: 'شهادات الجودة', href: '/ar/certificates' },
+          ...(activePages.projects ? [{ name: 'المشاريع', href: '/ar/projects' }] : []),
+          ...(activePages.certificates ? [{ name: 'شهادات الجودة', href: '/ar/certificates' }] : []),
         ]
       },
       products: {
@@ -80,8 +106,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         links: [
           { name: 'تواصل معنا', href: '/ar/contact' },
           { name: 'طلب عرض سعر', href: '/ar/quote' },
-          { name: 'الأسئلة الشائعة', href: '/ar/faq' },
-          { name: 'دليل التصدير', href: '/ar/export-guide' },
+          ...(activePages.faq ? [{ name: 'الأسئلة الشائعة', href: '/ar/faq' }] : []),
+          ...(activePages['export-guide'] ? [{ name: 'دليل التصدير', href: '/ar/export-guide' }] : []),
         ]
       }
     },
@@ -91,8 +117,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         links: [
           { name: 'About Us', href: '/en/about' },
           { name: 'Export Services', href: '/en/export' },
-          { name: 'Projects', href: '/en/projects' },
-          { name: 'Quality Certificates', href: '/en/certificates' },
+          ...(activePages.projects ? [{ name: 'Projects', href: '/en/projects' }] : []),
+          ...(activePages.certificates ? [{ name: 'Quality Certificates', href: '/en/certificates' }] : []),
         ]
       },
       products: {
@@ -109,8 +135,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         links: [
           { name: 'Contact Us', href: '/en/contact' },
           { name: 'Request Quote', href: '/en/quote' },
-          { name: 'FAQ', href: '/en/faq' },
-          { name: 'Export Guide', href: '/en/export-guide' },
+          ...(activePages.faq ? [{ name: 'FAQ', href: '/en/faq' }] : []),
+          ...(activePages['export-guide'] ? [{ name: 'Export Guide', href: '/en/export-guide' }] : []),
         ]
       }
     },
@@ -120,8 +146,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         links: [
           { name: 'Sobre Nosotros', href: '/es/about' },
           { name: 'Servicios de Exportación', href: '/es/export' },
-          { name: 'Proyectos', href: '/es/projects' },
-          { name: 'Certificados de Calidad', href: '/es/certificates' },
+          ...(activePages.projects ? [{ name: 'Proyectos', href: '/es/projects' }] : []),
+          ...(activePages.certificates ? [{ name: 'Certificados de Calidad', href: '/es/certificates' }] : []),
         ]
       },
       products: {
@@ -138,8 +164,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         links: [
           { name: 'Contáctenos', href: '/es/contact' },
           { name: 'Solicitar Cotización', href: '/es/quote' },
-          { name: 'Preguntas Frecuentes', href: '/es/faq' },
-          { name: 'Guía de Exportación', href: '/es/export-guide' },
+          ...(activePages.faq ? [{ name: 'Preguntas Frecuentes', href: '/es/faq' }] : []),
+          ...(activePages['export-guide'] ? [{ name: 'Guía de Exportación', href: '/es/export-guide' }] : []),
         ]
       }
     },
@@ -149,8 +175,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         links: [
           { name: 'À Propos', href: '/fr/about' },
           { name: 'Services d\'Exportation', href: '/fr/export' },
-          { name: 'Projets', href: '/fr/projects' },
-          { name: 'Certificats de Qualité', href: '/fr/certificates' },
+          ...(activePages.projects ? [{ name: 'Projets', href: '/fr/projects' }] : []),
+          ...(activePages.certificates ? [{ name: 'Certificats de Qualité', href: '/fr/certificates' }] : []),
         ]
       },
       products: {
@@ -167,8 +193,8 @@ export default function Footer({ locale, copyrightText }: FooterProps) {
         links: [
           { name: 'Contactez-nous', href: '/fr/contact' },
           { name: 'Demander un Devis', href: '/fr/quote' },
-          { name: 'FAQ', href: '/fr/faq' },
-          { name: 'Guide d\'Exportation', href: '/fr/export-guide' },
+          ...(activePages.faq ? [{ name: 'FAQ', href: '/fr/faq' }] : []),
+          ...(activePages['export-guide'] ? [{ name: 'Guide d\'Exportation', href: '/fr/export-guide' }] : []),
         ]
       }
     }

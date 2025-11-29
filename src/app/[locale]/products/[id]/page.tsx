@@ -62,7 +62,10 @@ async function getProductById(id: string) {
     const product = await getCachedProductById(id)
     return product
   } catch (error) {
-    console.error('Error fetching product:', error)
+    // Error will be logged by Next.js in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching product:', error)
+    }
     return null
   }
 }
@@ -80,7 +83,10 @@ async function getRelatedProducts(category: string, currentProductId: string, li
     })
     return products
   } catch (error) {
-    console.error('Error fetching related products:', error)
+    // Error will be logged by Next.js in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching related products:', error)
+    }
     return []
   }
 }
@@ -96,31 +102,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound()
   }
 
-  // Debug: Log product data
-  console.log('Product data:', {
-    id: product.id,
-    nameAr: product.nameAr,
-    nameEn: product.nameEn,
-    category: product.category,
-    thickness: product.thickness,
-    finishes: product.finishes,
-    originCountry: product.originCountry,
-    images: product.images
-  })
-
   // Get related products
   const relatedProducts = await getRelatedProducts(product.category, product.id)
-
-  // Debug: Log related products
-  console.log('Related products count:', relatedProducts.length)
-  if (relatedProducts.length > 0) {
-    console.log('First related product:', {
-      id: relatedProducts[0].id,
-      name: relatedProducts[0].nameAr,
-      images: relatedProducts[0].images,
-      imagesType: typeof relatedProducts[0].images
-    })
-  }
 
   // Helper function to get localized product name
   const getProductName = (product: any) => {

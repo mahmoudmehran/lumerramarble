@@ -27,6 +27,8 @@ import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
 import { Card } from '../../../components/ui/card'
 import { ToastProvider, toast } from '../../../components/ui/toast'
+import PageSEOManager from '../../../components/admin/PageSEOManager'
+import PageStatusToggle from '../../../components/admin/PageStatusToggle'
 
 interface QuoteRequest {
   id: string
@@ -1207,6 +1209,18 @@ Phone: +1 (XXX) XXX-XXXX`
     <ToastProvider>
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto p-6">
+        
+        {/* SEO Management Section */}
+        <div className="mb-8">
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">إعدادات صفحة طلب عرض سعر</h2>
+              <PageStatusToggle pageKey="quote" />
+            </div>
+            <PageSEOManager pageKey="quote" />
+          </Card>
+        </div>
+
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>

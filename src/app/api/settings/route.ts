@@ -13,14 +13,15 @@ export const revalidate = 3600
 // GET endpoint for public settings (no authentication required)
 export async function GET(request: NextRequest) {
   try {
-    console.log('Fetching settings from cache...')
     // Use cached settings
     const settings = await getCachedSettings()
 
-    console.log('Settings fetched successfully from cache')
     return NextResponse.json({ settings })
   } catch (error) {
-    console.error('Error fetching public settings:', error)
+    // Log only in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching public settings:', error)
+    }
     return NextResponse.json({ 
       error: 'Internal server error',
       settings: {

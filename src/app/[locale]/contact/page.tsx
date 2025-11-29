@@ -1,9 +1,14 @@
 import { MapPin, Phone, Mail, Clock, Youtube, Instagram, Facebook } from 'lucide-react'
+import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { Card } from '../../../components/ui/card'
 import { getContent } from '../../../lib/content'
 import { getSiteSettings } from '../../../lib/settings'
+import { prisma } from '../../../lib/db'
 import ContactForm from './ContactForm'
 import { PageHeader, ContentSection } from '../../../components/ui/page-sections'
+
+export const revalidate = 3600 // Revalidate every hour
 
 // WhatsApp & TikTok Icons (not available in lucide-react)
 const WhatsAppIcon = () => (
@@ -22,9 +27,50 @@ interface ContactPageProps {
   params: Promise<{ locale: string }>
 }
 
+export async function generateMetadata({ params }: ContactPageProps): Promise<Metadata> {
+  const { locale } = await params
+  
+  const seoData = await prisma.pageSEO.findUnique({
+    where: { pageKey: 'contact' }
+  })
+
+  const titles = {
+    ar: seoData?.titleAr || 'تواصل معنا',
+    en: seoData?.titleEn || 'Contact Us',
+    es: seoData?.titleEs || 'Contáctenos',
+    fr: seoData?.titleFr || 'Contactez-nous'
+  }
+
+  const descriptions = {
+    ar: seoData?.descriptionAr || 'تواصل معنا للحصول على استشارة مجانية',
+    en: seoData?.descriptionEn || 'Contact us for a free consultation',
+    es: seoData?.descriptionEs || 'Contáctenos para una consulta gratuita',
+    fr: seoData?.descriptionFr || 'Contactez-nous pour une consultation gratuite'
+  }
+
+  return {
+    title: titles[locale as keyof typeof titles],
+    description: descriptions[locale as keyof typeof descriptions],
+    ...(seoData?.ogImage && {
+      openGraph: {
+        images: [seoData.ogImage]
+      }
+    })
+  }
+}
+
 export default async function ContactPage({ params }: ContactPageProps) {
   const { locale } = await params
   const isRTL = locale === 'ar'
+  
+  // Check if page is active
+  const seoData = await prisma.pageSEO.findUnique({
+    where: { pageKey: 'contact' }
+  })
+
+  if (!seoData?.isActive) {
+    return notFound()
+  }
   
   // جلب المحتوى من قاعدة البيانات
   const content = await getContent('contact')
@@ -34,12 +80,27 @@ export default async function ContactPage({ params }: ContactPageProps) {
     return content[sectionKey]?.[contentKey]?.[locale as keyof typeof content[string][string]] || ''
   }
 
+  const titles = {
+    ar: seoData?.titleAr || getText('hero', 'title'),
+    en: seoData?.titleEn || getText('hero', 'title'),
+    es: seoData?.titleEs || getText('hero', 'title'),
+    fr: seoData?.titleFr || getText('hero', 'title')
+  }
+
+  const subtitles = {
+    ar: seoData?.descriptionAr || getText('hero', 'subtitle'),
+    en: seoData?.descriptionEn || getText('hero', 'subtitle'),
+    es: seoData?.descriptionEs || getText('hero', 'subtitle'),
+    fr: seoData?.descriptionFr || getText('hero', 'subtitle')
+  }
+
   return (
     <div className="min-h-screen bg-[var(--color-quinary-50)]">
       {/* Header Section */}
       <PageHeader
-        title={getText('hero', 'title')}
-        subtitle={getText('hero', 'subtitle')}
+        title={titles[locale as keyof typeof titles]}
+        subtitle={subtitles[locale as keyof typeof subtitles]}
+        image={seoData?.ogImage || undefined}
       />
 
       <ContentSection variant="white">

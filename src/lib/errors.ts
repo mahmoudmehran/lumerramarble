@@ -186,11 +186,16 @@ export function logError(error: unknown, context?: string) {
     details: apiError.details
   }
 
-  // Log للـ console
-  console.error('Error Log:', errorLog)
+  // Log only in development
+  if (process.env.NODE_ENV === 'development') {
+    console.error('Error Log:', errorLog)
+  }
 
-  // يمكن إضافة error tracking service هنا
-  // مثال: Sentry.captureException(apiError, { contexts: { error: errorLog } })
+  // Add error tracking service here for production
+  // Example: Sentry.captureException(apiError, { contexts: { error: errorLog } })
+  
+  // You can also log to a file or database in production
+  // Example: await logToDatabase(errorLog)
 
   return errorLog
 }

@@ -21,6 +21,8 @@ import {
 import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
 import { Card } from '../../../components/ui/card'
+import PageSEOManager from '../../../components/admin/PageSEOManager'
+import PageStatusToggle from '../../../components/admin/PageStatusToggle'
 
 interface ContactMessage {
   id: string
@@ -175,6 +177,17 @@ export default function MessagesManagement() {
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* SEO Management Section */}
+        <div className="mb-8">
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">إعدادات صفحة تواصل معنا</h2>
+              <PageStatusToggle pageKey="contact" />
+            </div>
+            <PageSEOManager pageKey="contact" />
+          </Card>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">

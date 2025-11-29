@@ -164,6 +164,102 @@ export const quoteFormSchema = z.object({
 export type QuoteFormData = z.infer<typeof quoteFormSchema>
 
 /**
+ * Single Page Quote Form Schema
+ * دمج جميع الخطوات في نموذج واحد للصفحة الواحدة
+ */
+export const singleQuoteFormSchema = z.object({
+  // Personal Information
+  fullName: z.string()
+    .min(2, 'الاسم يجب أن يكون على الأقل حرفين')
+    .max(100, 'الاسم طويل جداً')
+    .transform(sanitizeString),
+  
+  email: z.string()
+    .email('البريد الإلكتروني غير صحيح')
+    .transform(val => validator.normalizeEmail(val) || val),
+  
+  phone: z.string()
+    .min(10, 'رقم الهاتف غير صحيح')
+    .max(20, 'رقم الهاتف طويل جداً')
+    .transform(sanitizeString)
+    .refine(validatePhone, 'رقم الهاتف غير صحيح'),
+  
+  company: z.string()
+    .max(200, 'اسم الشركة طويل جداً')
+    .optional()
+    .transform(val => val ? sanitizeString(val) : undefined),
+  
+  country: z.string()
+    .min(2, 'الدولة يجب أن تكون على الأقل حرفين')
+    .max(100, 'اسم الدولة طويل جداً')
+    .transform(sanitizeString),
+  
+  city: z.string()
+    .min(2, 'المدينة يجب أن تكون على الأقل حرفين')
+    .max(100, 'اسم المدينة طويل جداً')
+    .transform(sanitizeString),
+  
+  // Product Selection
+  productName: z.string()
+    .min(1, 'يجب اختيار المنتج')
+    .transform(sanitizeString),
+  
+  productId: z.string().optional(),
+  
+  // Project Information
+  projectType: z.string()
+    .min(1, 'نوع المشروع مطلوب')
+    .transform(sanitizeString),
+  
+  projectName: z.string()
+    .max(200, 'اسم المشروع طويل جداً')
+    .optional()
+    .transform(val => val ? sanitizeString(val) : undefined),
+  
+  expectedDate: z.string().optional(),
+  
+  budget: z.string()
+    .max(100, 'الميزانية طويلة جداً')
+    .optional()
+    .transform(val => val ? sanitizeString(val) : undefined),
+  
+  // Product Requirements
+  quantity: z.string()
+    .min(1, 'الكمية مطلوبة')
+    .max(50, 'الكمية طويلة جداً')
+    .transform(sanitizeString),
+  
+  thickness: z.string()
+    .max(50, 'السماكة طويلة جداً')
+    .optional()
+    .transform(val => val ? sanitizeString(val) : undefined),
+  
+  finish: z.string()
+    .max(100, 'نوع التشطيب طويل جداً')
+    .optional()
+    .transform(val => val ? sanitizeString(val) : undefined),
+  
+  dimensions: z.string()
+    .max(100, 'الأبعاد طويلة جداً')
+    .optional()
+    .transform(val => val ? sanitizeString(val) : undefined),
+  
+  color: z.string()
+    .max(100, 'اللون طويل جداً')
+    .optional()
+    .transform(val => val ? sanitizeString(val) : undefined),
+  
+  message: z.string()
+    .max(2000, 'الرسالة طويلة جداً')
+    .optional()
+    .transform(val => val ? sanitizeString(val) : undefined),
+  
+  attachments: z.array(z.string()).optional()
+})
+
+export type SingleQuoteFormData = z.infer<typeof singleQuoteFormSchema>
+
+/**
  * Admin Login Schema
  */
 export const loginSchema = z.object({

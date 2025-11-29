@@ -17,8 +17,12 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    // Log للـ error tracking service
-    console.error('App Error:', error)
+    // Log only in development or send to error tracking service
+    if (process.env.NODE_ENV === 'development') {
+      console.error('App Error:', error)
+    }
+    // Add error tracking service here (e.g., Sentry)
+    // Example: Sentry.captureException(error)
   }, [error])
 
   return (

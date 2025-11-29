@@ -7,7 +7,7 @@ import { Input } from '../../components/ui/input'
 import { Textarea } from '../../components/ui/textarea'
 import { Select } from '../../components/ui/select'
 import { Card } from '../../components/ui/card'
-import { Save, Edit, Eye, Settings, Calculator, LogOut, Building, Ship, Mail, Package, Clock } from 'lucide-react'
+import { Save, Edit, Eye, Settings, Calculator, LogOut, Building, Ship, Mail, Package, Clock, HelpCircle, Award, FolderKanban, BookOpen } from 'lucide-react'
 
 // تعريف نوع المحتوى
 interface ContentData {
@@ -680,6 +680,41 @@ export default function AdminPanel() {
                   >
                     <Package className="w-4 h-4" />
                     إدارة المنتجات
+                  </button>
+                </div>
+              </div>
+
+              {/* New Pages Section */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-500 mb-3">صفحات الموقع</h3>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => router.push('/admin/faqs')}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-right transition-colors text-gray-600 hover:bg-gray-100"
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    الأسئلة الشائعة
+                  </button>
+                  <button
+                    onClick={() => router.push('/admin/certificates')}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-right transition-colors text-gray-600 hover:bg-gray-100"
+                  >
+                    <Award className="w-4 h-4" />
+                    شهادات الجودة
+                  </button>
+                  <button
+                    onClick={() => router.push('/admin/projects')}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-right transition-colors text-gray-600 hover:bg-gray-100"
+                  >
+                    <FolderKanban className="w-4 h-4" />
+                    المشاريع
+                  </button>
+                  <button
+                    onClick={() => router.push('/admin/export-guides')}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-right transition-colors text-gray-600 hover:bg-gray-100"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    دليل التصدير
                   </button>
                 </div>
               </div>

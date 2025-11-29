@@ -244,9 +244,22 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [searchTerm, setSearchTerm] = useState(search || '')
   const [selectedCategory, setSelectedCategory] = useState(category || 'all')
+  const [seoData, setSeoData] = useState<any>(null)
 
   // Fetch products from API
   useEffect(() => {
+    async function fetchSEOData() {
+      try {
+        const response = await fetch('/api/page-seo/products')
+        if (response.ok) {
+          const data = await response.json()
+          setSeoData(data)
+        }
+      } catch (error) {
+        console.error('Error fetching SEO data:', error)
+      }
+    }
+
     async function fetchProducts() {
       try {
         setLoading(true)
@@ -261,6 +274,7 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
         setLoading(false)
       }
     }
+    fetchSEOData()
     fetchProducts()
   }, [])
 
@@ -402,8 +416,9 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
     return (
       <div className="min-h-screen bg-[var(--color-quinary-50)]">
         <PageHeader
-          title={currentContent.title}
-          subtitle={currentContent.subtitle}
+          title={seoData ? (locale === 'ar' ? seoData.titleAr : locale === 'en' ? seoData.titleEn : locale === 'es' ? seoData.titleEs : seoData.titleFr) || currentContent.title : currentContent.title}
+          subtitle={seoData ? (locale === 'ar' ? seoData.descriptionAr : locale === 'en' ? seoData.descriptionEn : locale === 'es' ? seoData.descriptionEs : seoData.descriptionFr) || currentContent.subtitle : currentContent.subtitle}
+          image={seoData?.ogImage}
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
@@ -418,8 +433,9 @@ export default function ProductsPage({ params, searchParams }: ProductsPageProps
     <div className="min-h-screen bg-[var(--color-quinary-50)]">
       {/* Header Section */}
       <PageHeader
-        title={currentContent.title}
-        subtitle={currentContent.subtitle}
+        title={seoData ? (locale === 'ar' ? seoData.titleAr : locale === 'en' ? seoData.titleEn : locale === 'es' ? seoData.titleEs : seoData.titleFr) || currentContent.title : currentContent.title}
+        subtitle={seoData ? (locale === 'ar' ? seoData.descriptionAr : locale === 'en' ? seoData.descriptionEn : locale === 'es' ? seoData.descriptionEs : seoData.descriptionFr) || currentContent.subtitle : currentContent.subtitle}
+        image={seoData?.ogImage}
       />
 
       {/* Filters Section */}
